@@ -5,6 +5,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { FaqModule } from './faq/faq.module';
 import { EventModule } from './event/event.module';
+import { NoticeModule } from './notice/notice.module';
 
 @Module({
   imports: [
@@ -30,6 +31,8 @@ import { EventModule } from './event/event.module';
     FaqModule,
 
     EventModule,
+
+    NoticeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
