@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FaqModule } from './faq/faq.module';
 import { EventModule } from './event/event.module';
 import { NoticeModule } from './notice/notice.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -33,6 +34,8 @@ import { NoticeModule } from './notice/notice.module';
     EventModule,
 
     NoticeModule,
+
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

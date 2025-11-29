@@ -32,7 +32,8 @@ export class FaqService {
 
         query
             .skip((page - 1) * limit) //skip bản ghi đầu tiên
-            .take(limit); //lấy tối đa limit
+            .take(limit) //lấy tối đa limit
+            .orderBy('faq.createdAt', 'DESC')
 
         const [data, total] = await query.getManyAndCount()
         return {

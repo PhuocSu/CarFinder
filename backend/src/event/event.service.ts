@@ -30,7 +30,8 @@ export class EventService {
 
         query
             .skip((page - 1) * limit)
-            .take(limit);
+            .take(limit)
+            .orderBy('event.createdAt', 'DESC')
 
         const [data, total] = await query.getManyAndCount()
         return {
