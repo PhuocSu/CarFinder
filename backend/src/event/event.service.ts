@@ -12,9 +12,9 @@ export class EventService {
         private eventRepository: Repository<Event>,
     ) { }
 
-    create(dto: CreateEventDto) {
+    async create(dto: CreateEventDto) {
         const event = this.eventRepository.create(dto);
-        return this.eventRepository.save(event);
+        return await this.eventRepository.save(event);
     }
 
     async findAll(
@@ -43,15 +43,15 @@ export class EventService {
         }
     }
 
-    findOne(id: number) {
-        return this.eventRepository.findOne({ where: { id } });
+    async findOne(id: number) {
+        return await this.eventRepository.findOne({ where: { id } });
     }
 
-    update(id: number, dto: UpdateEventDto) {
-        return this.eventRepository.update(id, dto);
+    async update(id: number, dto: UpdateEventDto) {
+        return await this.eventRepository.update(id, dto);
     }
 
-    remove(id: number) {
-        return this.eventRepository.delete(id);
+    async remove(id: number) {
+        return await this.eventRepository.delete(id);
     }
 }

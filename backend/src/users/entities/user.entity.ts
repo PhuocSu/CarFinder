@@ -1,15 +1,13 @@
-import { ChildEntity, Column, Entity, PrimaryGeneratedColumn, TableInheritance } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
 
 export enum Role {
     ADMIN = 'ADMIN',
-    USER = 'USER'
+    INDIVIDUAL = 'INDIVIDUAL',
+    BUSINESS = 'BUSINESS',
+    AGENCY = 'AGENCY'
 }
 
 @Entity()
-@TableInheritance({column: {
-    type:'varchar', 
-    name:'type' //typeORm tự động điền
-}})
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
@@ -29,80 +27,44 @@ export class User {
     @Column()
     custAddr: string;
 
-    @Column({ type: 'enum', enum: Role, default: Role.USER })
+    @Column({ type: 'enum', enum: Role, default: Role.INDIVIDUAL })
     role: Role;
+
+    // Individual
+    @Column({ nullable: true })
+    hpNo?: number;
+
+    @Column({ nullable: true })
+    email?: string;
+
+    // Business và Agency (nhiều trường giống nhau nên gộp) => tránh dư thừa
+    @Column({ nullable: true })
+    reprsntName?: string;
+
+    @Column({ nullable: true })
+    corpRegNo?: string;
+
+    @Column({ nullable: true })
+    corpTellNo?: number;
+
+    @Column({ nullable: true })
+    bnsmRegNo?: string;
+
+    @Column({ nullable: true })
+    bnsmRegCert?: string;
+
+    @Column({ nullable: true })
+    corpFaxNo?: number;
+
+    @Column({ nullable: true })
+    corpEmail?: string;
+
+    @Column({ nullable: true })
+    custRep?: string;
+
+    @Column({ nullable: true })
+    custRepPhone?: number;
+
+    @Column({ nullable: true })
+    repDepTit?: string;
 }
-
-@ChildEntity()
-export class IndividualCustomer extends User {
-  @Column()
-  hpNo: number;
-
-  @Column()
-  email: string;
-}
-
-@ChildEntity()
-export class BusinessCustomer extends User {
-  @Column()
-  reprsntName: string;
-
-  @Column()
-  corpRegNo: string;
-
-  @Column()
-  corpTellNo: number;
-
-  @Column()
-  bnsmRegNo: string;
-
-  @Column()
-  bnsmRegCert: string;
-
-  @Column()
-  corpFaxNo: number;
-
-  @Column()
-  corpEmail: string;
-
-  @Column()
-  custRep: string;
-
-  @Column()
-  custRepPhone: number;
-
-  @Column()
-  repDepTit: string;
-}
-
-@ChildEntity()
-export class AgencyCustomer extends User {
-  @Column()
-  reprsntName: string;
-
-  @Column()
-  bnsmRegNo: string;
-
-  @Column()
-  corpTellNo: number;
-
-  @Column()
-  bnsmRegCert: string;
-
-  @Column()
-  corpFaxNo: number;
-
-  @Column()
-  corpEmail: string;
-
-  @Column()
-  custRep: string;
-
-  @Column()
-  custRepPhone: number;
-
-  @Column()
-  repDepTit: string;
-}
-
-

@@ -12,9 +12,9 @@ export class FaqService {
         private faqRepository: Repository<Faq>,
     ) { }
 
-    create(dto: CreateFaqDto) {
+    async create(dto: CreateFaqDto) {
         const faq = this.faqRepository.create(dto);
-        return this.faqRepository.save(faq);
+        return await this.faqRepository.save(faq);
     }
 
     async findAll(category?: Category, search?: string, page = 1, limit = 10) {
@@ -46,8 +46,8 @@ export class FaqService {
 
     }
 
-    findOne(id: number) {
-        return this.faqRepository.findOne({
+    async findOne(id: number) {
+        return await this.faqRepository.findOne({
             where: { id }
         })
     }
@@ -57,7 +57,7 @@ export class FaqService {
         return this.findOne(id);
     }
 
-    remove(id: number) {
-        return this.faqRepository.delete(id);
+    async remove(id: number) {
+        return await this.faqRepository.delete(id);
     }
 }

@@ -13,9 +13,9 @@ export class NoticeService {
     private noticeRepository: Repository<Notice>,
   ) { }
 
-  create(createNoticeDto: CreateNoticeDto) {
+  async create(createNoticeDto: CreateNoticeDto) {
     const notice = this.noticeRepository.create(createNoticeDto);
-    return this.noticeRepository.save(notice);
+    return await this.noticeRepository.save(notice);
   }
 
   async findAll(
@@ -42,15 +42,15 @@ export class NoticeService {
     
   }
 
-  findOne(id: number) {
-    return this.noticeRepository.findOne({ where: { id } });
+  async findOne(id: number) {
+    return await this.noticeRepository.findOne({ where: { id } });
   }
 
-  update(id: number, updateNoticeDto: UpdateNoticeDto) {
-    return this.noticeRepository.update(id, updateNoticeDto);
+  async update(id: number, updateNoticeDto: UpdateNoticeDto) {
+    return await this.noticeRepository.update(id, updateNoticeDto);
   }
 
-  remove(id: number) {
-    return this.noticeRepository.delete(id);
+  async remove(id: number) {
+    return await this.noticeRepository.delete(id);
   }
 }
