@@ -5,6 +5,9 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  // console.log('JWT_SECRET:', process.env.JWT_SECRET);
+  // console.log('Tất cả biến môi trường:', process.env);
+
   //đăng ký để sử dụng DTO
   app.useGlobalPipes(new ValidationPipe({
     whitelist: true, // Tự động loại bỏ các trường không được định nghĩa trong DTO

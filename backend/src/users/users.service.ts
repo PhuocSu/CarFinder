@@ -57,8 +57,8 @@ export class UsersService {
     return await this.userRepository.find();
   }
 
-  async findOne(id: number) {
-    return await this.userRepository.findOne({ where: { id } });
+  async findOne(custId: string): Promise<User | null> {
+    return this.userRepository.findOne({ where: { custId } });
   }
 
   //admin

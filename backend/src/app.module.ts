@@ -7,6 +7,7 @@ import { FaqModule } from './faq/faq.module';
 import { EventModule } from './event/event.module';
 import { NoticeModule } from './notice/notice.module';
 import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -36,6 +37,9 @@ import { UsersModule } from './users/users.module';
     NoticeModule,
 
     UsersModule,
+
+    AuthModule,
+
   ],
   controllers: [AppController],
   providers: [AppService],
