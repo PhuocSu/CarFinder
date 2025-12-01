@@ -30,6 +30,9 @@ export class User {
     @Column({ type: 'enum', enum: Role, default: Role.INDIVIDUAL })
     role: Role;
 
+    @Column()
+    isActive: boolean = true; 
+
     // Individual
     @Column({ nullable: true })
     hpNo?: number;
