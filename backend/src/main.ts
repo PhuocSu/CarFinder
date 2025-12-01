@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import { doubleCsrf } from 'csrf-csrf';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,9 @@ app.use(helmet({
   },
 }));
 
+//CSRF  => lấy token từ cookie + thêm interceptor cho axios
+
+
 
   //đăng ký để sử dụng DTO
   app.useGlobalPipes(new ValidationPipe({
@@ -27,6 +31,8 @@ app.use(helmet({
     transform: true, // Tự động chuyển đổi kiểu dữ liệu
     forbidNonWhitelisted: true, // Từ chối request nếu có trường không được định nghĩa
   }));
+
+  app.enableCors(); //sau add them cors
 
   await app.listen(process.env.PORT ?? 3000);
 }
