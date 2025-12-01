@@ -11,6 +11,7 @@ import { UpdateAdminDto } from './dto/update/update-admin.dto';
 import { UpdateIndividualDto } from './dto/update/update-individual.dto';
 import { UpdateBusinessDto } from './dto/update/update-business.dto';
 import { UpdateAgencyDto } from './dto/update/update-agency.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -19,18 +20,27 @@ export class UsersService {
     private userRepository: Repository<User>,
   ) {}
 
+  private async hashPassword(password: string): Promise<string>{
+    const saltOrRounds = 10;
+    return await bcrypt.hash(password, saltOrRounds);
+  }
+
   //admin
   async createAdmin (createAdminDto: CreateAdminDto) {
     const user = this.userRepository.create({
       ...createAdminDto,
+      custPw: await this.hashPassword(createAdminDto.custPw),
       role: Role.ADMIN,
     });
     return await this.userRepository.save(user);
   }
   //individual
   async createIndividual (createIndividualDto: CreateIndividualDto) {
+
+
     const user = this.userRepository.create({
       ...createIndividualDto,
+      custPw: await this.hashPassword(createIndividualDto.custPw),
       role: Role.INDIVIDUAL,
     });
     return await this.userRepository.save(user);
@@ -39,6 +49,7 @@ export class UsersService {
   async createBusiness (createBusinessDto: CreateBusinessDto) {
     const user = this.userRepository.create({
       ...createBusinessDto,
+      custPw: await this.hashPassword(createBusinessDto.custPw),
       role: Role.BUSINESS,
     });
     return await this.userRepository.save(user);
@@ -47,6 +58,7 @@ export class UsersService {
   async createAgency (createAgencyDto: CreateAgencyDto) {
     const user = this.userRepository.create({
       ...createAgencyDto,
+      custPw: await this.hashPassword(createAgencyDto.custPw),
       role: Role.AGENCY,
     });
     return await this.userRepository.save(user);

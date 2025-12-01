@@ -12,7 +12,6 @@ import { UpdateAgencyDto } from './dto/update/update-agency.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from './entities/user.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
-// import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 export class UsersController {
@@ -28,6 +27,7 @@ export class UsersController {
     };
   }
   //individual
+  @Public()
   @Post('individual')
   async createIndividual(@Body() createIndividualDto: CreateIndividualDto) {
     const user = await this.usersService.createIndividual(createIndividualDto);
@@ -37,6 +37,7 @@ export class UsersController {
     };
   }
   //business
+  @Public()
   @Post('business')
   async createBusiness(@Body() createBusinessDto: CreateBusinessDto) {
     const user = await this.usersService.createBusiness(createBusinessDto);
@@ -46,6 +47,7 @@ export class UsersController {
     };
   }
   //agency
+  @Public()
   @Post('agency')
   async createAgency(@Body() createAgencyDto: CreateAgencyDto) {
     const user = await this.usersService.createAgency(createAgencyDto);

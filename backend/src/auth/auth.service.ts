@@ -1,6 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UsersService } from 'src/users/users.service';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -14,8 +15,13 @@ export class AuthService {
         pass: string
     ): Promise<{ access_token: string }> {
         const user = await this.usersService.findOne(username)
-        if(user?.custPw !== pass) {
-            throw new UnauthorizedException();
+        if(!user) {
+            throw new UnauthorizedException("User not found");
+        }
+
+        const isMatch = await bcrypt.compare(pass, user.custPw)
+        if (!isMatch) {
+            throw new UnauthorizedException("Invalid credential");
         }
 
         //payload: dữ liệu được "đóng gói" vào trong token
@@ -23,6 +29,5 @@ export class AuthService {
         return {
             access_token: await this.jwtService.signAsync(payload)
         }
-    }
-
+    }        
 }
