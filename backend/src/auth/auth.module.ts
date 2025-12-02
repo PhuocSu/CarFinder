@@ -19,9 +19,11 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60s' },
-      }),
-      inject: [ConfigService], //cho phép đọc file từ .env
+        signOptions: { 
+          expiresIn: config.get<string>('JWT_ACCESS_EXPIRES') 
+        },
+      } as any),
+      inject: [ConfigService],
     }),
   ],
   controllers: [AuthController],
@@ -30,7 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       provide: 'JWT_REFRESH_CONFIG',
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: config.get<string>('JWT_REFRESH_EXPIRES') ?? '7d',
+        expiresIn: config.get<string>('JWT_REFRESH_EXPIRES'),
       }),
       inject: [ConfigService],
     },
