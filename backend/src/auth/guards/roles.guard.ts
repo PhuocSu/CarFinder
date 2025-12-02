@@ -12,10 +12,17 @@ export class RolesGuard implements CanActivate {
       context.getHandler(),
       context.getClass(),
     ]);
-    if (!requiredRoles) {
+
+    if (!requiredRoles || requiredRoles.length === 0) {
       return true;
     }
     const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user.roles?.includes(role));
+
+    // Nếu không có user => từ chối
+    if (!user || !user.role) {
+      return false;
+    }
+    
+    return requiredRoles.some((role) => user.role === role);
   }
 }

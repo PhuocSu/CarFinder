@@ -33,20 +33,22 @@ import { IS_PUBLIC_KEY } from '../decorators/public.decorator';
       const request = context.switchToHttp().getRequest();
       const token = this.extractTokenFromHeader(request); //lấy token từ headerheader
       if (!token) {
-        throw new UnauthorizedException();
+        throw new UnauthorizedException("Token not found");
       }
       try {
-        const payload = await this.jwtService.verifyAsync(
-          token,
-          {
-            secret: process.env.JWT_SECRET
-          }
-        );
-        // 💡 We're assigning the payload to the request object here
-        // so that we can access it in our route handlers
+        const payload = await this.jwtService.verifyAsync(token); //AuthGuard phải dùng cùng secret với JwtModule => để token
         request['user'] = payload;
-      } catch {
-        throw new UnauthorizedException();
+        
+      } catch(error) {
+        if (error.name === 'TokenExpiredError') {
+          throw new UnauthorizedException({
+              statusCode: 401,
+              message: 'Token expired',
+              code: 'TOKEN_EXPIRED'  // Thêm mã lỗi để phía frontend xử lý
+          });
+      }
+        console.log("JWT Verification Error:", error)
+        throw new UnauthorizedException("Invalid credentials");
       }
       return true;
     }

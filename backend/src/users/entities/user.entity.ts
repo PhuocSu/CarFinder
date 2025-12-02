@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Session } from '../../sessions/entities/session.entity';
 
 export enum Role {
     ADMIN = 'ADMIN',
@@ -32,6 +33,9 @@ export class User {
 
     @Column()
     isActive: boolean = true; 
+
+    @OneToMany(() => Session, session => session.user)
+    sessions_id: Session[]
 
     // Individual
     @Column({ nullable: true })

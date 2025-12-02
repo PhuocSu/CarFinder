@@ -6,21 +6,34 @@ import { JwtModule } from '@nestjs/jwt';
 import { AuthGuard } from './guards/auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { RolesGuard } from './guards/roles.guard';
+import { SessionsModule } from 'src/sessions/sessions.module';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     UsersModule,
-    JwtModule.registerAsync({ 
-      //NestJS docs sai => sử dụng registerAsync thay vì register + useFactory
+    SessionsModule, // add session to get refreshToken
+    //NestJS docs sai => sử dụng registerAsync thay vì register + useFactory
+    JwtModule.registerAsync({
       global: true,
-      useFactory: () => ({
-        secret: process.env.JWT_SECRET,
-        signOptions: { expiresIn: '60s' }, //accessToken kéo dài 60s
+      imports: [ConfigModule],
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_SECRET'),
+        signOptions: { expiresIn: '60s' },
       }),
+      inject: [ConfigService], //cho phép đọc file từ .env
     }),
   ],
   controllers: [AuthController],
   providers: [AuthService,
+    {
+      provide: 'JWT_REFRESH_CONFIG',
+      useFactory: (config: ConfigService) => ({
+        secret: config.get<string>('JWT_REFRESH_SECRET'),
+        expiresIn: config.get<string>('JWT_REFRESH_EXPIRES') ?? '7d',
+      }),
+      inject: [ConfigService],
+    },
     {
       provide: APP_GUARD, //tự động liên kết AuthGuard với mọi endpoints (Global auth guard)
       useClass: AuthGuard,
