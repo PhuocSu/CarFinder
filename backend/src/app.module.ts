@@ -11,6 +11,9 @@ import { AuthModule } from './auth/auth.module';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { SessionsModule } from './sessions/sessions.module';
+import { CarModule } from './car/car.module';
+import { SubModelModule } from './sub-model/sub-model.module';
+import { ModelModule } from './model/model.module';
 
 @Module({
   imports: [
@@ -53,6 +56,12 @@ import { SessionsModule } from './sessions/sessions.module';
     AuthModule,
 
     SessionsModule,
+
+    CarModule,
+
+    SubModelModule,
+
+    ModelModule,
 
   ],
   controllers: [AppController],
