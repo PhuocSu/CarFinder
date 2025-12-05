@@ -62,15 +62,14 @@ import { ModelModule } from './model/model.module';
     SubModelModule,
 
     ModelModule,
-
   ],
   controllers: [AppController],
   providers: [
     AppService,
     {
       provide: APP_GUARD,
-      useClass: ThrottlerGuard
-    }
+      useClass: ThrottlerGuard,
+    },
   ],
 })
-export class AppModule { }
+export class AppModule {}

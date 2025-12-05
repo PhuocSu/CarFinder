@@ -19,7 +19,7 @@ export class Session {
   @Column({ nullable: true })
   ipAddress?: string;
 
-  @ManyToOne(() => User, user => user.sessions_id, { onDelete: 'CASCADE' }) //Composition, dùng cascade để khi xóa user thì xóa session
+  @ManyToOne(() => User, user => user.sessions_id) 
   @JoinColumn({name: 'user_id'}) //tạo khóa ngoại
   user: User;
 

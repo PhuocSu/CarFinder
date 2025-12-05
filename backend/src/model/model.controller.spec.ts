@@ -12,7 +12,7 @@ describe('ModelController', () => {
     }).compile();
 
     controller = module.get<ModelController>(ModelController);
-  });
+  }); 
 
   it('should be defined', () => {
     expect(controller).toBeDefined();

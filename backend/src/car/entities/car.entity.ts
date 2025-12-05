@@ -1,8 +1,11 @@
+import { SubModel } from 'src/sub-model/entities/sub-model.entity';
 import {
   Column,
   CreateDateColumn,
   Entity,
   Index,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -54,12 +57,10 @@ export class Car {
   carImage: string[];
 
   @Column({
-    type: 'enum',
-    enum: VehicleBadge,
-    array: true, // <--- đây là key để lưu nhiều giá trị
-    default: [],
+    type: "json",
+    nullable: true,
   })
-  vehicleBadge: VehicleBadge[];
+  vehicleBadge: VehicleBadge[];  
 
   @Column()
   firstRegDate: Date;
@@ -90,6 +91,7 @@ export class Car {
   @Column()
   interiorColor: string;
 
+  @Index() // Thêm index cho tìm kiếm nhanh
   @Column({
     type: 'varchar',
     length: 20,
@@ -97,7 +99,6 @@ export class Car {
     nullable: false,
     comment: 'Car registration number',
   })
-  @Index() // Thêm index cho tìm kiếm nhanh
   carRegno: string;
 
   @Column()
@@ -121,4 +122,12 @@ export class Car {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  //========================================
+  @ManyToOne(() => SubModel, (subModel) => subModel.cars)
+  @JoinColumn({ name: 'sub_model_id' })
+  subModel: SubModel;
+
+  @Column({ name: 'sub_model_id' })
+  subModelId: number;
 }

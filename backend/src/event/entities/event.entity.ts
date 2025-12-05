@@ -24,8 +24,8 @@ export class Event {
     @Column()
     content: string
 
-    @Column()
-    isTemporarySave?: boolean = false
+    @Column({default: false})
+    isTemporarySave?: boolean
 
     @CreateDateColumn()
     createdAt: Date
