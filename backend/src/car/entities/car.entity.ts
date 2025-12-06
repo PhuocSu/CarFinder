@@ -1,4 +1,7 @@
 import { SubModel } from 'src/sub-model/entities/sub-model.entity';
+import { CompareCar } from 'src/users/entities/compare-car.entity';
+import { FavoriteCar } from 'src/users/entities/favorite-car.entity';
+import { UserCarView } from 'src/users/entities/user-car-view.entity';
 import {
   Column,
   CreateDateColumn,
@@ -6,6 +9,7 @@ import {
   Index,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -57,10 +61,10 @@ export class Car {
   carImage: string[];
 
   @Column({
-    type: "json",
+    type: 'json',
     nullable: true,
   })
-  vehicleBadge: VehicleBadge[];  
+  vehicleBadge: VehicleBadge[];
 
   @Column()
   firstRegDate: Date;
@@ -130,4 +134,14 @@ export class Car {
 
   @Column({ name: 'sub_model_id' })
   subModelId: number;
+
+  //========================================
+  @OneToMany(() => UserCarView, (view) => view.car)
+  viewedByUsers: UserCarView[];
+
+  @OneToMany(() => FavoriteCar, (favoriteCar) => favoriteCar.car)
+  favoritedByUsers: FavoriteCar[];
+
+  @OneToMany(() => CompareCar, (compareCar) => compareCar.car)
+  comparedByUsers: CompareCar[];
 }
