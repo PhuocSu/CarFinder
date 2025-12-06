@@ -32,19 +32,25 @@ export class CompareCarService {
       return { status: 'added' };
     } catch (error) {
       console.log('Error adding car to compare list:', error);
-      throw error;
+      throw new Error(error);
     }
   }
 
   async getCompareList(userId: number) {
-    return this.compareCarRepository.find({
-      where: {
-        user: { id: userId },
-      },
-      relations: ['car'],
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+    try {
+      return await this.compareCarRepository.find({
+        where: {
+          user: { id: userId },
+        },
+        relations: ['car'],
+        order: {
+          createdAt: 'DESC',
+        },
+      });
+      
+    } catch (error) {
+      console.log('Error getting compare list:', error);
+      throw new Error(error);
+    }
   }
 }

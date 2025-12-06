@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { RecentlyViewedCarService } from './recently-viewed-car.service';
 import { CreateRecentlyViewedCarDto } from './dto/create-recently-viewed-car.dto';
 import { UpdateRecentlyViewedCarDto } from './dto/update-recently-viewed-car.dto';
@@ -7,28 +7,13 @@ import { UpdateRecentlyViewedCarDto } from './dto/update-recently-viewed-car.dto
 export class RecentlyViewedCarController {
   constructor(private readonly recentlyViewedCarService: RecentlyViewedCarService) {}
 
-  @Post()
-  create(@Body() createRecentlyViewedCarDto: CreateRecentlyViewedCarDto) {
-    return this.recentlyViewedCarService.create(createRecentlyViewedCarDto);
+  @Post(":carId")
+  addCarToRecentlyViewed(@Param('carId') carId: number, @Req() req: any) {
+    return this.recentlyViewedCarService.toggle(req.user.sub, carId);
   }
 
   @Get()
-  findAll() {
-    return this.recentlyViewedCarService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.recentlyViewedCarService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateRecentlyViewedCarDto: UpdateRecentlyViewedCarDto) {
-    return this.recentlyViewedCarService.update(+id, updateRecentlyViewedCarDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.recentlyViewedCarService.remove(+id);
+  getRecentlyViewedCars(@Req() req: any) {
+    return this.recentlyViewedCarService.getRecentlyViewedCars(req.user.sub);
   }
 }
