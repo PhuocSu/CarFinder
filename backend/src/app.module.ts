@@ -14,6 +14,9 @@ import { SessionsModule } from './sessions/sessions.module';
 import { CarModule } from './car/car.module';
 import { SubModelModule } from './sub-model/sub-model.module';
 import { ModelModule } from './model/model.module';
+import { FavoriteCarModule } from './favorite-car/favorite-car.module';
+import { CompareCarModule } from './compare-car/compare-car.module';
+import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-car.module';
 
 @Module({
   imports: [
@@ -62,6 +65,12 @@ import { ModelModule } from './model/model.module';
     SubModelModule,
 
     ModelModule,
+
+    FavoriteCarModule,
+
+    CompareCarModule,
+
+    RecentlyViewedCarModule,
   ],
   controllers: [AppController],
   providers: [

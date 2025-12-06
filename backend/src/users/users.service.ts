@@ -36,8 +36,6 @@ export class UsersService {
   }
   //individual
   async createIndividual (createIndividualDto: CreateIndividualDto) {
-
-
     const user = this.userRepository.create({
       ...createIndividualDto,
       custPw: await this.hashPassword(createIndividualDto.custPw),

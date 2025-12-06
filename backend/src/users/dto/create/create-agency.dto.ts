@@ -10,7 +10,7 @@ export class CreateAgencyDto extends BaseCreateUserDto {
   corpRegNo: string;
 
   @IsNotEmpty()
-  corpTellNo: number;
+  corpTellNo: string;
 
   @IsNotEmpty()
   bnsmRegNo: string;
@@ -19,7 +19,7 @@ export class CreateAgencyDto extends BaseCreateUserDto {
   bnsmRegCert?: string;
 
   @IsOptional()
-  corpFaxNo?: number;
+  corpFaxNo?: string;
 
   @IsEmail()
   @IsOptional()
@@ -29,7 +29,7 @@ export class CreateAgencyDto extends BaseCreateUserDto {
   custRep: string;
 
   @IsNotEmpty()
-  custRepPhone: number;
+  custRepPhone: string;
 
   @IsOptional()
   repDepTit?: string;

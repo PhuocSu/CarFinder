@@ -1,6 +1,6 @@
+import { Car } from "src/car/entities/car.entity";
+import { User } from "src/users/entities/user.entity";
 import { CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { User } from "./user.entity";
-import { Car } from "../../car/entities/car.entity";
 
 @Entity()
 export class FavoriteCar {

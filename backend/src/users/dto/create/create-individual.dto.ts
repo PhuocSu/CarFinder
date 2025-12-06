@@ -3,8 +3,7 @@ import { IsNotEmpty, IsString, IsEmail, IsNumberString, IsNumber } from 'class-v
 
 export class CreateIndividualDto extends BaseCreateUserDto {
   @IsNotEmpty()
-  @IsNumber()
-  hpNo: number;
+  hpNo: string;
 
   @IsNotEmpty()
   @IsEmail()

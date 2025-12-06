@@ -10,8 +10,7 @@ export class CreateBusinessDto extends BaseCreateUserDto {
   corpRegNo: string;
 
   @IsNotEmpty()
-  @IsNumber()
-  corpTellNo: number;
+  corpTellNo: string;
 
   @IsNotEmpty()
   bnsmRegNo: string;
@@ -20,7 +19,7 @@ export class CreateBusinessDto extends BaseCreateUserDto {
   bnsmRegCert?: string;
 
   @IsOptional()
-  corpFaxNo?: number;
+  corpFaxNo?: string;
 
   @IsEmail()
   @IsOptional()
@@ -30,7 +29,7 @@ export class CreateBusinessDto extends BaseCreateUserDto {
   custRep: string;
 
   @IsNotEmpty()
-  custRepPhone: number;
+  custRepPhone: string;
 
   @IsOptional()
   repDepTit?: string;

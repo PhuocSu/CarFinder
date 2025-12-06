@@ -1,7 +1,7 @@
+import { CompareCar } from 'src/compare-car/entities/compare-car.entity';
+import { FavoriteCar } from 'src/favorite-car/entities/favorite-car.entity';
+import { RecentlyViewedCar } from 'src/recently-viewed-car/entities/recently-viewed-car.entity';
 import { SubModel } from 'src/sub-model/entities/sub-model.entity';
-import { CompareCar } from 'src/users/entities/compare-car.entity';
-import { FavoriteCar } from 'src/users/entities/favorite-car.entity';
-import { UserCarView } from 'src/users/entities/user-car-view.entity';
 import {
   Column,
   CreateDateColumn,
@@ -136,8 +136,8 @@ export class Car {
   subModelId: number;
 
   //========================================
-  @OneToMany(() => UserCarView, (view) => view.car)
-  viewedByUsers: UserCarView[];
+  @OneToMany(() => RecentlyViewedCar, (view) => view.car)
+  viewedByUsers: RecentlyViewedCar[];
 
   @OneToMany(() => FavoriteCar, (favoriteCar) => favoriteCar.car)
   favoritedByUsers: FavoriteCar[];

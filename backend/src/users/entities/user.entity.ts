@@ -7,10 +7,9 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Session } from '../../sessions/entities/session.entity';
-import { Car } from 'src/car/entities/car.entity';
-import { UserCarView } from './user-car-view.entity';
-import { FavoriteCar } from './favorite-car.entity';
-import { CompareCar } from './compare-car.entity';
+import { RecentlyViewedCar } from 'src/recently-viewed-car/entities/recently-viewed-car.entity';
+import { FavoriteCar } from 'src/favorite-car/entities/favorite-car.entity';
+import { CompareCar } from 'src/compare-car/entities/compare-car.entity';
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -50,7 +49,7 @@ export class User {
 
   // Individual
   @Column({ nullable: true })
-  hpNo?: number;
+  hpNo?: string;
 
   @Column({ nullable: true })
   email?: string;
@@ -63,7 +62,7 @@ export class User {
   corpRegNo?: string;
 
   @Column({ nullable: true })
-  corpTellNo?: number;
+  corpTellNo?: string;
 
   @Column({ nullable: true })
   bnsmRegNo?: string;
@@ -72,7 +71,7 @@ export class User {
   bnsmRegCert?: string;
 
   @Column({ nullable: true })
-  corpFaxNo?: number;
+  corpFaxNo?: string;
 
   @Column({ nullable: true })
   corpEmail?: string;
@@ -81,13 +80,13 @@ export class User {
   custRep?: string;
 
   @Column({ nullable: true })
-  custRepPhone?: number;
+  custRepPhone?: string;
 
   @Column({ nullable: true })
   repDepTit?: string;
 
-  @OneToMany(() => UserCarView, (view) => view.user)
-  recentlyViewedCars: UserCarView[];
+  @OneToMany(() => RecentlyViewedCar, (recentlyViewedCar) => recentlyViewedCar.user)
+  recentlyViewedCars: RecentlyViewedCar[];
 
   @OneToMany(() => FavoriteCar, (favoriteCar) => favoriteCar.user)
   favoriteCars: FavoriteCar[];

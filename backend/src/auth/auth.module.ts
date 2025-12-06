@@ -32,7 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
       provide: 'JWT_REFRESH_CONFIG',
       useFactory: (config: ConfigService) => ({
         secret: config.get<string>('JWT_REFRESH_SECRET'),
-        expiresIn: config.get<string>('JWT_REFRESH_EXPIRES'),
+        expiresIn: config.get<string>('REFRESH_TOKEN_EXPIRATION'),
       }),
       inject: [ConfigService],
     },
