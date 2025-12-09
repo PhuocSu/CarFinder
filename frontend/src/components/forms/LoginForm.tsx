@@ -1,50 +1,76 @@
 "use client";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Checkbox, Form, Input, message, Typography } from "antd";
 import { useLogin } from "@/app/api/auth/useLogin";
 import { useSetRecoilState } from "recoil";
 import { authState } from "@/store/authStore";
-import { redirect } from "next/dist/server/api-utils";
 import { useRouter } from "next/navigation";
-
 
 const { Title } = Typography;
 
 type FieldType = {
   username?: string;
   password?: string;
-  // remember?: boolean;
+  remember?: boolean;
 };
 
 const LoginForm: React.FC = () => {
+  const [form] = Form.useForm();
   const router = useRouter();
-  const loginMutation = useLogin()
-  const setAuth = useSetRecoilState(authState)
+  const loginMutation = useLogin();
+  const setAuth = useSetRecoilState(authState);
 
-  const onFinish = async (values: {username: string, password: string}) => {
+  useEffect(() => {
+    const savedUsername = localStorage.getItem("username");
+    const rememberMe = localStorage.getItem("rememberMe");
+    if (savedUsername && rememberMe === "true") {
+      form.setFieldsValue({
+        username: savedUsername,
+        remember: true,
+      });
+    }
+  }, [form]);
+
+  const onFinish = async (values: {
+    username: string;
+    password: string;
+    remember?: boolean;
+  }) => {
     try {
-      const response = await loginMutation.mutateAsync(values) //mở đầu bằng việc kích họat việc đăng nhập
+      //tách trường remember ra khỏi payload gửi lên server
+      const { remember, ...loginData } = values;
+
+      // Gọi API đăng nhập chỉ với username và password
+      const response = await loginMutation.mutateAsync(loginData); //mở đầu bằng việc kích họat việc đăng nhập
 
       //1. lưu access token vào trong storage hoặc cookies
-      localStorage.setItem("access_token", response.access_token)
+      localStorage.setItem("access_token", response.access_token);
 
       //2. Cập nhật state xác thực thực toàn cục
       setAuth({
         user: response.user,
         accessToken: response.access_token,
-        isAuthenticated: true
-      })
+        isAuthenticated: true,
+      });
 
-      //3. Hiển thị thông báo thành công
-      message.success("Login successfully")
-      router.push('/')
+      //3. Xử lý "Nhớ tài khoản"
+      if (remember) {
+        localStorage.setItem("username", values.username);
+        localStorage.setItem("rememberMe", "true");
+      } else {
+        localStorage.removeItem("username");
+        localStorage.removeItem("rememberMe");
+      }
 
+      //4. Hiển thị thông báo thành công
+      message.success("Login successfully");
+      router.push("/");
     } catch (error) {
-      console.log("Login failed: ",error)
-      console.error("Login failed: ",error)
+      console.log("Login failed: ", error);
+      console.error("Login failed: ", error);
     }
-  }
+  };
 
   return (
     <div
@@ -76,6 +102,7 @@ const LoginForm: React.FC = () => {
 
       {/* Form */}
       <Form
+        form={form}
         name="login"
         layout="vertical"
         initialValues={{ remember: true }}
@@ -127,11 +154,11 @@ const LoginForm: React.FC = () => {
             alignItems: "center",
           }}
         >
-          {/* <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
+          <Form.Item<FieldType> name="remember" valuePropName="checked" noStyle>
             <Checkbox style={{ fontSize: 14, color: "#666670" }}>
               아이디 저장
             </Checkbox>
-          </Form.Item> */}
+          </Form.Item>
         </div>
 
         {/* Submit Button */}

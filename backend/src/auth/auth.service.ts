@@ -44,7 +44,7 @@ export class AuthService {
         const payload = { 
             sub: user.id, 
             username: user.custId, 
-            role: user.role 
+            role: user.role //cần thiết khi phía frontend
         }
 
         const refreshToken = await this.generateRefreshToken(payload);
