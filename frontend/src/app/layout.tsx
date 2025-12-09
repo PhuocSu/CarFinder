@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { RecoilRoot } from "recoil";
 import Providers from "@/providers/providers";
+import Header from "./ui/components/Header";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,9 +26,21 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable}`}
+        style={{ width: "100vw", height: "100vh" }}
+      >
         <Providers>
-          {children}
+        <Header />
+          <div
+            style={{
+              width: "100%",
+              maxWidth: "1200px",
+              margin: "0px auto",
+            }}
+          >
+            {children}
+          </div>
         </Providers>
       </body>
     </html>

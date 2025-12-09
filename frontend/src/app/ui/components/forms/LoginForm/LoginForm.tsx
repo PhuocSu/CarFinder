@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Button, Checkbox, Form, Input, message, Typography } from "antd";
+import { Button, Checkbox, Divider, Form, Input, message, Typography } from "antd";
 import { useLogin } from "@/app/api/auth/useLogin";
 import { useSetRecoilState } from "recoil";
 import { authState } from "@/store/authStore";
 import { useRouter } from "next/navigation";
+import styles from "./LoginForm.module.css";
 
 const { Title } = Typography;
 
@@ -180,6 +181,27 @@ const LoginForm: React.FC = () => {
           </Button>
         </Form.Item>
       </Form>
+
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          gap: 8,
+          alignItems: "center",
+        }}
+      >
+        <Typography.Link className={styles['header__bottom--character']} style={{color: 'var(--button-secondary-fg-enabled, #3533CC)'}}>회원가입</Typography.Link>
+        <Divider
+          orientation="vertical"
+          style={{ margin: 0, height: "12px", borderColor: "#d9d9d9" }}
+        />
+        <Typography.Link className={styles['header__bottom--character']} style={{color: 'var(--base-fg-color-base-fg-40, #8F97A4)'}}>아이디 찾기</Typography.Link>
+        <Divider
+          orientation="vertical"
+          style={{ margin: 0, height: "12px", borderColor: "#d9d9d9" }}
+        />
+        <Typography.Link className={styles['header__bottom--character']} style={{color: 'var(--base-fg-color-base-fg-40, #8F97A4)'}}>비밀번호 찾기</Typography.Link>
+      </div>
     </div>
   );
 };
