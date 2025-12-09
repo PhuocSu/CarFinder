@@ -32,7 +32,10 @@ app.use(helmet({
     forbidNonWhitelisted: true, // Từ chối request nếu có trường không được định nghĩa
   }));
 
-  app.enableCors(); //sau add them cors
+  app.enableCors({
+    origin: "http://localhost:3001", // cho phép truy câpj từ frontend
+    credentials: true, // cho phép gửi cookies qua Cors
+  }); //sau add them cors
 
   await app.listen(process.env.PORT ?? 3000);
 }
