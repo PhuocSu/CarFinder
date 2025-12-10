@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
 import { doubleCsrf } from 'csrf-csrf';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -20,6 +21,9 @@ app.use(helmet({
     },
   },
 }));
+
+//đọc từ cookie -> hay quên
+app.use(cookieParser()); 
 
 //CSRF  => lấy token từ cookie + thêm interceptor cho axios
 

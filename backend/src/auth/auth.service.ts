@@ -27,7 +27,7 @@ export class AuthService {
     
     async signIn(
         username: string, 
-        pass: string,
+        password: string,
         req: any
     ): Promise<{ access_token: string, refresh_token: string }> {
         const user = await this.usersService.findOne(username)
@@ -35,7 +35,7 @@ export class AuthService {
             throw new UnauthorizedException("User not found");
         }
 
-        const isMatch = await bcrypt.compare(pass, user.custPw)
+        const isMatch = await bcrypt.compare(password, user.custPw)
         if (!isMatch) {
             throw new UnauthorizedException("Invalid credential");
         }
