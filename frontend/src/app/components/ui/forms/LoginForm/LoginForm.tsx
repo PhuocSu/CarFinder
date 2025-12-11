@@ -23,6 +23,10 @@ const LoginForm: React.FC = () => {
   const setAuth = useSetRecoilState(authState);
 
   useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem("access_token")) {
+      router.replace('/');
+    }  
+    
     const savedUsername = localStorage.getItem("username");
     const rememberMe = localStorage.getItem("rememberMe");
     if (savedUsername && rememberMe === "true") {
@@ -31,7 +35,7 @@ const LoginForm: React.FC = () => {
         remember: true,
       });
     }
-  }, [form]);
+  }, [form, router]);
 
   const onFinish = async (values: {
     username: string;
@@ -68,7 +72,7 @@ const LoginForm: React.FC = () => {
 
       //4. Hiển thị thông báo thành công
       message.success("Login successfully");
-      router.push("/");
+      router.replace('/');
     } catch (error) {
       console.log("Login failed: ", error);
       console.error("Login failed: ", error);

@@ -36,7 +36,9 @@
 
 .header__nav__item,
 .header__top__login,
-.header__top__register {
+.header__top__register,
+.header__top__logout,
+.header__top__mypage {
     color: var(--base-fg-color-base-fg-50, #666670);
     font-size: 15px;
     font-family: 'Noto Sans KR', sans-serif;

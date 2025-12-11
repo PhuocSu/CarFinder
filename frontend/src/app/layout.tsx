@@ -32,7 +32,7 @@ export default function RootLayout({
         style={{ width: "100vw", height: "100vh" }}
       >
         <Providers>
-        <Header />
+          <Header />
           <div
             style={{
               width: "100%",
@@ -40,10 +40,10 @@ export default function RootLayout({
               margin: "0px auto",
             }}
           >
-            {children}
+            <main>{children}</main>
           </div>
+          <Footer />
         </Providers>
-        <Footer />
       </body>
     </html>
   );

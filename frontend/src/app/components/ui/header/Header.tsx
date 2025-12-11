@@ -14,14 +14,6 @@ export default function Header() {
   const router = useRouter();
 
   useEffect(() => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(!!token);
-
-    const checkAuth = () => {
-      const token = localStorage.getItem("access_token");
-      setIsAuthenticated(!!token);
-    };
-
     // Kiểm tra 1 lần khi load component
     checkAuth();
 
@@ -33,6 +25,11 @@ export default function Header() {
       window.removeEventListener("authChanged", checkAuth);
     };
   }, []);
+
+  const checkAuth = () => {
+    const token = localStorage.getItem("access_token");
+    setIsAuthenticated(!!token);
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
@@ -51,12 +48,12 @@ export default function Header() {
           {isAuthenticated ? (
             <>
               <Typography.Text
-                className={styles.header__top__login}
+                className={styles.header__top__logout}
                 onClick={handleLogout}
               >
                 로그아웃
               </Typography.Text>
-              <Typography.Text className={styles.header__top__register}>
+              <Typography.Text className={styles.header__top__mypage}>
                 마이 페이지
               </Typography.Text>
             </>
