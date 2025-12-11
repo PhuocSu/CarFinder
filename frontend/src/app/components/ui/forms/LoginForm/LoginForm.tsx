@@ -47,6 +47,8 @@ const LoginForm: React.FC = () => {
 
       //1. lưu access token vào trong storage hoặc cookies
       localStorage.setItem("access_token", response.access_token);
+      
+      window.dispatchEvent(new Event("authChanged"));
 
       //2. Cập nhật state xác thực thực toàn cục
       setAuth({
