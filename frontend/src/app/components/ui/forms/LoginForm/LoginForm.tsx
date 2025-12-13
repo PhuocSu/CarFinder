@@ -24,7 +24,7 @@ const LoginForm: React.FC = () => {
 
   useEffect(() => {
     if (typeof window !== 'undefined' && localStorage.getItem("access_token")) {
-      router.replace('/');
+      router.replace('/'); // không thể quay lại loginPage, khác với push()
     }  
     
     const savedUsername = localStorage.getItem("username");

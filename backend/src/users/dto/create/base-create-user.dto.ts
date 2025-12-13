@@ -11,7 +11,6 @@ export class BaseCreateUserDto {
   custId: string;
 
   @IsNotEmpty()
-  @MinLength(6)
   custPw: string;
 
   @IsOptional()
