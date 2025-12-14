@@ -5,8 +5,6 @@ import { RecoilRoot } from 'recoil';
 
 const queryClient = new QueryClient();
 
-console.log("Providers rendered")
-
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <RecoilRoot>
