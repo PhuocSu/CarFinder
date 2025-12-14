@@ -13,11 +13,9 @@ import {
   Min,
 } from 'class-validator';
 import { Entity } from 'typeorm';
-import {
-  FuelType,
-  TransmissionType,
-  VehicleBadge,
-} from '../entities/car.entity';
+import { FuelType } from '../enums/fuel-type.enum';
+import { TransmissionType } from '../enums/transmission-type.enum';
+import { VehicleBadge } from '../enums/vehicle-badge.enum';
 
 @Entity()
 export class CreateCarDto {

@@ -3,7 +3,11 @@
 import FaqCard from "@/app/components/ui/cards/FaqCard";
 
 const FaqPage = () => {
-  return <FaqCard />;
+  return (
+    <div>
+      <FaqCard />
+    </div>
+  );
 };
 
 export default FaqPage;

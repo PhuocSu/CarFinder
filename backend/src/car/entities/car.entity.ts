@@ -13,44 +13,47 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { ColumnMetadata } from 'typeorm/metadata/ColumnMetadata.js';
+import { VehicleBadge } from '../enums/vehicle-badge.enum';
+import { FuelType } from '../enums/fuel-type.enum';
+import { TransmissionType } from '../enums/transmission-type.enum';
 
-export enum VehicleBadge {
-  COUPE_OPTION = '쿠페특옵션',
-  SHORT_DISTANCE = '짧은키로',
-  SINGLE_OWNER = '일인소유',
-  NO_INSURANCE_HISTORY = '보험이력없음',
-  TAX_BENEFIT = '세제혜택',
-  LIKE_NEW = '신차급',
-  CAMPER = '캠핑카',
-  BEIGE_SEATS = '베이지시트',
-  EXTENDED_WARRANTY = '보증연장',
-  NON_SMOKER = '비흡연',
-  MANUFACTURER_WARRANTY = '제조사AS',
-  GOOD_CONDITION = '양호',
-  SELLER_RECOMMENDED = '판매자추천',
-  COST_EFFECTIVE = '가성비',
-  ONLY_ONE_IN_COUNTRY = '전국유일',
-  FAMILY_CAR = '패밀리카',
-  SAFETY_FEATURES = '안전사양',
-}
 
-export enum FuelType {
-  ALL = '전체',
-  GASOLINE = '가솔린',
-  DIESEL = '디젤',
-  LPG = 'LPG',
-  HYBRID = '하이브리드',
-  ELECTRIC = '전기',
-}
+// export enum VehicleBadge {
+//   COUPE_OPTION = '쿠페특옵션',
+//   SHORT_DISTANCE = '짧은키로',
+//   SINGLE_OWNER = '일인소유',
+//   NO_INSURANCE_HISTORY = '보험이력없음',
+//   TAX_BENEFIT = '세제혜택',
+//   LIKE_NEW = '신차급',
+//   CAMPER = '캠핑카',
+//   BEIGE_SEATS = '베이지시트',
+//   EXTENDED_WARRANTY = '보증연장',
+//   NON_SMOKER = '비흡연',
+//   MANUFACTURER_WARRANTY = '제조사AS',
+//   GOOD_CONDITION = '양호',
+//   SELLER_RECOMMENDED = '판매자추천',
+//   COST_EFFECTIVE = '가성비',
+//   ONLY_ONE_IN_COUNTRY = '전국유일',
+//   FAMILY_CAR = '패밀리카',
+//   SAFETY_FEATURES = '안전사양',
+// }
 
-export enum TransmissionType {
-  AUTOMATIC = '자동변속기',
-  MANUAL = '수동변속기',
-  CVT = '무단변속기',
-  DCT = '듀얼클러치변속기',
-  SEMI_AUTOMATIC = '반자동변속기',
-}
+// export enum FuelType {
+//   ALL = '전체',
+//   GASOLINE = '가솔린',
+//   DIESEL = '디젤',
+//   LPG = 'LPG',
+//   HYBRID = '하이브리드',
+//   ELECTRIC = '전기',
+// }
+
+// export enum TransmissionType {
+//   AUTOMATIC = '자동변속기',
+//   MANUAL = '수동변속기',
+//   CVT = '무단변속기',
+//   DCT = '듀얼클러치변속기',
+//   SEMI_AUTOMATIC = '반자동변속기',
+// }
 
 @Entity()
 export class Car {
