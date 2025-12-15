@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Card, Flex, Image, Typography } from "antd";
+import { Button, Flex, Image, Typography } from "antd";
 
 const FaqCard = () => {
   return (

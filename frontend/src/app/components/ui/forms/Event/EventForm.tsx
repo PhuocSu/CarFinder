@@ -1,0 +1,283 @@
+"use client";
+
+import { Editor } from "@tinymce/tinymce-react";
+import { Button, ConfigProvider, DatePickerProps, Flex, Input, Typography } from "antd";
+import { DatePicker } from "antd";
+
+import koKR from "antd/es/locale/ko_KR";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
+
+const { RangePicker } = DatePicker;
+
+const EventForm = () => {
+  return (
+    <Flex vertical align="center" gap={"80px"} style={{ marginBottom: "80px" }}>
+      <Typography.Text
+        style={{
+          width: "100%",
+          textAlign: "center",
+          color: "var(--base-fg-color-base-fg-70, #37373E)",
+          fontSize: 28,
+          fontFamily: "Noto Sans KR",
+          fontWeight: "700",
+          wordWrap: "break-word",
+        }}
+      >
+        이벤트
+      </Typography.Text>
+
+      <Flex vertical gap={"40px"} style={{ width: "100%" }}>
+        <Flex vertical gap={"16px"}>
+          <Flex align="center" gap={16} style={{ height: "40px" }}>
+            <Typography.Text
+              style={{ width: "100px", flexShrink: 0, display: "inline-block" }}
+            >
+              글제목
+            </Typography.Text>
+            <Input
+              placeholder="글제목을 입력해주세요."
+              style={{ height: "100%" }}
+            />
+          </Flex>
+
+          <Flex align="center" gap={16} style={{ height: "40px" }}>
+            <Typography.Text
+              style={{ width: "100px", flexShrink: 0, display: "inline-block" }}
+            >
+              부제목
+            </Typography.Text>
+
+            <Input
+              placeholder="글제목을 입력해주세요."
+              style={{ height: "100%" }}
+            />
+          </Flex>
+
+          <Flex align="center" gap={16} style={{ height: "40px" }}>
+            <Typography.Text
+              style={{ width: "100px", flexShrink: 0, display: "inline-block" }}
+            >
+              파일첨부
+            </Typography.Text>
+            <Input
+              placeholder="선택된 파일 없음"
+              style={{ height: "100%", width: "458px" }}
+              disabled
+            />
+            <Button
+              data-icon="none"
+              data-shownumber="true"
+              data-size="middle"
+              data-state="enabled"
+              data-style="tertiary"
+              style={{
+                width: "75px",
+                height: "100%",
+                paddingLeft: 12,
+                paddingRight: 12,
+                background: "var(--button-tertiary-bg-enabled, white)",
+                borderRadius: 2,
+                outline:
+                  "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
+                outlineOffset: "-1px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 4,
+                display: "inline-flex",
+              }}
+            >
+              <div
+                style={{
+                  color: "var(--button-tertiary-fg-enabled, #666670)",
+                  fontSize: 14,
+                  fontFamily: "Noto Sans KR",
+                  fontWeight: "700",
+                  wordWrap: "break-word",
+                }}
+              >
+                파일선택
+              </div>
+            </Button>
+          </Flex>
+
+          <Flex align="center" gap={16} style={{ height: "40px" }}>
+            <Typography.Text
+              style={{ width: "100px", flexShrink: 0, display: "inline-block" }}
+            >
+              등록일시
+            </Typography.Text>
+
+            {/* Date entry and Due date */}
+            <Flex gap={"12px"} style={{height: "40px" }}>
+              <ConfigProvider locale={koKR}>
+                <DatePicker
+                  style={{ width: 224 }}
+                  placeholder="시작일을 선택해주세요."
+                />
+              </ConfigProvider>
+
+              <ConfigProvider locale={koKR}>
+                <DatePicker
+                  style={{ width: 224 }}
+                  placeholder="종료일을 선택해주세요."
+                />
+              </ConfigProvider>
+            </Flex>
+
+            <Button
+              data-icon="none"
+              data-shownumber="true"
+              data-size="middle"
+              data-state="enabled"
+              data-style="tertiary"
+              style={{
+                width: "75px",
+                height: "100%",
+                paddingLeft: 12,
+                paddingRight: 12,
+                background: "var(--button-tertiary-bg-enabled, white)",
+                borderRadius: 2,
+                outline:
+                  "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
+                outlineOffset: "-1px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 4,
+                display: "inline-flex",
+              }}
+            >
+              <div
+                style={{
+                  color: "var(--button-tertiary-fg-enabled, #666670)",
+                  fontSize: 14,
+                  fontFamily: "Noto Sans KR",
+                  fontWeight: "700",
+                  wordWrap: "break-word",
+                }}
+              >
+                종료하기
+              </div>
+            </Button>
+          </Flex>
+        </Flex>
+
+        <Editor
+          apiKey="dttcf1ulrpqltrzmq790n50l71y4tde3gubprnr5siyurx8v"
+          init={{
+            plugins:
+              "anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount",
+            toolbar:
+              "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
+          }}
+          initialValue=""
+        />
+      </Flex>
+
+      <Flex gap={10}>
+        <Button
+          data-icon="none"
+          data-shownumber="true"
+          data-size="large"
+          data-state="enabled"
+          data-style="primary"
+          style={{
+            width: "200px",
+            height: "48px",
+            paddingLeft: 16,
+            paddingRight: 16,
+            background: "var(--button-primary-bg-enabled, #2F2C4D)",
+            borderRadius: 2,
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 4,
+            display: "inline-flex",
+          }}
+        >
+          <span
+            style={{
+              color: "var(--button-primary-fg, white)",
+              fontSize: 14,
+              fontFamily: "Noto Sans KR",
+              fontWeight: "700",
+              wordWrap: "break-word",
+            }}
+          >
+            확인
+          </span>
+        </Button>
+
+        <Button
+          data-icon="none"
+          data-shownumber="true"
+          data-size="large"
+          data-state="enabled"
+          data-style="secondary"
+          style={{
+            width: "200px",
+            height: "48px",
+            paddingLeft: 16,
+            paddingRight: 16,
+            background: "var(--button-secondary-bg-enabled, white)",
+            borderRadius: 2,
+            outline:
+              "1px var(--button-secondary-stroke-enabled, #4F4C6B) solid",
+            outlineOffset: "-1px",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 4,
+            display: "inline-flex",
+          }}
+        >
+          <span
+            style={{
+              color: "var(--button-secondary-fg-enabled, #4F4C6B)",
+              fontSize: 14,
+              fontFamily: "Noto Sans KR",
+              fontWeight: "700",
+              wordWrap: "break-word",
+            }}
+          >
+            임시저장
+          </span>
+        </Button>
+
+        <Button
+          data-icon="none"
+          data-shownumber="true"
+          data-size="large"
+          data-state="enabled"
+          data-style="tertiary"
+          style={{
+            width: "200px",
+            height: "48px",
+            paddingLeft: 16,
+            paddingRight: 16,
+            background: "var(--button-tertiary-bg-enabled, white)",
+            borderRadius: 2,
+            outline: "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
+            outlineOffset: "-1px",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 4,
+            display: "inline-flex",
+          }}
+        >
+          <span
+            style={{
+              color: "var(--button-tertiary-fg-enabled, #666670)",
+              fontSize: 14,
+              fontFamily: "Noto Sans KR",
+              fontWeight: "700",
+              wordWrap: "break-word",
+            }}
+          >
+            취소
+          </span>
+        </Button>
+      </Flex>
+    </Flex>
+  );
+};
+
+export default EventForm;
