@@ -29,7 +29,7 @@ const CarCard = () => {
           />
         </Flex>
 
-        <Flex style={{ position: "absolute", top: "8px", left: "8px" }}>
+        <Flex gap={"8px"} style={{ position: "absolute", top: "8px", left: "8px" }}>
           <div
             style={{
               paddingLeft: 8,
@@ -64,14 +64,7 @@ const CarCard = () => {
         <Flex vertical style={{ padding: "0 12px" }}>
           {/* Car Name */}
           <Typography.Text
-            style={{
-              color: "var(--base-fg-color-base-fg-70, #37373E)",
-              fontSize: 16,
-              fontFamily: "Noto Sans KR",
-              fontWeight: "400",
-              wordWrap: "break-word",
-              marginBottom: "12px",
-            }}
+            style={{color: 'var(--base-fg-color-base-fg-60, #4A4A50)', fontSize: 18, fontFamily: 'Inter', fontWeight: '700', wordWrap: 'break-word'}}
           >
             더 뉴렉스턴 스포츠 칸 쿨멘 2.2 4WD 노블레스 1263274867463
           </Typography.Text>

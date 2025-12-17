@@ -1,0 +1,48 @@
+.container {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+  
+  .badge {
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 9999px;
+    background: #f9f9f9;
+    color: #666670;
+    font-size: 13px;
+    font-family: Inter, sans-serif;
+    font-weight: 400;
+    display: inline-flex;
+    align-items: center;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+    box-sizing: border-box;
+    line-height: 32px;
+  
+    &:hover {
+      background: #ececf1;
+    }
+  }
+  
+  .active {
+    border: 1px solid var(--button-tertiary-stroke-selected, #1B1B42);
+  }
+  
+  .arrow {
+    cursor: pointer;
+    color: #666670;
+    font-size: 16px;
+  
+    &:hover {
+      color: #2f2c4d;
+    }
+  }
+  

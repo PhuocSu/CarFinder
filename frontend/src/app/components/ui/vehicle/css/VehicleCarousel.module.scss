@@ -1,0 +1,60 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  padding: 40px 0;
+}
+
+.swiper {
+  padding: 20px 0;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+  transform: translateY(0) scale(0.9);
+  opacity: 0.6;
+
+  span {
+    margin-top: 8px;
+    font-size: 14px;
+    color: #888;
+    transition: all 0.3s ease;
+  }
+}
+
+.image {
+  width: 140px;
+}
+
+/* SLIDE Ở GIỮA */
+.active {
+  transform: translateY(-12px) scale(1);
+  opacity: 1;
+
+  span {
+    font-size: 16px;
+    font-weight: 700;
+    color: #111;
+  }
+}
+
+/* ARROWS */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  font-size: 24px;
+  cursor: pointer;
+  color: #111;
+}
+
+.left {
+  left: -24px;
+}
+
+.right {
+  right: -24px;
+}

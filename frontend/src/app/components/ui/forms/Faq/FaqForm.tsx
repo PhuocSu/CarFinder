@@ -2,14 +2,7 @@
 
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, Flex, Input, Select, Typography } from "antd";
-
-const categoryOptions = [
-  { label: "차량 및 계약 절차 관련", value: "vehicle_and_contract_procedure" },
-  { label: "계약 조건 관련", value: "contract_terms" },
-  { label: "결제/비용 관련", value: "payment_and_cost" },
-  { label: "인수관련", value: "handover" },
-  { label: "기타", value: "others" },
-];
+import { FAQ_CATEGORY_OPTIONS } from "@/constants/faq/faqCategoryOptions";
 
 const FaqForm = () => {
   return (
@@ -50,7 +43,7 @@ const FaqForm = () => {
             <Select
               style={{ height: "100%", width: "542px", display: "flex", justifyContent: "center" }}
               placeholder="질문의 주제를 선택해주세요."
-              options={categoryOptions}
+              options={FAQ_CATEGORY_OPTIONS}
             />
           </Flex>
 

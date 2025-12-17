@@ -1,0 +1,31 @@
+.homepage--filter__tab {
+  all: unset; //reset từ đầu
+  flex: 1;
+  height: 40px; // cố định chiều cao
+  padding: 8px 16px;
+  background: var(--base-bg-color-base-bg-5, #f1f2f5);
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  display: flex;
+  cursor: pointer;
+  outline: 1px var(--base-stroke-color-base-stroke-20, #E0E0E3) solid;
+
+  span {
+    text-align: center;
+    color: var(--base-fg-color-base-fg-70, #37373e);
+    font-size: 16px;
+    font-family: "Noto Sans KR", sans-serif;
+    font-weight: 400; // cố định font-weight mặc định
+    word-wrap: break-word;
+    white-space: nowrap;
+  }
+}
+
+.homepage--filter__tab--active {
+  background: rgba(255, 255, 255, 0.85);
+
+  span {
+    font-weight: 700; // chỉ đổi font-weight khi active
+  }
+}

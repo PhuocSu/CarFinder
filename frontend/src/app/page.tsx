@@ -1,9 +1,11 @@
 "use client";
 
+import HomepageFilter from "./components/ui/filter/homepage/Tab/HomepageFilter";
+
 export default function HomePage() {
   return (
     <div>
-      <h1>Home Page</h1>
+      <HomepageFilter />
     </div>
   );
 }
