@@ -7,7 +7,7 @@ import styles from "./SearchTab.module.scss";
 
 const SearchTab = () => {
   return (
-    <Flex vertical gap={"16px"} style={{ padding: "20px" }}>
+    <Flex vertical gap={"16px"} style={{ padding: "24px" }}>
       {/* Search Input + Button */}
       <Flex gap={"10px"} style={{ height: "52px" }}>
         <Input
