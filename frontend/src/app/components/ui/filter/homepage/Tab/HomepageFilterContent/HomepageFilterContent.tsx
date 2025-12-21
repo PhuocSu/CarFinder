@@ -6,10 +6,11 @@ import styles from "./HomepageFilterContent.module.scss";
 const HomepageFilterContent = () => {
   return (
     <Flex vertical className={styles["homepage-container"]}>
-      <div style={{ gap: "8px" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
         <Typography.Text className={styles["homepage-container--title"]}>
           내 차 팔 때, 믿을 수 있는 첫걸음
         </Typography.Text>
+
         <div style={{ display: "flex", flexDirection: "column" }}>
           <Typography.Text className={styles["homepage-container--text"]}>
             복잡한 절차 없이 간편하게.

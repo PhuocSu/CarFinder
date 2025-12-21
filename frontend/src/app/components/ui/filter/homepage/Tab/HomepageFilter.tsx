@@ -12,8 +12,8 @@ const HomepageFilter = () => {
   const [activeTab, setActiveTab] = useState("검색으로 찾고싶어요");
 
   return (
-    <Flex gap={"20px"}>
-      <Flex vertical className="homepage--filter" style={{ width: "793px" }}>
+    <Flex justify="center" gap={"20px"} style={{ height: "210px"}}>
+      <Flex vertical className={styles["homepage--filter"]} style={{ width: "793px" }}>
         {/*================= 3 Filter ================= */}
         <Flex className={"homepage--filter__filter"} style={{ width: "100%" }}>
           <div

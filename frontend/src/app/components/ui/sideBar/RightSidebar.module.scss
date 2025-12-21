@@ -1,0 +1,34 @@
+.right-sidebar {
+    position: absolute;
+    top: 60px;
+    right: 10px;
+
+    height: 292px;
+    width: 102px;
+    display: flex;
+    align-items: center;
+    flex-direction: column; 
+    padding: 16px;
+    border: 1px solid #ccc;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.right-sidebar__badge {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 1px;
+    height: 100%;
+    cursor: pointer;
+
+    span {
+        white-space: nowrap;
+    }
+
+}
+
+.right-sidebar__badge:nth-child(2) {
+    padding: 16px;
+}

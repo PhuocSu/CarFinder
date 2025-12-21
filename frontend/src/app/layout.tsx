@@ -5,6 +5,7 @@ import Providers from "@/providers/providers";
 import Header from "./components/ui/header/Header";
 import Footer from "./components/ui/footer/Footer";
 
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -36,11 +37,10 @@ export default function RootLayout({
           <div
             style={{
               width: "100%",
-              maxWidth: "1200px",
               margin: "0px auto",
             }}
           >
-            <main>{children}</main>
+            <main>{children}</main> 
           </div>
           <Footer />
         </Providers>

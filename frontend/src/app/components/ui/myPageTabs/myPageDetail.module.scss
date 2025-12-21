@@ -1,0 +1,29 @@
+.div__tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  .div__tabs__span {
+    color: var(--base-fg-color-base-fg-60, #4a4a50);
+    font-family: "Noto Sans KR";
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    letter-spacing: -0.4px;
+
+    .active {
+      font-weight: 700;
+    }
+  }
+}
+
+.display__name {
+  color: var(--base-fg-color-base-fg-50, #666670);
+  /* KR/Title/title-md */
+  font-family: "Noto Sans KR";
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 26px; /* 144.444% */
+  letter-spacing: -0.45px;
+}
