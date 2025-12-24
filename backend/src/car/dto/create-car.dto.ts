@@ -87,6 +87,10 @@ export class CreateCarDto {
   @IsOptional()
   discountPercent: number = 0;
 
+  @IsString()
+  @IsOptional()
+  description: string = "";
+
   @IsBoolean()
   @IsOptional()
   isAvailable: boolean = true;

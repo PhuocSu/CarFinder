@@ -1,7 +1,8 @@
 "use client";
 
 import HomepageFilter from "./components/ui/filter/homepage/Tab/HomepageFilter";
-import RecentlyViewed from "./components/ui/sideBar/RecentlyViewed/RecentlyViewd";
+import Compare from "./components/ui/sideBar/Compare/Compare";
+import RecentlyViewed from "./components/ui/sideBar/RecentlyViewed/RecentlyViewed";
 import RightSidebar from "./components/ui/sideBar/RightSidebar";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
@@ -12,6 +13,7 @@ export default function HomePage() {
       <HomepageFilter />
       <RightSidebar onOpen={open} />
       {isOpen && <RecentlyViewed onClose={close} />}
+      <Compare />
     </div>
   );
 }

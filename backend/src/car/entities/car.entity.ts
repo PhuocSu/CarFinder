@@ -117,6 +117,9 @@ export class Car {
   @Column('float')
   discountPercent: number;
 
+  @Column()
+  description: string;
+
   @Column({
     type: 'boolean',
     default: false,

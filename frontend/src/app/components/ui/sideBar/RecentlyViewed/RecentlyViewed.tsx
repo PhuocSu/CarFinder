@@ -3,7 +3,6 @@
 import { CloseOutlined } from "@ant-design/icons";
 import styles from "./RecentlyViewed.module.scss";
 import { Flex, Image, Typography } from "antd";
-import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 
 interface RecentlyViewedProps {
   onClose: () => void;
