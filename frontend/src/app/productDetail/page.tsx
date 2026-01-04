@@ -1,12 +1,11 @@
 "use client"
 
-import CarCard from "../components/ui/cards/CarCard";
-
+import ProductDetail from "../components/ui/productDetail/ProductDetail";
 
 const ProductDetailPage = () => {
     return (
-        <div>
-            <CarCard />
+        <div style={{ width: "1200px", height: "100%", margin: "40px auto", display: "flex", gap: "20px" }}>
+            <ProductDetail />
         </div>
     );
 };
