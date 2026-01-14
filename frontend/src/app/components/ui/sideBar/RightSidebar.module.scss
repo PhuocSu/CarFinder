@@ -1,7 +1,9 @@
 .right-sidebar {
-    position: absolute;
-    top: 60px;
+    position: fixed;
+    top: 200px;
     right: 10px;
+    z-index: 99;
+    background-color: #fff;
 
     height: 292px;
     width: 102px;

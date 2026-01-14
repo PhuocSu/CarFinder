@@ -24,6 +24,18 @@ export class CreateCarDto {
   @IsNotEmpty({ message: 'Car images are required' })
   carImage: string[];
 
+  @IsString()
+  @IsNotEmpty()
+  modelName: string;
+
+  @IsString()
+  @IsNotEmpty()
+  subModelName: string;
+
+  @IsString()
+  @IsNotEmpty({ message: 'Brand name is required' })
+  brandName: string;
+
   @IsArray()
   @IsEnum(VehicleBadge, { each: true })
   @IsOptional()

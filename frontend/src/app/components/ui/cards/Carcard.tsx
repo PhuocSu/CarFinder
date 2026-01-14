@@ -1,17 +1,23 @@
 "use client";
 
 import { Flex, Image, Typography } from "antd";
+import { Vehicle } from "@/app/api/listPage/useVehicles";
+import { formatNumber } from "@/utils/formatNumber";
+import { calculateFinalPrice } from "@/utils/countPrice";
 
-const CarCard = () => {
+const CarCard = ({ vehicle }: { vehicle: Vehicle }) => {
+  const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
   return (
-    <Flex vertical style={{ width: "387px", borderRadius: "8px" }}>
+    <Flex vertical style={{ width: "100%", borderRadius: "8px" }}>
       <Flex vertical style={{ position: "relative" }}>
-        <Image
-          style={{ height: "220px" }}
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-          alt="CarImage"
-          preview={false}
-        />
+        <div style={{ height: "220px", background: "#F5F5F5" }}>
+          <Image
+            style={{ height: "100%", width: "100%" }}
+            src={vehicle.carImage[0]}
+            alt="CarImage"
+            preview={false}
+          />
+        </div>
 
         <Flex style={{ position: "absolute", bottom: "8px", right: "8px" }}>
           <Image
@@ -29,34 +35,40 @@ const CarCard = () => {
           />
         </Flex>
 
-        <Flex gap={"8px"} style={{ position: "absolute", top: "8px", left: "8px" }}>
-          <div
-            style={{
-              paddingLeft: 8,
-              paddingRight: 8,
-              paddingTop: 4,
-              paddingBottom: 4,
-              background:
-                "linear-gradient(163deg, #6427C2 0%, #2F2C4D 100%), linear-gradient(156deg, #44217A 0%, #2F2C4D 100%), var(--primary-bg-color-primary-bg-10, #EFE9FE)",
-              borderRadius: 9999,
-              justifyContent: "center",
-              alignItems: "center",
-              gap: 4,
-              display: "flex",
-            }}
-          >
-            <Typography.Text
+        <Flex
+          gap={"8px"}
+          style={{ position: "absolute", top: "8px", left: "8px" }}
+        >
+          {vehicle.vehicleBadge.map((badge, index) => (
+            <div
+              key={index}
               style={{
-                color: "white",
-                fontSize: 12,
-                fontFamily: "Inter",
-                fontWeight: "400",
-                wordWrap: "break-word",
+                paddingLeft: 8,
+                paddingRight: 8,
+                paddingTop: 4,
+                paddingBottom: 4,
+                background:
+                  "linear-gradient(163deg, #6427C2 0%, #2F2C4D 100%), linear-gradient(156deg, #44217A 0%, #2F2C4D 100%), var(--primary-bg-color-primary-bg-10, #EFE9FE)",
+                borderRadius: 9999,
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 4,
+                display: "flex",
               }}
             >
-              텍스트
-            </Typography.Text>
-          </div>
+              <Typography.Text
+                style={{
+                  color: "white",
+                  fontSize: 12,
+                  fontFamily: "Inter",
+                  fontWeight: "400",
+                  wordWrap: "break-word",
+                }}
+              >
+                {badge}
+              </Typography.Text>
+            </div>
+          ))}
         </Flex>
       </Flex>
 
@@ -64,42 +76,52 @@ const CarCard = () => {
         <Flex vertical style={{ padding: "0 12px" }}>
           {/* Car Name */}
           <Typography.Text
-            style={{color: 'var(--base-fg-color-base-fg-60, #4A4A50)', fontSize: 18, fontFamily: 'Inter', fontWeight: '700', wordWrap: 'break-word'}}
+            style={{
+              color: "var(--base-fg-color-base-fg-60, #4A4A50)",
+              fontSize: 18,
+              fontFamily: "Inter",
+              fontWeight: "700",
+              wordWrap: "break-word",
+            }}
           >
-            더 뉴렉스턴 스포츠 칸 쿨멘 2.2 4WD 노블레스 1263274867463
+            {`${vehicle.modelName} ${vehicle.subModelName} ${vehicle.brandName}`}
           </Typography.Text>
 
           {/* Price */}
           <Flex vertical gap={4} style={{ marginBottom: "12px" }}>
             {/* Discount Percent && basePrice */}
-            <Flex gap={4}>
-              <Typography.Text
-                style={{
-                  color:
-                    "var(--status-error-color-status-error-fg-50, #EF4444)",
-                  fontSize: 14,
-                  fontFamily: "Noto Sans KR",
-                  fontWeight: "700",
-                  wordWrap: "break-word",
-                }}
-              >
-                10%
-              </Typography.Text>
-              <Typography.Text
-                style={{
-                  color: "var(--base-fg-color-base-fg-50, #666670)",
-                  fontSize: 14,
-                  fontFamily: "Noto Sans KR",
-                  fontWeight: "400",
-                  textDecoration: "line-through",
-                  wordWrap: "break-word",
-                }}
-              >
-                35,000,000원
-              </Typography.Text>
-            </Flex>
+            {vehicle.discountPercent === 0 ? (
+              <div style={{ height: "22px" }}></div>
+            ) : (
+              <Flex gap={4}>
+                <Typography.Text
+                  style={{
+                    color:
+                      "var(--status-error-color-status-error-fg-50, #EF4444)",
+                    fontSize: 14,
+                    fontFamily: "Noto Sans KR",
+                    fontWeight: "700",
+                    wordWrap: "break-word",
+                  }}
+                >
+                  {vehicle.discountPercent}%
+                </Typography.Text>
+                <Typography.Text
+                  style={{
+                    color: "var(--base-fg-color-base-fg-50, #666670)",
+                    fontSize: 14,
+                    fontFamily: "Noto Sans KR",
+                    fontWeight: "400",
+                    textDecoration: "line-through",
+                    wordWrap: "break-word",
+                  }}
+                >
+                  {formatNumber(vehicle.basePrice)}원
+                </Typography.Text>
+              </Flex>
+            )}
 
-            {/* Price */}
+            {/* basePrice */}
             <Typography.Text
               style={{
                 color: "var(--base-fg-color-base-fg-70, #37373E)",
@@ -109,7 +131,7 @@ const CarCard = () => {
                 wordWrap: "break-word",
               }}
             >
-              32,100,000원
+              {formatNumber(finalPrice)}원
             </Typography.Text>
           </Flex>
 
@@ -145,7 +167,7 @@ const CarCard = () => {
                   wordWrap: "break-word",
                 }}
               >
-                2022년
+                {vehicle.manufacturerYear}년
               </Typography.Text>
             </div>
 
@@ -179,7 +201,7 @@ const CarCard = () => {
                   wordWrap: "break-word",
                 }}
               >
-                132,232 km
+                {formatNumber(vehicle.mileage)} km
               </Typography.Text>
             </div>
 
@@ -212,7 +234,7 @@ const CarCard = () => {
                   wordWrap: "break-word",
                 }}
               >
-                가솔린
+                {vehicle.fuelType}
               </Typography.Text>
             </div>
           </Flex>

@@ -24,7 +24,11 @@ export class CarService {
       if (!subModel) {
         throw new Error('SubModel not found');
       }
-      const car = this.carRepository.create(createCarDto);
+      const car = this.carRepository.create({
+        ...createCarDto,
+        modelName: subModel.model.modelName || '',
+        subModelName: subModel.subModelName || '',
+      });
       return this.carRepository.save(car);
     } catch (error) {
       console.log('Error creating car:', error);
