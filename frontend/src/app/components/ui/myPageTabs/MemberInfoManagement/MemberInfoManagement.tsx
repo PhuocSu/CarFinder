@@ -1,7 +1,7 @@
 "use client"
 
 
-import { authState } from "@/store/authStore";
+import { authState } from "@/store/authStore.atom";
 import { useRecoilValue } from "recoil";
 import IndividualMemberInfo from "../../forms/MyPage/IndividualMemberInfo";
 import BusinessMemberInfo from "../../forms/MyPage/BusinessMemberInfo";

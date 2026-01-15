@@ -1,7 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
 import { UpdateCarDto } from './dto/update-car.dto';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('car')
 export class CarController {
@@ -12,9 +22,18 @@ export class CarController {
     return this.carService.create(createCarDto);
   }
 
+  @Public()
   @Get()
-  findAll() {
-    return this.carService.findAll();
+  findAll(
+    @Query('search') search?: string,
+    @Query('page') page = 1,
+    @Query('pageSize') pageSize = 12,
+  ) {
+    return this.carService.findAll(
+      search,
+      Number(page),
+      Number(pageSize),
+    );
   }
 
   @Get(':id')
@@ -22,9 +41,13 @@ export class CarController {
     return this.carService.findOne(+id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCarDto: UpdateCarDto) {
-    return this.carService.update(+id, updateCarDto);
+  @Get('search')
+  searchByCarRegNo_ModelName_SubModel_BrandName(
+    @Query('search') search?: string,
+  ) {
+    return this.carService.findAll(
+      search,
+    );
   }
 
   @Delete(':id')

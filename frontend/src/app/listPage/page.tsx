@@ -2,12 +2,23 @@
 
 import LeftFilter from "../components/ui/filter/listpage/LeftFilter/LeftFilter";
 import RightContent from "../components/ui/filter/listpage/RightContent/RightContent";
+import RightSidebar from "../components/ui/sideBar/RightSidebar";
+import { useCompare } from "@/hooks/useCompare";
+import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
+import RecentlyViewed from "../components/ui/sideBar/RecentlyViewed/RecentlyViewed";
+import Compare from "../components/ui/sideBar/Compare/Compare";
 
 const ListPage = () => {
+    const { isOpen, open, close } = useRecentlyViewed();
     return (
-        <div style={{ width: "1200px", height: "100%", margin: "40px auto", display: "flex", gap: "20px" }}>
+        <div style={{ width: "1200px", height: "100%", margin: "40px auto", display: "flex", gap: "20px", position: "relative" }}>
+            <RightSidebar onOpen={open} />
             <LeftFilter />
             <RightContent />
+
+            <RightSidebar onOpen={open} />
+            {isOpen && <RecentlyViewed onClose={close} />}
+            <Compare />
         </div>
     );
 };

@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import { Button, Checkbox, Divider, Form, Input, message, Typography } from "antd";
 import { useLogin } from "@/app/api/auth/useLogin";
 import { useSetRecoilState } from "recoil";
-import { authState } from "@/store/authStore";
+import { authState } from "@/store/authStore.atom";
 import { useRouter } from "next/navigation";
 import styles from "./LoginForm.module.css";
 

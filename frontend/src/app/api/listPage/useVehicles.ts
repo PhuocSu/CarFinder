@@ -2,6 +2,9 @@
 
 import { useQuery } from "@tanstack/react-query";
 import api from "@/lib/axios";
+import { useRecoilValue } from "recoil";
+import { vehicleFilterReadSelector } from "@/selectors/VehicleFilter.selectors";
+
 
 export interface Vehicle {
     id: number;
@@ -33,14 +36,29 @@ export interface Vehicle {
 
 
 export function useVehicles() {
-    return useQuery<Vehicle[]>({
-        queryKey: ["vehicles"],
-        queryFn: async () => {
-            const res = await api.get("/car");
-            
-            return res.data;
-        },
-        
-    });
+    const filter = useRecoilValue(vehicleFilterReadSelector);
+
+  return useQuery<{
+    data: Vehicle[];
+    total: number;
+  }>({
+    queryKey: [
+      "vehicles",
+      filter.search,
+      filter.page,
+      filter.pageSize,
+      filter.orderBy,
+      filter.orderDirection,
+    ],
+    queryFn: async () => {
+      const res = await api.get("/car", {
+        params: filter,
+      });
+      console.log("API RESPONSE:", res.data);
+      return res.data;
+    },
+    placeholderData: (previousData) => previousData,
+    staleTime: 60_000,
+  });
 }
 

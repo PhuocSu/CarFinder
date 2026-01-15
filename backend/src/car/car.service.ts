@@ -36,18 +36,12 @@ export class CarService {
     }
   }
 
-  async findAll(){
+  async findOne(id: number) {
     try {
-      return await this.carRepository.find({relations: ['subModel']});
-    } catch (error) {
-      console.log('Error finding all cars:', error);
-      throw new Error('Failed to find all cars');
-    }
-  }
-
-  async findOne(id: number){
-    try {
-      return await this.carRepository.findOne({ where: { id }, relations: ['subModel'] });
+      return await this.carRepository.findOne({
+        where: { id },
+        relations: ['subModel'],
+      });
     } catch (error) {
       console.log('Error finding car:', error);
       throw new Error('Failed to find car');
@@ -92,6 +86,49 @@ export class CarService {
     } catch (error) {
       console.log('Error removing car:', error);
       throw new Error('Failed to remove car');
+    }
+  }
+
+  async findAll(
+    search?: string,
+    page = 1,
+    pageSize = 12
+  ) {
+    try {
+      const qb = this.carRepository.createQueryBuilder('car');
+
+      if (search) {
+        const keywords = search.toLowerCase().trim().split(/\s+/); 
+
+        keywords.forEach((word, index) => {
+          qb.andWhere(
+            `(
+              LOWER(car.carRegno) LIKE :kw${index}
+              OR LOWER(car.modelName) LIKE :kw${index}
+              OR LOWER(car.subModelName) LIKE :kw${index}
+              OR LOWER(car.brandName) LIKE :kw${index}
+            )`,
+            { [`kw${index}`]: `%${word}%` },
+          );
+        });
+      }
+
+      qb.orderBy('car.createdAt', 'DESC');
+
+      // pagination
+      qb.skip((page - 1) * pageSize).take(pageSize);
+
+      const [items, count] = await qb.getManyAndCount();
+      return { 
+        data: items, 
+        total: count,
+        page,
+        pageSize,
+        totalPages: Math.ceil(count / pageSize),
+      };
+    } catch (error) {
+      console.error('Error searching cars:', error);
+      throw new Error('Failed to search cars');
     }
   }
 }

@@ -78,7 +78,7 @@ export class Car {
     nullable: false,
     comment: 'Car registration number',
   })
-  carRegno: string;
+  carRegNo: string;
 
   @Column()
   transmissionType: TransmissionType;

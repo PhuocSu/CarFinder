@@ -1,8 +1,10 @@
 "use client";
 
 import { Typography } from "antd";
+import { useVehicles } from "@/app/api/listPage/useVehicles";
 
 const VehicleCount = () => {
+    const { data: vehicles } = useVehicles();
   return (
       <Typography.Text
         style={{
@@ -18,7 +20,7 @@ const VehicleCount = () => {
           wordWrap: "break-word",
         }}
       >
-        전체 40대
+        {`전체 ${vehicles?.total}대`}
       </Typography.Text>
   );
 };

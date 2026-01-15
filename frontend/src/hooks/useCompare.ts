@@ -1,7 +1,7 @@
 "use client";
 
 import { useRecoilState } from "recoil";
-import { compareOpenState } from "../store/compareStore";
+import { compareOpenState } from "../store/compareStore.atom";
 import { useEffect } from "react";
 
 export const useCompare = () => {

@@ -1,11 +1,10 @@
 "use client";
 
 import { Flex, Image, Typography } from "antd";
-import { Vehicle } from "@/app/api/listPage/useVehicles";
 import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
 
-const CarCard = ({ vehicle }: { vehicle: Vehicle }) => {
+const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
   return (
     <Flex vertical style={{ width: "100%", borderRadius: "8px" }}>
@@ -39,7 +38,7 @@ const CarCard = ({ vehicle }: { vehicle: Vehicle }) => {
           gap={"8px"}
           style={{ position: "absolute", top: "8px", left: "8px" }}
         >
-          {vehicle.vehicleBadge.map((badge, index) => (
+          {vehicle.vehicleBadge.map((badge: string, index: number) => (
             <div
               key={index}
               style={{
