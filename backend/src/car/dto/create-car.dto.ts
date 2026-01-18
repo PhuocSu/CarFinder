@@ -25,14 +25,6 @@ export class CreateCarDto {
   carImage: string[];
 
   @IsString()
-  @IsNotEmpty()
-  modelName: string;
-
-  @IsString()
-  @IsNotEmpty()
-  subModelName: string;
-
-  @IsString()
   @IsNotEmpty({ message: 'Brand name is required' })
   brandName: string;
 
@@ -71,10 +63,8 @@ export class CreateCarDto {
   @IsNotEmpty({ message: 'Mileage is required' })
   mileage: number;
 
-  @IsNumber()
-  @Min(0.1, { message: 'Engine displacement must be positive' })
-  @IsNotEmpty({ message: 'Engine displacement is required' })
-  engineDisplacement: number;
+  @IsOptional()
+  engineDisplacement: string;
 
   @IsString()
   @IsNotEmpty({ message: 'Interior color is required' })
@@ -82,7 +72,7 @@ export class CreateCarDto {
 
   @IsString()
   @IsNotEmpty({ message: 'Registration number is required' })
-  carRegno: string;
+  carRegNo: string;
 
   @IsEnum(TransmissionType, { message: 'Invalid transmission type' })
   @IsNotEmpty({ message: 'Transmission type is required' })
@@ -101,7 +91,7 @@ export class CreateCarDto {
 
   @IsString()
   @IsOptional()
-  description: string = "";
+  description: string = '';
 
   @IsBoolean()
   @IsOptional()

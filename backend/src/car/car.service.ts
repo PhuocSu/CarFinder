@@ -26,8 +26,6 @@ export class CarService {
       }
       const car = this.carRepository.create({
         ...createCarDto,
-        modelName: subModel.model.modelName || '',
-        subModelName: subModel.subModelName || '',
       });
       return this.carRepository.save(car);
     } catch (error) {
@@ -91,44 +89,81 @@ export class CarService {
 
   async findAll(
     search?: string,
+    modelId?: number,
+    subModelId?: number,
+    badges?: string[],
+    sortBy?: 'price' | 'year' | 'mileage',
+    order: 'asc' | 'desc' = 'asc',
     page = 1,
-    pageSize = 12
+    pageSize = 12,
   ) {
-    try {
-      const qb = this.carRepository.createQueryBuilder('car');
+    const qb = this.carRepository
+      .createQueryBuilder('car')
+      .leftJoinAndSelect('car.subModel', 'subModel')
+      .leftJoinAndSelect('subModel.model', 'model');
 
-      if (search) {
-        const keywords = search.toLowerCase().trim().split(/\s+/); 
+    // ===== SEARCH =====
+    if (search) {
+      const keywords = search.toLowerCase().trim().split(/\s+/);
 
-        keywords.forEach((word, index) => {
-          qb.andWhere(
-            `(
-              LOWER(car.carRegno) LIKE :kw${index}
-              OR LOWER(car.modelName) LIKE :kw${index}
-              OR LOWER(car.subModelName) LIKE :kw${index}
-              OR LOWER(car.brandName) LIKE :kw${index}
-            )`,
-            { [`kw${index}`]: `%${word}%` },
-          );
-        });
-      }
-
-      qb.orderBy('car.createdAt', 'DESC');
-
-      // pagination
-      qb.skip((page - 1) * pageSize).take(pageSize);
-
-      const [items, count] = await qb.getManyAndCount();
-      return { 
-        data: items, 
-        total: count,
-        page,
-        pageSize,
-        totalPages: Math.ceil(count / pageSize),
-      };
-    } catch (error) {
-      console.error('Error searching cars:', error);
-      throw new Error('Failed to search cars');
+      keywords.forEach((word, index) => {
+        qb.andWhere(
+          `(
+            LOWER(car.carRegNo) LIKE :kw${index}
+            OR LOWER(car.brandName) LIKE :kw${index}
+            OR LOWER(subModel.subModelName) LIKE :kw${index}
+            OR LOWER(model.modelName) LIKE :kw${index}
+          )`,
+          { [`kw${index}`]: `%${word}%` },
+        );
+      });
     }
+
+    // ===== FILTER BY MODEL, SUBMODEL =====
+    if (modelId) {
+      qb.andWhere('model.id = :modelId', { modelId });
+    }
+
+    if (subModelId) {
+      qb.andWhere('subModel.id = :subModelId', { subModelId });
+    }
+
+    // ===== SORT =====
+    switch (sortBy) {
+      case 'price':
+        qb.orderBy('car.basePrice', order.toUpperCase() as 'ASC' | 'DESC');
+        break;
+      case 'year':
+        qb.orderBy(
+          'car.manufacturerYear',
+          order.toUpperCase() as 'ASC' | 'DESC',
+        );
+        break;
+      case 'mileage':
+        qb.orderBy('car.mileage', order.toUpperCase() as 'ASC' | 'DESC');
+        break;
+      default:
+        qb.orderBy('car.createdAt', 'DESC');
+    }
+
+    // ========SEARCH BY BADGES ============
+    if (badges && badges.length > 0) {
+      qb.andWhere(`JSON_OVERLAPS(car.vehicleBadge, :badges)`, {
+        badges: JSON.stringify(badges),
+      });
+    }
+
+    // ===== PAGINATION =====
+    qb.skip((page - 1) * pageSize).take(pageSize);
+
+    const [items, count] = await qb.getManyAndCount();
+
+    return {
+      data: items,
+      total: count,
+      page,
+      pageSize,
+      totalPages: Math.ceil(count / pageSize),
+    };
   }
 }

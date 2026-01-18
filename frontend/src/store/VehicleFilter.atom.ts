@@ -4,9 +4,18 @@ export interface VehicleFilter {
   search: string;
   page: number;
   pageSize: number;
-  orderBy: "createdAt";
-  orderDirection: "ASC" | "DESC";
+  sortBy?: "price" | "year" | "mileage";
+  order?: "asc" | "desc";
+  
+  badges: string[];
+
+  modelId?: number;
+  subModelId?: number;
 }
+
+export type SortBy = "price" | "year" | "mileage" | undefined;
+export type Order = "asc" | "desc";
+
 
 export const vehicleFilterState = atom<VehicleFilter>({
   key: "vehicleFilterState",
@@ -14,7 +23,9 @@ export const vehicleFilterState = atom<VehicleFilter>({
     search: "",
     page: 1,
     pageSize: 12,
-    orderBy: "createdAt",
-    orderDirection: "DESC",
+    sortBy: undefined as SortBy,
+    order: "asc" as Order,
+
+    badges: [],
   },
 });

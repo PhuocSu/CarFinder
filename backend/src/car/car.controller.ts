@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   Query,
+  ParseArrayPipe,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -26,11 +27,24 @@ export class CarController {
   @Get()
   findAll(
     @Query('search') search?: string,
+    @Query('modelId') modelId?: number,
+    @Query('subModelId') subModelId?: number,
+    @Query(
+      'badges',
+      new ParseArrayPipe({ items: String, optional: true }),
+    ) badges?: string[],
+    @Query('sortBy') sortBy?: 'price' | 'year' | 'mileage',
+    @Query('order') order?: 'asc' | 'desc',
     @Query('page') page = 1,
     @Query('pageSize') pageSize = 12,
   ) {
     return this.carService.findAll(
       search,
+      Number(modelId),
+      Number(subModelId),
+      badges,
+      sortBy,
+      order,
       Number(page),
       Number(pageSize),
     );
@@ -45,9 +59,7 @@ export class CarController {
   searchByCarRegNo_ModelName_SubModel_BrandName(
     @Query('search') search?: string,
   ) {
-    return this.carService.findAll(
-      search,
-    );
+    return this.carService.findAll(search);
   }
 
   @Delete(':id')

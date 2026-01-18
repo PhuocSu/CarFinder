@@ -28,6 +28,19 @@ export const vehiclePageSelector = selector<number>({
 
 export const vehicleFilterReadSelector = selector({
   key: "vehicleFilterReadSelector",
-  get: ({ get }) => get(vehicleFilterState),
+  get: ({ get }) => {
+    const filter = get(vehicleFilterState);
+    return {
+      search: filter.search || undefined,
+      page: filter.page,
+      pageSize: filter.pageSize,
+      sortBy: filter.sortBy,
+      order: filter.sortBy ? filter.order : undefined,
+
+      subModelId: filter.subModelId,
+      
+      badges: filter.badges,
+    };
+  },
 });
 

@@ -1,28 +1,44 @@
 "use client";
 
 import { Badge, Button, Flex, Image, Typography } from "antd";
-import styles from "./ModelSearch.module.scss";
-import { VehicleBadge } from "@/enums/vehicle-badge.enum";
-import { useState } from "react";
-
-// ví dụ COUPE_OPTION = "쿠페특옵션"  => label: "쿠페특옵션", value: "COUPE_OPTION"
-const badgeOptions = Object.entries(VehicleBadge).map(([key, value]) => ({
-  label: value,
-  value: key,
-}));
+import { useEffect, useState } from "react";
+import { useModel } from "@/app/api/listPage/useModel";
 
 const ModelSearch = () => {
-  const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
-  const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
+  // format dữ liệu trả về sau này
+  const { data: models = [] } = useModel();
 
-  const toggleBadge = (value: string) => {
-    setSelectedBadges((prev) => {
-      if (prev.includes(value)) {
+  const [activeModelId, setActiveModelId] = useState<number | null>(null); //model hiện tại đang mở submenu
+  const [selectedModelIds, setSelectedModelIds] = useState<number[]>([]); // danh sách Model
+  const [selectedSubModelIds, setSelectedSubModelIds] = useState<number[]>([]); //danh sách SubModel
+  const [isOpen, setIsOpen] = useState(true);
+
+  // toggle submodel
+  const toggleSubModel = (id: number) => {
+    setSelectedSubModelIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((subId) => subId !== id);
+      } else {
+        return [...prev, id];
+      }
+    });
+  };
+
+  const toggleModel = (id: number) => {
+    setSelectedModelIds((prev) => {
+      if (prev.includes(id)) {
+        // Bỏ chọn model => clear subModel thuộc model đó
+        setSelectedSubModelIds((prevSub) =>
+          prevSub.filter((subId) => {
+            const model = models.find((m) => m.id === id);
+            return !model?.subModels.some((sub) => sub.id === subId);
+          })
+        );
         // nếu đã chọn
-        return prev.filter((badge) => badge !== value);
+        return prev.filter((modelId) => modelId !== id);
       } else {
         // nếu chưa chọn
-        return [...prev, value];
+        return [...prev, id];
       }
     });
   };
@@ -35,56 +51,7 @@ const ModelSearch = () => {
         height: "100%",
       }}
     >
-      <Flex
-        gap={8}
-        style={{
-          width: "100%",
-          padding: "0px 0px 13px",
-          borderBottom:
-            "1px solid var(--base-stroke-color-base-stroke-20, #E2E4E8)",
-        }}
-      >
-        <Button
-          style={{
-            height: "40px",
-            flex: 1,
-            borderRadius: 2,
-            border: "1px solid var(--button-tertiary-stroke-enabled, #CECED3)",
-            background: "var(--button-tertiary-bg-enabled, #FFF)",
-          }}
-        >
-          <Image
-            src="/images/listPage/icon-list.svg"
-            preview={false}
-            width={24}
-            height={24}
-          />
-          <Typography.Text className={styles.button__search__title}>
-            최근 검색 조건
-          </Typography.Text>
-        </Button>
-        <Button
-          style={{
-            height: "40px",
-            flex: 1,
-            borderRadius: 2,
-            border: "1px solid var(--button-tertiary-stroke-enabled, #CECED3)",
-            background: "var(--button-tertiary-bg-enabled, #FFF)",
-          }}
-        >
-          <Image
-            src="/images/listPage/icon-reload.svg"
-            preview={false}
-            width={24}
-            height={24}
-          />
-          <Typography.Text className={styles.button__search__title}>
-            초기화
-          </Typography.Text>
-        </Button>
-      </Flex>
-
-      {/* Search by model */}
+      {/* Search by models */}
       <Flex
         vertical
         gap={20}
@@ -101,7 +68,7 @@ const ModelSearch = () => {
             : "1px solid var(--base-stroke-color-base-stroke-20, #E0E0E3)",
           borderLeft: (() => {
             if (isOpen) return "none";
-            return selectedBadges.length > 0
+            return selectedModelIds.length > 0
               ? "6px solid var(--primary-stroke-color-primary-stroke-80, #4F4C6B)"
               : "1px solid var(--base-stroke-color-base-stroke-20, #E0E0E3)";
           })(),
@@ -109,10 +76,10 @@ const ModelSearch = () => {
         }}
       >
         <Flex justify="space-between">
-          <Typography.Text>차량뱃지</Typography.Text>
+          <Typography.Text>차종</Typography.Text>
           <Flex gap={8}>
             <Badge
-              count={selectedBadges.length}
+              count={selectedModelIds.length}
               style={{
                 backgroundColor: "#3533CC",
                 color: "white",
@@ -142,7 +109,8 @@ const ModelSearch = () => {
             />
           </Flex>
         </Flex>
-        {/* Enum bên trong */}
+
+        {/* Models bên trong */}
         {isOpen && (
           <Flex
             vertical
@@ -157,57 +125,103 @@ const ModelSearch = () => {
             }}
           >
             <Flex vertical gap={4}>
-              {badgeOptions.map((badge) => {
-                const isActive = selectedBadges.includes(badge.value);
+              {models.map((model) => {
+                const isActive = activeModelId === model.id;
+                const isModelSelected = selectedModelIds.includes(model.id);
+
                 return (
-                  <Flex
-                    key={badge.value}
-                    onClick={() => toggleBadge(badge.value)}
-                    style={{
-                      width: "100%",
-                      height: "32px",
-                      padding: "0 12px",
-                      background: isActive
-                        ? "var(--primary-bg-color-primary-bg-10, #DCE4FE)"
-                        : "var(--button-tertiary-bg-enabled, white)",
-                      borderRadius: 2,
-                      justifyContent: "space-between",
-                      alignItems: "center",
-                      cursor: "pointer",
-                    }}
-                  >
-                    <Typography.Text
+                  <div key={model.id}>
+                    {/* Model */}
+                    <Flex
+                      onClick={() => {
+                        toggleModel(model.id);
+                        setActiveModelId(isActive ? null : model.id);
+                      }}
                       style={{
-                        color: "var(--base-fg-color-base-fg-70, #313948)",
-                        fontSize: 13,
-                        fontFamily: "Noto Sans KR",
-                        fontWeight: isActive ? "700" : "400",
-                        wordWrap: "break-word",
+                        width: "100%",
+                        height: "32px",
+                        padding: "0 12px",
+                        fontWeight: isModelSelected ? 700 : 400,
+                        background: isModelSelected
+                          ? "var(--primary-bg-color-primary-bg-10, #DCE4FE)"
+                          : "var(--button-tertiary-bg-enabled, white)",
+                        borderRadius: 2,
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        cursor: "pointer",
                       }}
                     >
-                      {badge.label}
-                    </Typography.Text>
+                      <Typography.Text>{model.modelName}</Typography.Text>
 
-                    {/* Close khi ở trạng thái active */}
-                    {isActive && (
-                      <Image
-                        src="/images/listPage/icon-close.svg"
-                        preview={false}
-                        width={16}
-                        height={16}
-                        onClick={(e) => {
-                          e.stopPropagation(); // QUAN TRỌNG: ngăn sự kiện lan lên phần tử cha
-                          toggleBadge(badge.value);
-                        }}
+                      {isModelSelected && (
+                        <Image
+                          src="/images/listPage/icon-close.svg"
+                          preview={false}
+                          width={20}
+                          height={20}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleModel(model.id);
+                            setActiveModelId(null);
+                          }}
+                        />
+                      )}
+                    </Flex>
+
+                    {/* SubModels */}
+                    {isActive && model.subModels.length > 0 && (
+                      <Flex
+                        vertical
+                        gap={4}
                         style={{
-                          cursor: "pointer",
-                          flexShrink: 0,
-                          display: "flex",
-                          alignItems: "center",
+                          marginLeft: 12,
+                          marginTop: 4,
                         }}
-                      />
+                      >
+                        {model.subModels.map((subModel) => {
+                          const isSubSelected = selectedSubModelIds.includes(
+                            subModel.id
+                          );
+
+                          return (
+                            <Flex
+                              align="center"
+                              justify="center"
+                              key={subModel.id}
+                              onClick={() => toggleSubModel(subModel.id)}
+                              style={{
+                                height: "32px",
+                                padding: "0 12px",
+                                borderRadius: 4,
+                                alignItems: "center",
+                                justifyContent: "space-between",
+                                cursor: "pointer",
+                                display: "flex",
+                                fontWeight: isSubSelected ? 700 : 400,
+                              }}
+                            >
+                              <Typography.Text>
+                                {subModel.subModelName}
+                              </Typography.Text>
+
+                              {isSubSelected && (
+                                <Image
+                                  src="/images/listPage/icon-close.svg"
+                                  preview={false}
+                                  width={16}
+                                  height={16}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleSubModel(subModel.id);
+                                  }}
+                                />
+                              )}
+                            </Flex>
+                          );
+                        })}
+                      </Flex>
                     )}
-                  </Flex>
+                  </div>
                 );
               })}
             </Flex>

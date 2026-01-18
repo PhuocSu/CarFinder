@@ -26,12 +26,6 @@ export class Car {
   @Column('json')
   carImage: string[];
 
-  @Column({ nullable: true })
-  modelName: string;
-
-  @Column({ nullable: true })
-  subModelName: string;
-
   @Column()
   brandName: string;
 
@@ -65,7 +59,7 @@ export class Car {
   mileage: number;
 
   @Column()
-  engineDisplacement: number;
+  engineDisplacement: string;
 
   @Column()
   interiorColor: string;

@@ -3,6 +3,8 @@
 import { Flex, Image, Typography } from "antd";
 import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { VehicleBadge } from "@/enums/vehicle-badge.enum";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
@@ -64,7 +66,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
                   wordWrap: "break-word",
                 }}
               >
-                {badge}
+                {VehicleBadge[badge as keyof typeof VehicleBadge]}
               </Typography.Text>
             </div>
           ))}
@@ -83,7 +85,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
               wordWrap: "break-word",
             }}
           >
-            {`${vehicle.modelName} ${vehicle.subModelName} ${vehicle.brandName}`}
+            {getVehicleFullName(vehicle)}
           </Typography.Text>
 
           {/* Price */}
