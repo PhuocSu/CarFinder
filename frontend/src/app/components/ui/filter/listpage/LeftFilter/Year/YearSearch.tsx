@@ -4,13 +4,26 @@ import { Flex, Image, Select, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { YEARS } from "@/enums/year.enum";
 import styles from "./YearSearch.module.scss";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 const YearSearch = () => {
+  const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
+
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
   const [selectedStartYear, setSelectedStartYear] = useState<number | null>(null);
   const [selectedEndYear, setSelectedEndYear] = useState<number | null>(null);
   const hasYearSelected =
     selectedStartYear !== null || selectedEndYear !== null;
+
+    useEffect(() => {
+      setVehicleFilter((prev) => ({
+        ...prev,
+        yearMin: selectedStartYear ?? undefined,
+        yearMax: selectedEndYear ?? undefined,
+        page: 1,
+      }));
+    }, [selectedStartYear, selectedEndYear]);
 
   const endYearOptions = selectedStartYear
     ? YEARS.filter((year) => year >= selectedStartYear)

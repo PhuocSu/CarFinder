@@ -27,12 +27,14 @@ export class CarController {
   @Get()
   findAll(
     @Query('search') search?: string,
-    @Query('modelIds') modelIds?: string,
-    @Query('subModelIds') subModelIds?: string,
     @Query(
       'badges',
       new ParseArrayPipe({ items: String, optional: true }),
     ) badges?: string[],
+    @Query('modelIds') modelIds?: string,
+    @Query('subModelIds') subModelIds?: string,
+    @Query('yearMin') yearMin?: number,
+    @Query('yearMax') yearMax?: number,
     @Query('sortBy') sortBy?: 'price' | 'year' | 'mileage',
     @Query('order') order?: 'asc' | 'desc',
     @Query('page') page = 1,
@@ -40,9 +42,11 @@ export class CarController {
   ) {
     return this.carService.findAll(
       search,
+      badges,
       modelIds?.split(',').map(Number),
       subModelIds?.split(',').map(Number),
-      badges,
+      yearMin,
+      yearMax,
       sortBy,
       order,
       Number(page),

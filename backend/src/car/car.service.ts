@@ -89,9 +89,11 @@ export class CarService {
 
   async findAll(
     search?: string,
+    badges?: string[],
     modelIds?: number[],
     subModelIds?: number[],
-    badges?: string[],
+    yearMin?: number,
+    yearMax?: number,
     sortBy?: 'price' | 'year' | 'mileage',
     order: 'asc' | 'desc' = 'asc',
     page = 1,
@@ -151,6 +153,14 @@ export class CarService {
       qb.andWhere(`JSON_OVERLAPS(car.vehicleBadge, :badges)`, {
         badges: JSON.stringify(badges),
       });
+    }
+
+    // =========SEARCH BY YEAR ==============
+    if (yearMin) {
+      qb.andWhere('car.manufacturerYear >= :yearMin', { yearMin });
+    }
+    if (yearMax) {
+      qb.andWhere('car.manufacturerYear <= :yearMax', { yearMax });
     }
 
     // ===== PAGINATION =====

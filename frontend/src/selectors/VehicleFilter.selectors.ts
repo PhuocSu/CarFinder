@@ -41,6 +41,8 @@ export const vehicleFilterReadSelector = selector({
       subModelIds: filter.subModelIds?.length ? filter.subModelIds : undefined,
       
       badges: filter.badges,
+      yearMin: filter.yearMin,
+      yearMax: filter.yearMax,
     };
   },
 });
