@@ -45,6 +45,8 @@ export const vehicleFilterReadSelector = selector({
       yearMax: filter.yearMax,
       priceMin: filter.priceMin,
       priceMax: filter.priceMax,
+      mileageMin: filter.mileageMin,
+      mileageMax: filter.mileageMax,
     };
   },
 });

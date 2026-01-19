@@ -17,6 +17,9 @@ export interface VehicleFilter {
 
   priceMin?: number;
   priceMax?: number;
+  
+  mileageMin?: number;
+  mileageMax?: number;
 }
 
 export type SortBy = "price" | "year" | "mileage" | undefined;
@@ -39,5 +42,7 @@ export const vehicleFilterState = atom<VehicleFilter>({
     yearMax: undefined,
     priceMin: undefined,
     priceMax: undefined,
+    mileageMin: undefined,
+    mileageMax: undefined,
   },
 });

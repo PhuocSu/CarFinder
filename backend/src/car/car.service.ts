@@ -96,6 +96,8 @@ export class CarService {
     yearMax?: number,
     priceMin?: number,
     priceMax?: number,
+    mileageMin?: number,
+    mileageMax?: number,
     sortBy?: 'price' | 'year' | 'mileage',
     order: 'asc' | 'desc' = 'asc',
     page = 1,
@@ -181,6 +183,14 @@ export class CarService {
           priceMax,
         },
       );
+    }
+
+    //========= SEARCB BY MILEAGE ==========
+    if (mileageMin) {
+      qb.andWhere('car.mileage >= :mileageMin', { mileageMin });
+    }
+    if (mileageMax) {
+      qb.andWhere('car.mileage <= :mileageMax', { mileageMax });
     }
 
     // ===== PAGINATION =====
