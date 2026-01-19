@@ -94,6 +94,8 @@ export class CarService {
     subModelIds?: number[],
     yearMin?: number,
     yearMax?: number,
+    priceMin?: number,
+    priceMax?: number,
     sortBy?: 'price' | 'year' | 'mileage',
     order: 'asc' | 'desc' = 'asc',
     page = 1,
@@ -161,6 +163,24 @@ export class CarService {
     }
     if (yearMax) {
       qb.andWhere('car.manufacturerYear <= :yearMax', { yearMax });
+    }
+
+    // ========SEARCH BY PRICE =============
+    if (priceMin) {
+      qb.andWhere(
+        '(car.basePrice - (car.basePrice * COALESCE(car.discountPercent, 0) / 100)) >= :priceMin',
+        {
+          priceMin,
+        },
+      );
+    }
+    if (priceMax) {
+      qb.andWhere(
+        '(car.basePrice - (car.basePrice * COALESCE(car.discountPercent, 0) / 100)) <= :priceMax',
+        {
+          priceMax,
+        },
+      );
     }
 
     // ===== PAGINATION =====

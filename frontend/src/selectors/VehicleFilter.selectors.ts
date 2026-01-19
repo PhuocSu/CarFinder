@@ -43,6 +43,8 @@ export const vehicleFilterReadSelector = selector({
       badges: filter.badges,
       yearMin: filter.yearMin,
       yearMax: filter.yearMax,
+      priceMin: filter.priceMin,
+      priceMax: filter.priceMax,
     };
   },
 });
