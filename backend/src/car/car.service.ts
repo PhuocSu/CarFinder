@@ -89,8 +89,8 @@ export class CarService {
 
   async findAll(
     search?: string,
-    modelId?: number,
-    subModelId?: number,
+    modelIds?: number[],
+    subModelIds?: number[],
     badges?: string[],
     sortBy?: 'price' | 'year' | 'mileage',
     order: 'asc' | 'desc' = 'asc',
@@ -120,12 +120,12 @@ export class CarService {
     }
 
     // ===== FILTER BY MODEL, SUBMODEL =====
-    if (modelId) {
-      qb.andWhere('model.id = :modelId', { modelId });
+    // url should be: /car?modelIds=1,2&subModelIds=3,4,5
+    if (modelIds?.length) {
+      qb.andWhere('model.id IN (:...modelIds)', { modelIds });
     }
-
-    if (subModelId) {
-      qb.andWhere('subModel.id = :subModelId', { subModelId });
+    if (subModelIds?.length) {
+      qb.andWhere('subModel.id IN (:...subModelIds)', { subModelIds });
     }
 
     // ===== SORT =====

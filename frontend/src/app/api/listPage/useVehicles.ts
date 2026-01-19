@@ -50,7 +50,9 @@ export function useVehicles() {
       const res = await api.get("/car", {
         params: {
           ...filter,
-          badges: filter.badges?.length ? filter.badges.join(',') : undefined
+          badges: filter.badges?.length ? filter.badges.join(',') : undefined,
+          modelIds: filter.modelIds?.length ? filter.modelIds.join(',') : undefined,
+          subModelIds: filter.subModelIds?.length ? filter.subModelIds.join(',') : undefined,
         }
       })
       return res.data;

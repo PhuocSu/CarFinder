@@ -37,7 +37,8 @@ export const vehicleFilterReadSelector = selector({
       sortBy: filter.sortBy,
       order: filter.sortBy ? filter.order : undefined,
 
-      subModelId: filter.subModelId,
+      modelIds: filter.modelIds?.length ? filter.modelIds : undefined,
+      subModelIds: filter.subModelIds?.length ? filter.subModelIds : undefined,
       
       badges: filter.badges,
     };

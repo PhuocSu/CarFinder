@@ -3,15 +3,27 @@
 import { Badge, Button, Flex, Image, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { useModel } from "@/app/api/listPage/useModel";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 const ModelSearch = () => {
   // format dữ liệu trả về sau này
   const { data: models = [] } = useModel();
+  const [,setVehicleFilter] = useRecoilState(vehicleFilterState);
 
   const [activeModelId, setActiveModelId] = useState<number | null>(null); //model hiện tại đang mở submenu
   const [selectedModelIds, setSelectedModelIds] = useState<number[]>([]); // danh sách Model
   const [selectedSubModelIds, setSelectedSubModelIds] = useState<number[]>([]); //danh sách SubModel
   const [isOpen, setIsOpen] = useState(true);
+
+  useEffect(() => {
+    setVehicleFilter((prev) => ({
+      ...prev,
+      modelIds: selectedModelIds.length > 0 ? selectedModelIds : [],
+      subModelIds: selectedSubModelIds.length > 0 ? selectedSubModelIds : [],
+      page: 1,
+    }));
+  }, [selectedSubModelIds, selectedModelIds]);
 
   // toggle submodel
   const toggleSubModel = (id: number) => {

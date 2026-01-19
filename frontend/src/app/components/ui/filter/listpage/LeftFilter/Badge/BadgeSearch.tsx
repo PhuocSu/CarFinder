@@ -24,7 +24,7 @@ const BadgeSearch = () => {
       badges: selectedBadges.length > 0 ? selectedBadges : [],
       page: 1,
     }));
-  }, [selectedBadges, setVehicleFilter]);
+  }, [selectedBadges]);
 
   const toggleBadge = (value: string) => {
     setSelectedBadges((prev) => {

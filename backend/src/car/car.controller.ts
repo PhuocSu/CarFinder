@@ -27,8 +27,8 @@ export class CarController {
   @Get()
   findAll(
     @Query('search') search?: string,
-    @Query('modelId') modelId?: number,
-    @Query('subModelId') subModelId?: number,
+    @Query('modelIds') modelIds?: string,
+    @Query('subModelIds') subModelIds?: string,
     @Query(
       'badges',
       new ParseArrayPipe({ items: String, optional: true }),
@@ -40,8 +40,8 @@ export class CarController {
   ) {
     return this.carService.findAll(
       search,
-      Number(modelId),
-      Number(subModelId),
+      modelIds?.split(',').map(Number),
+      subModelIds?.split(',').map(Number),
       badges,
       sortBy,
       order,
