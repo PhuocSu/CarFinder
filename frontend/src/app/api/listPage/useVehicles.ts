@@ -53,6 +53,7 @@ export function useVehicles() {
           badges: filter.badges?.length ? filter.badges.join(',') : undefined,
           modelIds: filter.modelIds?.length ? filter.modelIds.join(',') : undefined,
           subModelIds: filter.subModelIds?.length ? filter.subModelIds.join(',') : undefined,
+          fuelTypes: filter.fuelTypes?.length ? filter.fuelTypes.join(',') : undefined,
         }
       })
       return res.data;

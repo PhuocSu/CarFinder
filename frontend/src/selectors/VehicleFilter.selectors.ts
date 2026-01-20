@@ -47,6 +47,7 @@ export const vehicleFilterReadSelector = selector({
       priceMax: filter.priceMax,
       mileageMin: filter.mileageMin,
       mileageMax: filter.mileageMax,
+      fuelTypes: filter.fuelTypes?.length ? filter.fuelTypes : undefined,
     };
   },
 });

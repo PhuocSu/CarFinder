@@ -5,6 +5,7 @@ import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
 import { getVehicleFullName } from "@/utils/getVehicleFullName";
 import { VehicleBadge } from "@/enums/vehicle-badge.enum";
+import FuelType from "@/enums/fuel.enum";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
@@ -235,7 +236,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
                   wordWrap: "break-word",
                 }}
               >
-                {vehicle.fuelType}
+                {FuelType[vehicle.fuelType as keyof typeof FuelType]}
               </Typography.Text>
             </div>
           </Flex>

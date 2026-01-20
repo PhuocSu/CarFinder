@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Car } from './entities/car.entity';
 import { Repository } from 'typeorm';
 import { SubModel } from 'src/sub-model/entities/sub-model.entity';
+import { FuelType } from './enums/fuel-type.enum';
 
 @Injectable()
 export class CarService {
@@ -98,6 +99,8 @@ export class CarService {
     priceMax?: number,
     mileageMin?: number,
     mileageMax?: number,
+    fuelTypes?: string[],
+    colors?: string[],  
     sortBy?: 'price' | 'year' | 'mileage',
     order: 'asc' | 'desc' = 'asc',
     page = 1,
@@ -191,6 +194,15 @@ export class CarService {
     }
     if (mileageMax) {
       qb.andWhere('car.mileage <= :mileageMax', { mileageMax });
+    }
+
+    //========SEARCH BY FUEL =============
+    if (fuelTypes && fuelTypes.length > 0) {
+      if(!fuelTypes.includes("ALL")){
+        qb.andWhere(`car.fuelType IN (:...fuelTypes)`, {
+          fuelTypes,
+        });
+      }
     }
 
     // ===== PAGINATION =====

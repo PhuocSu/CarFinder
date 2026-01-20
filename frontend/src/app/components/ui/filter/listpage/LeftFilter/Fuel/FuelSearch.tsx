@@ -1,28 +1,40 @@
 "use client";
 
-import { Badge, Button, Flex, Image, Select, Typography } from "antd";
+import { Badge, Button, Flex, Image, Typography } from "antd";
 import { useEffect, useState } from "react";
-import { YEARS } from "@/enums/year.enum";
-import styles from "./YearSearch.module.scss";
 import FuelType from "@/enums/fuel.enum";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
-export const FUEL_OPTIONS: { key: FuelType; label: string }[] = [
-  { key: FuelType.ALL, label: "전체" },
-  { key: FuelType.GASOLINE, label: "가솔린" },
-  { key: FuelType.DIESEL, label: "디젤" },
-  { key: FuelType.LPG, label: "LPG" },
-  { key: FuelType.HYBRID, label: "하이브리드" },
-  { key: FuelType.ELECTRIC, label: "전기" },
-];
+export const FUEL_OPTIONS = [
+  { key: "ALL", label: FuelType.ALL },
+  { key: "GASOLINE", label: FuelType.GASOLINE },
+  { key: "DIESEL", label: FuelType.DIESEL },
+  { key: "LPG", label: FuelType.LPG },
+  { key: "HYBRID", label: FuelType.HYBRID },
+  { key: "ELECTRIC", label: FuelType.ELECTRIC },
+] as const;
 
-const YearSearch = () => {
+const FuelSearch = () => {
+  const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
+
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
-  const [selectedButtons, setSelectedButtons] = useState<Set<FuelType>>(
-    new Set()
+  type FuelKey = (typeof FUEL_OPTIONS)[number]["key"];
+  const [selectedButtons, setSelectedButtons] = useState<Set<FuelKey>>(
+    new Set(),
   );
+
   const selectedCount = selectedButtons.size;
 
-  const toggleButton = (key: FuelType) => {
+  useEffect(() => {
+    setVehicleFilter((prev) => ({
+      ...prev,
+      fuelTypes: selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
+      page: 1,
+    }));
+  }, [selectedButtons, setVehicleFilter]);
+
+  const toggleButton = (key: FuelKey) => {
     setSelectedButtons((prev) => {
       const next = new Set(prev); //copy prev sang next
       if (next.has(key)) {
@@ -67,7 +79,7 @@ const YearSearch = () => {
         }}
       >
         <Flex justify="space-between">
-          <Typography.Text>차종</Typography.Text>
+          <Typography.Text>연료</Typography.Text>
           <Flex gap={8}>
             <Badge
               count={selectedCount}
@@ -108,11 +120,12 @@ const YearSearch = () => {
               {FUEL_OPTIONS.slice(0, 2).map((item) => (
                 <Button
                   key={item.key}
-                  style={{ flex: 1, height: "100%",
+                  style={{
+                    flex: 1,
+                    height: "100%",
                     fontWeight: selectedButtons.has(item.key) ? "700" : "400",
-                    border:  `1px solid ${selectedButtons.has(item.key) ? "var(--button-tertiary-stroke-selected, #1B1B42)" : "var(--base-stroke-color-base-stroke-20, #E2E4E8)"}`,
-                   }}
-
+                    border: `1px solid ${selectedButtons.has(item.key) ? "var(--button-tertiary-stroke-selected, #1B1B42)" : "var(--base-stroke-color-base-stroke-20, #E2E4E8)"}`,
+                  }}
                   onClick={() => toggleButton(item.key)}
                 >
                   {item.label}
@@ -123,10 +136,12 @@ const YearSearch = () => {
               {FUEL_OPTIONS.slice(2, 4).map((item) => (
                 <Button
                   key={item.key}
-                  style={{ flex: 1, height: "100%",
+                  style={{
+                    flex: 1,
+                    height: "100%",
                     fontWeight: selectedButtons.has(item.key) ? "700" : "400",
-                    border:  `1px solid ${selectedButtons.has(item.key) ? "var(--button-tertiary-stroke-selected, #1B1B42)" : "var(--base-stroke-color-base-stroke-20, #E2E4E8)"}`,
-                   }}
+                    border: `1px solid ${selectedButtons.has(item.key) ? "var(--button-tertiary-stroke-selected, #1B1B42)" : "var(--base-stroke-color-base-stroke-20, #E2E4E8)"}`,
+                  }}
                   onClick={() => toggleButton(item.key)}
                 >
                   {item.label}
@@ -137,10 +152,12 @@ const YearSearch = () => {
               {FUEL_OPTIONS.slice(4).map((item) => (
                 <Button
                   key={item.key}
-                  style={{ flex: 1, height: "100%",
+                  style={{
+                    flex: 1,
+                    height: "100%",
                     fontWeight: selectedButtons.has(item.key) ? "700" : "400",
-                    border:  `1px solid ${selectedButtons.has(item.key) ? "var(--button-tertiary-stroke-selected, #1B1B42)" : "var(--base-stroke-color-base-stroke-20, #E2E4E8)"}`,
-                   }}
+                    border: `1px solid ${selectedButtons.has(item.key) ? "var(--button-tertiary-stroke-selected, #1B1B42)" : "var(--base-stroke-color-base-stroke-20, #E2E4E8)"}`,
+                  }}
                   onClick={() => toggleButton(item.key)}
                 >
                   {item.label}
@@ -154,4 +171,4 @@ const YearSearch = () => {
   );
 };
 
-export default YearSearch;
+export default FuelSearch;
