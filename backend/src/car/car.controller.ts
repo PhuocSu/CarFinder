@@ -27,7 +27,7 @@ export class CarController {
   @Get()
   findAll(
     @Query('search') search?: string,
-    @Query('badges', new ParseArrayPipe({ items: String, optional: true }))
+    @Query('badges', new ParseArrayPipe({ items: String, optional: true })) //ParseArrayPipe: chuyển đổi tham số query có dấu phẩy thành Mảng
     badges?: string[],
     @Query('modelIds') modelIds?: string,
     @Query('subModelIds') subModelIds?: string,
@@ -39,7 +39,11 @@ export class CarController {
     @Query('mileageMax') mileageMax?: number,
     @Query('fuelTypes', new ParseArrayPipe({ items: String, optional: true }))
     fuelTypes?: string[],
-    @Query('colors') colors?: string,
+    @Query('exColors', new ParseArrayPipe({ items: String, optional: true }))
+    exColors?: string[],
+    @Query('inColors', new ParseArrayPipe({ items: String, optional: true }))
+    inColors?: string[],
+
     @Query('sortBy') sortBy?: 'price' | 'year' | 'mileage',
     @Query('order') order?: 'asc' | 'desc',
     @Query('page') page = 1,
@@ -57,7 +61,8 @@ export class CarController {
       mileageMin,
       mileageMax,
       fuelTypes,
-      colors?.split(','),
+      exColors,
+      inColors,
       sortBy,
       order,
       Number(page),

@@ -33,13 +33,13 @@ export class Car {
     type: 'json',
     nullable: true,
   })
-  vehicleBadge: VehicleBadge[];
+  vehicleBadge: VehicleBadge[]; //one car - many badges
 
   @Column()
   firstRegDate: Date;
 
   @Column()
-  fuelType: FuelType;
+  fuelType: FuelType; //one car - one fuelType
 
   @Column()
   exteriorColor: string;

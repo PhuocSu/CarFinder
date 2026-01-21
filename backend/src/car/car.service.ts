@@ -100,7 +100,8 @@ export class CarService {
     mileageMin?: number,
     mileageMax?: number,
     fuelTypes?: string[],
-    colors?: string[],  
+    exColors?: string[],  
+    inColors?: string[],
     sortBy?: 'price' | 'year' | 'mileage',
     order: 'asc' | 'desc' = 'asc',
     page = 1,
@@ -188,7 +189,7 @@ export class CarService {
       );
     }
 
-    //========= SEARCB BY MILEAGE ==========
+    //========= SEARCH BY MILEAGE ==========
     if (mileageMin) {
       qb.andWhere('car.mileage >= :mileageMin', { mileageMin });
     }
@@ -196,13 +197,27 @@ export class CarService {
       qb.andWhere('car.mileage <= :mileageMax', { mileageMax });
     }
 
-    //========SEARCH BY FUEL =============
+    //======== SEARCH BY FUEL =============
     if (fuelTypes && fuelTypes.length > 0) {
       if(!fuelTypes.includes("ALL")){
         qb.andWhere(`car.fuelType IN (:...fuelTypes)`, {
           fuelTypes,
         });
       }
+    }
+
+    //========== SEARCH BY EXTERIOR COLOR =========
+    if(exColors && exColors.length > 0){
+      qb.andWhere(`car.exteriorColor IN (:...exColors)`, {
+        exColors,
+      });
+    }
+
+    //========== SEARCH BY INTERIOR COLOR =========
+    if(inColors && inColors.length > 0){
+      qb.andWhere(`car.interiorColor IN (:...inColors)`, {
+        inColors,
+      });
     }
 
     // ===== PAGINATION =====

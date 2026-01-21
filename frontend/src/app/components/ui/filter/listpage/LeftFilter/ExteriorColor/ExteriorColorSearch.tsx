@@ -4,15 +4,27 @@ import { Badge, Button, Flex, Image, Select, Typography } from "antd";
 import { useEffect, useState } from "react";
 import EXTERIOR_COLOR from "@/enums/exterior-color.enum";
 import { EXTERIOR_COLOR_OPTIONS } from "@/constants/listPage/exterior-color/exterior-color-options";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
-const YearSearch = () => {
+const ExteriorColorSearch = () => {
+  const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
-  const [selectedButtons, setSelectedButtons] = useState<Set<EXTERIOR_COLOR>>(
+  type ExColorKey = (typeof EXTERIOR_COLOR_OPTIONS)[number]["key"];
+  const [selectedButtons, setSelectedButtons] = useState<Set<ExColorKey>>(
     new Set()
   );
   const selectedCount = selectedButtons.size;
 
-  const toggleButton = (color: EXTERIOR_COLOR) => {
+  useEffect(() => {
+    setVehicleFilter((prev) => ({
+      ...prev,
+      exColors: selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
+      page: 1,
+    }));
+  },[selectedButtons]) 
+
+  const toggleButton = (color: ExColorKey) => {
     setSelectedButtons((prev) => {
       const next = new Set(prev); //copy prev sang next
       next.has(color) ? next.delete(color) : next.add(color);
@@ -144,4 +156,4 @@ const YearSearch = () => {
   );
 };
 
-export default YearSearch;
+export default ExteriorColorSearch;

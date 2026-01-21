@@ -22,6 +22,8 @@ export interface VehicleFilter {
   mileageMax?: number;
   
   fuelTypes?: string[];
+  exColors?: string[]; //same to Query in BE in controllers, huh??
+  inColors?: string[];
 }
 
 export type SortBy = "price" | "year" | "mileage" | undefined;
@@ -47,5 +49,7 @@ export const vehicleFilterState = atom<VehicleFilter>({
     mileageMin: undefined,
     mileageMax: undefined,
     fuelTypes: [],
+    exColors: [],
+    inColors: []
   },
 });

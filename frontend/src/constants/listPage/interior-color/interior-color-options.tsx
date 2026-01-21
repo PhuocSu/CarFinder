@@ -12,7 +12,7 @@ export const INTERIOR_COLOR_OPTIONS: {
   { key: InteriorColor.RED_SERIES, label: "빨간색 계열", swatchColor: "rgb(215, 46, 54)" },
   { key: InteriorColor.BLUE_SERIES, label: "청색 계열", swatchColor: "rgb(27, 53, 155)" },
   { key: InteriorColor.WHITE_SERIES, label: "흰색 계열", swatchColor: "rgb(233, 233, 233)" },
-  { key: InteriorColor.ORANGE_SERIES, label: "녹색 계열", swatchColor: "rgb(26, 157, 78)" },
-  { key: InteriorColor.YELLOW_SERIES, label: "주황색 계열", swatchColor: "rgb(239, 98, 37)" },
+  { key: InteriorColor.GREEN_SERIES, label: "녹색 계열", swatchColor: "rgb(26, 157, 78)" },
+  { key: InteriorColor.ORANGE_SERIES, label: "주황색 계열", swatchColor: "rgb(239, 98, 37)" },
   { key: InteriorColor.YELLOW_SERIES, label: "노란색 계열", swatchColor: "rgb(244, 196, 62)" },
 ];

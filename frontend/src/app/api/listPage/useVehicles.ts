@@ -54,6 +54,8 @@ export function useVehicles() {
           modelIds: filter.modelIds?.length ? filter.modelIds.join(',') : undefined,
           subModelIds: filter.subModelIds?.length ? filter.subModelIds.join(',') : undefined,
           fuelTypes: filter.fuelTypes?.length ? filter.fuelTypes.join(',') : undefined,
+          exColors: filter.exColors?.length ? filter.exColors.join(',') : undefined,
+          inColors: filter.inColors?.length ? filter.inColors.join(',') : undefined,
         }
       })
       return res.data;

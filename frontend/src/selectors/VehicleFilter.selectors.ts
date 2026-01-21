@@ -48,6 +48,8 @@ export const vehicleFilterReadSelector = selector({
       mileageMin: filter.mileageMin,
       mileageMax: filter.mileageMax,
       fuelTypes: filter.fuelTypes?.length ? filter.fuelTypes : undefined,
+      exColors: filter.exColors?.length ? filter.exColors : undefined,
+      inColors: filter.inColors?.length ? filter.inColors : undefined,
     };
   },
 });

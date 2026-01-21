@@ -6,6 +6,7 @@ import FuelType from "@/enums/fuel.enum";
 import { useRecoilState } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
+// badges is, too!
 export const FUEL_OPTIONS = [
   { key: "ALL", label: FuelType.ALL },
   { key: "GASOLINE", label: FuelType.GASOLINE },
@@ -32,7 +33,7 @@ const FuelSearch = () => {
       fuelTypes: selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
       page: 1,
     }));
-  }, [selectedButtons, setVehicleFilter]);
+  }, [selectedButtons]);
 
   const toggleButton = (key: FuelKey) => {
     setSelectedButtons((prev) => {
