@@ -23,6 +23,8 @@ export class FavoriteCarService {
         return { status: 'removed' };
       }
 
+      
+
       const favorite = this.favoriteCarRepository.create({
         user: { id: userId },
         car: { id: carId },

@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/common';
 import { FavoriteCarService } from './favorite-car.service';
 
-@Controller('favorite-car')
+@Controller('favorite-cars')
 export class FavoriteCarController {
   constructor(private readonly favoriteCarService: FavoriteCarService) {}
 

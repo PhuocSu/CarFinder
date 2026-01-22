@@ -37,7 +37,7 @@ export interface Vehicle {
   };
 }
 
-export function useVehicles() {
+export function useVehiclesQuery() {
   const filter = useRecoilValue(vehicleFilterReadSelector);
   console.log("VEHICLE FILTER:", filter);
 

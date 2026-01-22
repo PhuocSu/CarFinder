@@ -1,7 +1,7 @@
 "use client";
 
 import { Col, Flex, Row, Typography } from "antd";
-import { useVehicles, Vehicle } from "@/app/api/listPage/useVehicles";
+import { useVehiclesQuery, Vehicle } from "@/app/api/listPage/useVehiclesQuery";
 import CarCard from "@/app/components/ui/cards/CarCard";
 import VehiclePagination from "@/app/components/ui/pagination/VehiclePagination";
 import { useRecoilValue } from "recoil";
@@ -10,10 +10,10 @@ import { vehicleFilterReadSelector } from "@/selectors/VehicleFilter.selectors";
 
 const VehicleList = () => {
   const filter = useRecoilValue(vehicleFilterReadSelector);
-  const { data: vehicles, isLoading, isError } = useVehicles();
+  const { data: vehicles, isLoading, isError } = useVehiclesQuery();
 
-  console.log("vehicles data:", vehicles);
-  console.log("filter state:", filter);
+  // console.log("vehicles data:", vehicles);
+  // console.log("filter state:", filter);
 
   if (isError) {
     return (

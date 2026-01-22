@@ -23,6 +23,20 @@ export class CompareCarService {
         await this.compareCarRepository.remove(exist);
         return { status: 'removed' };
       }
+
+      const currentCount = await this.compareCarRepository.count({
+        where: {
+          user: { id: userId },
+        },
+      });
+
+      if (currentCount >= 3) {
+        return {
+          status: 'error',
+          message: 'You can only compare up to 3 cars at a time',
+        };
+      }
+
       //nếu chưa tồn tại thì thêm
       const compare = this.compareCarRepository.create({
         user: { id: userId },
@@ -47,7 +61,6 @@ export class CompareCarService {
           createdAt: 'DESC',
         },
       });
-      
     } catch (error) {
       console.log('Error getting compare list:', error);
       throw new Error(error);

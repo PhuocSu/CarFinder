@@ -8,7 +8,7 @@ interface LoginData {
     password: string;
 }
 
-export function useLogin() {
+export function useLoginMutation() {
     return useMutation({
         mutationFn: async(data: LoginData) => {
             const response = await api.post("/auth/login", data)

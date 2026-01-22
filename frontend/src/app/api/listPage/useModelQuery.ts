@@ -15,7 +15,7 @@ export interface Model {
   subModels: SubModel[];
 }
 
-export function useModel() {
+export function useModelQuery() {
   return useQuery<Model[]>({
     queryKey: ["model"],
     queryFn: async () => {

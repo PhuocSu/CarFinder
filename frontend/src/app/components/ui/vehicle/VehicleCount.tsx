@@ -1,10 +1,10 @@
 "use client";
 
 import { Typography } from "antd";
-import { useVehicles } from "@/app/api/listPage/useVehicles";
+import { useVehiclesQuery } from "@/app/api/listPage/useVehiclesQuery";
 
 const VehicleCount = () => {
-    const { data: vehicles } = useVehicles();
+    const { data: vehicles } = useVehiclesQuery();
   return (
       <Typography.Text
         style={{

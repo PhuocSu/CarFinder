@@ -2,7 +2,7 @@
 
 import React, { useEffect } from "react";
 import { Button, Checkbox, Divider, Form, Input, message, Typography } from "antd";
-import { useLogin } from "@/app/api/auth/useLogin";
+import { useLoginMutation } from "@/app/api/auth/useLoginMutation";
 import { useSetRecoilState } from "recoil";
 import { authState } from "@/store/authStore.atom";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,7 @@ type FieldType = {
 const LoginForm: React.FC = () => {
   const [form] = Form.useForm();
   const router = useRouter();
-  const loginMutation = useLogin();
+  const loginMutation = useLoginMutation();
   const setAuth = useSetRecoilState(authState);
 
   useEffect(() => {

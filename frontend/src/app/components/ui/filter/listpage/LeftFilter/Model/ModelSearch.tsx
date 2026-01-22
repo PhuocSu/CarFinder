@@ -2,13 +2,13 @@
 
 import { Badge, Button, Flex, Image, Typography } from "antd";
 import { useEffect, useState } from "react";
-import { useModel } from "@/app/api/listPage/useModel";
 import { useRecoilState } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
+import { useModelQuery } from "@/app/api/listPage/useModelQuery";
 
 const ModelSearch = () => {
   // format dữ liệu trả về sau này
-  const { data: models = [] } = useModel();
+  const { data: models = [] } = useModelQuery();
   const [,setVehicleFilter] = useRecoilState(vehicleFilterState);
 
   const [activeModelId, setActiveModelId] = useState<number | null>(null); //model hiện tại đang mở submenu
