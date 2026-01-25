@@ -10,13 +10,19 @@ import { useRecoilValue } from "recoil";
 import { favoriteCarState } from "@/store/favoriteCar.atom";
 import { useToggleFavoriteMutation } from "@/app/api/favorite/useToggleFavoriteMutation";
 import { useFavoriteQuery } from "@/app/api/favorite/useFavoriteQuery";
+import { compareCarState } from "@/store/compareCar.atom";
+import { useToggleCompareMutation } from "@/app/api/compare/useToggleCompareMutation";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
+
   const favoriteCars = useRecoilValue(favoriteCarState);
   const toggleFavorite = useToggleFavoriteMutation();
-  
   const isFavorite = favoriteCars.includes(vehicle.id);
+
+  const compareCars = useRecoilValue(compareCarState);
+  const toggleCompare = useToggleCompareMutation();
+  const isCompare = compareCars.includes(vehicle.id);
   
   console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);
   return (
@@ -33,10 +39,11 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
 
         <Flex style={{ position: "absolute", bottom: "8px", right: "8px" }}>
           <Image
-            style={{ padding: "6px" }}
-            src="/images/CompareIcon.svg"
+            style={{ padding: "6px", cursor: "pointer" }}
+            src={isCompare ? "/images/CompareIconFilled.svg" : "/images/CompareIcon.svg"}
             alt="CompareIcon"
             preview={false}
+            onClick={() => toggleCompare.mutate(vehicle.id)}
           />
 
           <Image

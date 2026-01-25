@@ -3,7 +3,7 @@ import { CompareCarService } from './compare-car.service';
 import { CreateCompareCarDto } from './dto/create-compare-car.dto';
 import { UpdateCompareCarDto } from './dto/update-compare-car.dto';
 
-@Controller('compare-car')
+@Controller('compare-cars')
 export class CompareCarController {
   constructor(private readonly compareCarService: CompareCarService) {}
 

@@ -6,3 +6,64 @@
 
 => hiện tại hôm bữa chưa lường trước trường hợp này
 
+- Về workflow của Click Favorite Badge:
+[User refresh page / F5]
+        ↓
+[Browser reload JS runtime]
+        ↓
+[RecoilRoot khởi tạo]
+        ↓
+authState = default (user = null)
+        ↓
+<InitApp />
+        ↓
+useInitAuth()
+        ↓
+Đọc localStorage:
+  access_token = "xxx.yyy.zzz"
+        ↓
+Set axios Authorization header
+        ↓
+Decode JWT (hoặc gọi /me)
+        ↓
+setAuth({
+  user,
+  accessToken,
+  isAuthenticated: true
+})
+        ↓
+authState cập nhật
+        ↓
+useAuth()
+        ↓
+user !== null   ✅
+        ↓
+useInitFavoriteCars()
+        ↓
+(1) Load localStorage favorites
+        ↓
+favoriteCarState = [1, 3, 5] (tạm thời)
+        ↓
+(2) useFavoriteQuery enabled
+        ↓
+GET /favorite-cars (JWT hợp lệ)
+        ↓
+Backend trả danh sách
+        ↓
+Sync Recoil + localStorage
+        ↓
+favoriteCarState = [1, 3, 5] (chuẩn)
+        ↓
+CarCard render
+        ↓
+isFavorite = true
+        ↓
+UI: trái tim màu đỏ ❤️
+        ↓
+User click trái tim
+        ↓
+POST /favorite-cars/:id
+        ↓
+200 OK / 201 Created
+        ↓
+Optimistic update
