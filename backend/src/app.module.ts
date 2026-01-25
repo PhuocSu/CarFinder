@@ -29,7 +29,7 @@ import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-c
       throttlers: [
         {
           ttl: 60000,
-          limit: 10,
+          limit: 30,
         },
       ],
     }),

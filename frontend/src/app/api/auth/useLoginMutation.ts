@@ -12,6 +12,7 @@ export function useLoginMutation() {
     return useMutation({
         mutationFn: async(data: LoginData) => {
             const response = await api.post("/auth/login", data)
+            console.log(response.data)
             return response.data
         }
     })

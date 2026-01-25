@@ -9,6 +9,7 @@ import FuelType from "@/enums/fuel.enum";
 import { useRecoilValue } from "recoil";
 import { favoriteCarState } from "@/store/favoriteCar.atom";
 import { useToggleFavoriteMutation } from "@/app/api/favorite/useToggleFavoriteMutation";
+import { useFavoriteQuery } from "@/app/api/favorite/useFavoriteQuery";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
@@ -17,7 +18,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
   
   const isFavorite = favoriteCars.includes(vehicle.id);
   
-  console.log("isFavorite:", isFavorite, "vehicleId:", vehicle.id);
+  console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);
   return (
     <Flex vertical style={{ width: "100%", borderRadius: "8px" }}>
       <Flex vertical style={{ position: "relative" }}>

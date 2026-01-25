@@ -4,7 +4,6 @@ import "./globals.css";
 import Providers from "@/providers/providers";
 import Header from "./components/ui/header/Header";
 import Footer from "./components/ui/footer/Footer";
-import FavoriteInitializer from "./components/FavoriteInitializer";
 
 
 const inter = Inter({ variable: "--font-inter", subsets: ["latin"], });
@@ -33,7 +32,6 @@ export default function RootLayout({
               margin: "0px auto",
             }}
           >
-            <FavoriteInitializer />
             <main>{children}</main> 
           </div>
           <Footer />

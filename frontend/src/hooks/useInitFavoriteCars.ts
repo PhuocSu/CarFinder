@@ -14,12 +14,16 @@ const useInitFavoriteCars = () => {
 
   // 1. Load from localStorage first (UI doesn't fluctuate)
   useEffect(() => {
+    console.log("useInitFavoriteCars - user:", user);
     if (!user) return;
 
     const key = `favorite_car_ids_${user.sub}`;
+    console.log("useInitFavoriteCars - key:", key);
     const cached = localStorage.getItem(key);
+    console.log("useInitFavoriteCars - cached:", cached);
     if (cached) {
       setFavoriteCars(JSON.parse(cached));
+      console.log("useInitFavoriteCars - loaded:", JSON.parse(cached));
     }
   }, [user?.sub]);
 
