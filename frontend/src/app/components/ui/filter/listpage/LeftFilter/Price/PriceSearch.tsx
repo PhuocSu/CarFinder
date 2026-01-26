@@ -3,12 +3,13 @@
 import { Flex, Image, Select, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { PRICE_STEPS } from "@/enums/price.enum";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 
 
 const PriceSearch = () => {
+  const filter = useRecoilValue(vehicleFilterState);
   const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
 
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
@@ -20,6 +21,18 @@ const PriceSearch = () => {
   const endPriceOptions = selectedStartPrice
     ? PRICE_STEPS.filter((price) => price.value >= selectedStartPrice)
     : PRICE_STEPS;
+
+  //reset filter
+  useEffect(() => {
+    const isPriceReset = filter.priceMin === undefined &&
+    filter.priceMax === undefined &&
+    (selectedStartPrice !== null || selectedEndPrice !== null);
+    
+    if(isPriceReset) {
+      setSelectedStartPrice(null);
+      setSelectedEndPrice(null);
+    }
+  }, [filter.priceMin, filter.priceMax]);
 
   useEffect(() => {
     setVehicleFilter((prev) => ({

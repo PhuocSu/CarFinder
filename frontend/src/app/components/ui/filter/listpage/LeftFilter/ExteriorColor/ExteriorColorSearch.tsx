@@ -4,25 +4,37 @@ import { Badge, Button, Flex, Image, Select, Typography } from "antd";
 import { useEffect, useState } from "react";
 import EXTERIOR_COLOR from "@/enums/exterior-color.enum";
 import { EXTERIOR_COLOR_OPTIONS } from "@/constants/listPage/exterior-color/exterior-color-options";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 const ExteriorColorSearch = () => {
+  const filter = useRecoilValue(vehicleFilterState);
   const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
   type ExColorKey = (typeof EXTERIOR_COLOR_OPTIONS)[number]["key"];
   const [selectedButtons, setSelectedButtons] = useState<Set<ExColorKey>>(
-    new Set()
+    new Set(),
   );
   const selectedCount = selectedButtons.size;
+
+  // reset filter
+  useEffect(() => {
+    const isExColorReset =
+      (!filter.exColors || filter.exColors.length === 0) &&
+      selectedButtons.size > 0;
+    if (isExColorReset) {
+      setSelectedButtons(new Set());
+    }
+  }, [filter.exColors]);
 
   useEffect(() => {
     setVehicleFilter((prev) => ({
       ...prev,
-      exColors: selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
+      exColors:
+        selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
       page: 1,
     }));
-  },[selectedButtons]) 
+  }, [selectedButtons]);
 
   const toggleButton = (color: ExColorKey) => {
     setSelectedButtons((prev) => {
@@ -124,26 +136,28 @@ const ExteriorColorSearch = () => {
                     onClick={() => toggleButton(option.key)}
                   >
                     <Flex align="center" gap={8} justify="flex-start">
-                        <div style={{
-                            width: 16,
-                            height: 16,
-                            borderRadius: "4px",
-                            backgroundColor: option.swatchColor,
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                        }}>
-                            <Image
-                                src="/images/listPage/tick-icon.svg"
-                                preview={false}
-                                width="100%"
-                                height="100%"
-                                style={{
-                                    opacity: isSelected ? 1 : 0,
-                                }}
-                            />
-                        </div>
-                        <Typography.Text>{option.label}</Typography.Text>
+                      <div
+                        style={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: "4px",
+                          backgroundColor: option.swatchColor,
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Image
+                          src="/images/listPage/tick-icon.svg"
+                          preview={false}
+                          width="100%"
+                          height="100%"
+                          style={{
+                            opacity: isSelected ? 1 : 0,
+                          }}
+                        />
+                      </div>
+                      <Typography.Text>{option.label}</Typography.Text>
                     </Flex>
                   </Button>
                 );

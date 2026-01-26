@@ -4,6 +4,15 @@
  + Nên có components/ui: chỉ chứa component có thể tái sử dụng dung thoi
  + components/: nên tạo folder > copy html, css từ  components/ui + thêm logic
 
+- Về hook, selector:
+ + Selector: Tính toán derived state, thường chỉ (đọc), dùng ở nhiều component khác nhau
+ + Hook: Xử lý side effects, logic phức tạp (đọc, ghi), dùng ở component cụ thể
+
+- Về Recoil
+ + Reset về trạng thái ban đầu: sử dụng useResetRecoilState() => câp jnhaapj trong từng components
+ + useRecoilState -> đọc, ghi
+ + useSetRecoilState -> ghi
+ + useRecoilValue -> chỉ đọc
 => hiện tại hôm bữa chưa lường trước trường hợp này
 
 - Về workflow của Click Favorite Badge:

@@ -3,7 +3,7 @@
 import { Badge, Button, Flex, Image, Typography } from "antd";
 import { useEffect, useState } from "react";
 import FuelType from "@/enums/fuel.enum";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 // badges is, too!
@@ -17,6 +17,7 @@ export const FUEL_OPTIONS = [
 ] as const;
 
 const FuelSearch = () => {
+  const filter = useRecoilValue(vehicleFilterState);
   const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
 
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
@@ -28,9 +29,20 @@ const FuelSearch = () => {
   const selectedCount = selectedButtons.size;
 
   useEffect(() => {
+    const isFuelReset =
+      (!filter.fuelTypes || filter.fuelTypes.length === 0) &&
+      selectedButtons.size > 0;
+
+    if (isFuelReset) {
+      setSelectedButtons(new Set());
+    }
+  }, [filter.fuelTypes]);
+
+  useEffect(() => {
     setVehicleFilter((prev) => ({
       ...prev,
-      fuelTypes: selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
+      fuelTypes:
+        selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
       page: 1,
     }));
   }, [selectedButtons]);

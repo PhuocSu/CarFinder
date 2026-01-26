@@ -4,26 +4,38 @@ import { Badge, Button, Flex, Image, Select, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { InteriorColor } from "@/enums/interior-color.enum";
 import { INTERIOR_COLOR_OPTIONS } from "@/constants/listPage/interior-color/interior-color-options";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 const InteriorColorSearch = () => {
+  const filter = useRecoilValue(vehicleFilterState);
   const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
 
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
   type InColorKey = (typeof INTERIOR_COLOR_OPTIONS)[number]["key"];
   const [selectedButtons, setSelectedButtons] = useState<Set<InColorKey>>(
-    new Set()
+    new Set(),
   );
   const selectedCount = selectedButtons.size;
+
+  // reset filter
+  useEffect(() => {
+    const isInteriorColorReset =
+      (!filter.inColors || filter.inColors.length === 0) &&
+      selectedButtons.size > 0;
+    if (isInteriorColorReset) {
+      setSelectedButtons(new Set());
+    }
+  }, [filter.inColors]);
 
   useEffect(() => {
     setVehicleFilter((prev) => ({
       ...prev,
-      inColors: selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
+      inColors:
+        selectedButtons.size > 0 ? Array.from(selectedButtons) : undefined,
       page: 1,
     }));
-  }, [selectedButtons])
+  }, [selectedButtons]);
 
   const toggleButton = (color: InColorKey) => {
     setSelectedButtons((prev) => {
@@ -126,37 +138,40 @@ const InteriorColorSearch = () => {
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "flex-start",
-
                     }}
                     onClick={() => toggleButton(option.key)}
                   >
                     <Flex align="center" gap={8}>
-                        <div style={{
-                            width: 16,
-                            height: 16,
-                            borderRadius: "4px",
-                            backgroundColor: option.swatchColor,
-                        }}>
-                            <Image
-                                src="/images/listPage/tick-icon.svg"
-                                preview={false}
-                                width="100%"
-                                height="100%"
-                                style={{
-                                    opacity: isSelected ? 1 : 0,
-                                }}
-                            />
-                        </div>
-                        <Typography.Text style={{display: 'flex', 
-                            flexWrap: 'nowrap',
-                            overflow: 'hidden',
-                            textOverflow: 'ellipsis',
-                            whiteSpace: 'nowrap',
-                            maxWidth: '100%',
-                            }}
-                        >
-                            {option.label}
-                        </Typography.Text>
+                      <div
+                        style={{
+                          width: 16,
+                          height: 16,
+                          borderRadius: "4px",
+                          backgroundColor: option.swatchColor,
+                        }}
+                      >
+                        <Image
+                          src="/images/listPage/tick-icon.svg"
+                          preview={false}
+                          width="100%"
+                          height="100%"
+                          style={{
+                            opacity: isSelected ? 1 : 0,
+                          }}
+                        />
+                      </div>
+                      <Typography.Text
+                        style={{
+                          display: "flex",
+                          flexWrap: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          maxWidth: "100%",
+                        }}
+                      >
+                        {option.label}
+                      </Typography.Text>
                     </Flex>
                   </Button>
                 );

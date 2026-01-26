@@ -3,11 +3,12 @@
 import { Flex, Image, Select, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { MILEAGE_STEPS } from "@/enums/mileage.enum";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 
 const MileageSearch = () => {
+  const filter = useRecoilValue(vehicleFilterState);
   const [, setVehicleState] = useRecoilState(vehicleFilterState);
 
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
@@ -20,6 +21,18 @@ const MileageSearch = () => {
   const endMileageOptions = selectedStartMileage
     ? MILEAGE_STEPS.filter((mileage) => mileage.value >= selectedStartMileage)
     : MILEAGE_STEPS;
+
+    // reset filter
+    useEffect(() => {
+      const isMileageReset = filter.mileageMin === undefined &&
+      filter.mileageMax === undefined &&
+      (selectedStartMileage !== null || selectedEndMileage !== null);
+      
+      if(isMileageReset) {
+        setSelectedStartMileage(null);
+        setSelectedEndMileage(null);
+      }
+    }, [filter.mileageMin, filter.mileageMax]);
 
   useEffect(() => {
     setVehicleState((prev) => ({

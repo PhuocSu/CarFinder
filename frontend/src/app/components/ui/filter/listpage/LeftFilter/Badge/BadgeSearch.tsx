@@ -4,7 +4,7 @@ import { Badge, Button, Flex, Image, Typography } from "antd";
 import styles from "./ModelSearch.module.scss";
 import { VehicleBadge } from "@/enums/vehicle-badge.enum";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 // ví dụ COUPE_OPTION = "쿠페특옵션"  => label: "쿠페특옵션", value: "COUPE_OPTION"
@@ -17,6 +17,7 @@ const BadgeSearch = () => {
   const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
   const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
+  const filter = useRecoilValue(vehicleFilterState);
 
   useEffect(() => {
     setVehicleFilter((prev) => ({
@@ -25,6 +26,13 @@ const BadgeSearch = () => {
       page: 1,
     }));
   }, [selectedBadges]);
+
+  useEffect(() => {
+    // Khi reset filter (badges = []) => sync lại selectedBadges xóa đi UI click
+    if (filter.badges.length === 0 && selectedBadges.length > 0) {
+      setSelectedBadges([]);
+    }
+  }, [filter.badges]);
 
   const toggleBadge = (value: string) => {
     setSelectedBadges((prev) => {
@@ -46,7 +54,6 @@ const BadgeSearch = () => {
         height: "100%",
       }}
     >
-
       {/* Search by badge */}
       <Flex
         vertical
@@ -121,7 +128,9 @@ const BadgeSearch = () => {
           >
             <Flex vertical gap={4}>
               {badgeOptions.map((badge) => {
-                const isActive = selectedBadges.includes(badge.value as VehicleBadge);
+                const isActive = selectedBadges.includes(
+                  badge.value as VehicleBadge,
+                );
                 return (
                   <Flex
                     key={badge.value}
@@ -176,7 +185,6 @@ const BadgeSearch = () => {
             </Flex>
           </Flex>
         )}
-
       </Flex>
     </Flex>
   );

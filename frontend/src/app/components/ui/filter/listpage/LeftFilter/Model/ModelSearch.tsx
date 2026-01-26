@@ -2,7 +2,7 @@
 
 import { Badge, Button, Flex, Image, Typography } from "antd";
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 import { useModelQuery } from "@/app/api/listPage/useModelQuery";
 
@@ -16,6 +16,8 @@ const ModelSearch = () => {
   const [selectedSubModelIds, setSelectedSubModelIds] = useState<number[]>([]); //danh sách SubModel
   const [isOpen, setIsOpen] = useState(true);
 
+  const filter = useRecoilValue(vehicleFilterState);
+
   useEffect(() => {
     setVehicleFilter((prev) => ({
       ...prev,
@@ -24,6 +26,14 @@ const ModelSearch = () => {
       page: 1,
     }));
   }, [selectedSubModelIds, selectedModelIds]);
+
+  useEffect(() => {
+    if (filter.modelIds?.length === 0 && selectedModelIds.length > 0 || filter.subModelIds?.length === 0 && selectedSubModelIds.length > 0) {
+      setSelectedModelIds([]);
+      setSelectedSubModelIds([]);
+      setActiveModelId(null);
+    }
+  }, [filter.modelIds, filter.subModelIds]);
 
   // toggle submodel
   const toggleSubModel = (id: number) => {

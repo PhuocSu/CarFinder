@@ -2,8 +2,11 @@
 
 import { Button, Flex, Image, Typography } from "antd";
 import styles from "./SearchToolbars.module.scss";
+import { useVehicleFilter } from "@/hooks/useVehicleFilter";
 
 const SearchToolbars = () => {
+  const {resetAllFilters} = useVehicleFilter();
+
     return (
         <Flex
         gap={8}
@@ -41,6 +44,7 @@ const SearchToolbars = () => {
             border: "1px solid var(--button-tertiary-stroke-enabled, #CECED3)",
             background: "var(--button-tertiary-bg-enabled, #FFF)",
           }}
+          onClick={resetAllFilters}
         >
           <Image
             src="/images/listPage/icon-reload.svg"
