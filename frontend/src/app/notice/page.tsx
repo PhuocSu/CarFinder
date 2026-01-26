@@ -1,15 +1,13 @@
 "use client";
 
-import NoticeCard from "../components/ui/cards/NoticeCard";
+import NoticePage from "../components/ui/notice_Event_Faq/notice/NoticePage";
 
-
-
-const NoticePage = () => {
+const NoticePageContainer = () => {
     return (
-        <div>
-            <NoticeCard />
+        <div style={{width: "1200px", margin: "0 auto"}}>
+            <NoticePage />
         </div>
     );
 };
 
-export default NoticePage;
+export default NoticePageContainer;

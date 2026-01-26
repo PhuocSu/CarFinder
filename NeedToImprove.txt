@@ -13,6 +13,8 @@
  + useRecoilState -> đọc, ghi
  + useSetRecoilState -> ghi
  + useRecoilValue -> chỉ đọc
+
+ + Trong component đáng lẽ nên chia folder theo trang (listPage, Homepage, ...)
 => hiện tại hôm bữa chưa lường trước trường hợp này
 
 - Về workflow của Click Favorite Badge:

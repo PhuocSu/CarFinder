@@ -18,6 +18,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   //Admin
+  // @Public()
   @Post('admin')
   async createAdmin(@Body() createAdminDto: CreateAdminDto) {
     const user = await this.usersService.createAdmin(createAdminDto);
