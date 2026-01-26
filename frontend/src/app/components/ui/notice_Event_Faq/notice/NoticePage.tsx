@@ -2,7 +2,8 @@
 
 import { Flex, Typography } from "antd";
 import NoticeSearchBar from "./noticeSearchBar";
-import ActionFooter from "../ui/actionFooter";
+import NoticeActionFooter from "./NoticeActionFooter";
+import NoticePagination from "./NoticePagination";
 
 const NoticePage = () => {
     return (
@@ -17,7 +18,9 @@ const NoticePage = () => {
                 
             </Flex>
 
-            <ActionFooter />
+            <NoticeActionFooter />
+
+            <NoticePagination />
         </div>
     );
 };

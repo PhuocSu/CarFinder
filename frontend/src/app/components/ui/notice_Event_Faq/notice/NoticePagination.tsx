@@ -1,7 +1,7 @@
 "use client";
 import { Pagination } from "antd";
 import { useState } from "react";
-const PaginationComponent = () => {
+const NoticePagination = () => {
   const [current, setCurrent] = useState(1);
   const total = 60;
   const pageSize = 10;
@@ -27,6 +27,6 @@ const PaginationComponent = () => {
   );
 };
 
-export default PaginationComponent;
+export default NoticePagination;
 
 // Mai test

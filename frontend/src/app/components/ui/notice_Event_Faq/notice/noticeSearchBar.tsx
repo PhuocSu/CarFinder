@@ -3,7 +3,7 @@
 import { Space, Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 
-const SearchBar = () => {
+const NoticeSearchBar = () => {
     return (
         <Space size={8} style={{height: "40px" }}>
             <Input placeholder="공지사항 제목을 검색해주세요"
@@ -27,4 +27,4 @@ const SearchBar = () => {
     );
 };
 
-export default SearchBar;
+export default NoticeSearchBar;
