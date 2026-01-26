@@ -3,7 +3,7 @@
 - Vê component:
  + Nên có components/ui: chỉ chứa component có thể tái sử dụng dung thoi
  + components/: nên tạo folder > copy html, css từ  components/ui + thêm logic
-
+ + Trong component đáng lẽ nên chia folder theo trang (listPage, Homepage, ...)
 => hiện tại hôm bữa chưa lường trước trường hợp này
 
 - Về workflow của Click Favorite Badge:
