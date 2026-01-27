@@ -1,8 +1,13 @@
 "use client"
 
 import { Button, Flex, Image, Typography } from "antd";
+import { NoticeCards } from "@/types/notice";
 
-const NoticeCard = () => {
+interface NoticeCardProps {
+  notice: NoticeCards;
+}
+
+const NoticeCard = ({ notice }: NoticeCardProps) => {
     return (
         <Flex
         vertical
@@ -52,30 +57,32 @@ const NoticeCard = () => {
                   fontFamily: "Noto Sans KR",
                 }}
               >
-                3잡 사기 예방 기능이 추가됩니다.
+                {notice.title}
               </Typography.Text>
 
-              <div
-                style={{
-                  padding: "2px 6px",
-                  background: "#555555",
-                  borderRadius: 8,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <span
+              {notice.isTemporarySave && (
+                <div
                   style={{
-                    color: "white",
-                    fontSize: 10,
-                    fontFamily: "Noto Sans KR",
-                    fontWeight: 400,
+                    padding: "2px 6px",
+                    background: "#555555",
+                    borderRadius: 8,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  임시저장
-                </span>
-              </div>
+                  <span
+                    style={{
+                      color: "white",
+                      fontSize: 10,
+                      fontFamily: "Noto Sans KR",
+                      fontWeight: 400,
+                    }}
+                  >
+                    임시저장
+                  </span>
+                </div>
+              )}
             </Flex>
 
               <Typography.Text
@@ -85,7 +92,7 @@ const NoticeCard = () => {
                   fontFamily: "Pretendard",
                 }}
               >
-                2023-12-12
+                {new Date(notice.createdAt).toLocaleDateString('ko-KR')}
               </Typography.Text>
             </Flex>
           </Flex>
