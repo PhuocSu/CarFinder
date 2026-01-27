@@ -1,15 +1,69 @@
 "use client";
 
-import { Button, Flex, Input, Typography } from "antd";
+import { useCreateNoticeMutation } from "@/app/api/notice/useCreationNoticeMutation";
+import { noticeFormState } from "@/store/noticeStore.atom";
+import { Button, Flex, Form, Input, Typography } from "antd";
 import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
+import { useRecoilState } from "recoil";
 
 // Dynamic import với tắt SSR
 const Editor = dynamic(
   () => import("@tinymce/tinymce-react").then((mod) => mod.Editor),
-  { ssr: false }
+  { ssr: false },
 );
 
 const NoticeForm = () => {
+  const router = useRouter();
+  const createNoticeMutation = useCreateNoticeMutation();
+  const [noticeForm, setNoticeForm] = useRecoilState(noticeFormState);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoticeForm((prev) => ({
+      ...prev,
+      title: e.target.value,
+    }));
+  };
+  
+  const handleContentChange = (content: string) => {
+    setNoticeForm((prev) => ({
+      ...prev,
+      content: content,
+    }));
+  };
+  
+  const handleFileChange = (file: string) => {
+    setNoticeForm((prev) => ({
+      ...prev,
+      fileAttachment: file,
+    }));
+  };
+
+  const handleConfirm = () => {
+    createNoticeMutation.mutate({
+      ...noticeForm,
+      isTemporarySave: false,
+    });
+  };
+
+  const handleTemporarySave = () => {
+    createNoticeMutation.mutate({
+      ...noticeForm,
+      isTemporarySave: true,
+    });
+  };
+
+  const handleCancel = () => {
+    // Reset form khi cancel
+    setNoticeForm({
+      title: "",
+      content: "",
+      fileAttachment: "",
+      isTemporarySave: false,
+    });
+    router.back();
+  };
+
   return (
     <Flex vertical align="center" gap={"80px"} style={{ marginBottom: "80px" }}>
       <Typography.Text
@@ -34,7 +88,12 @@ const NoticeForm = () => {
             >
               글제목
             </Typography.Text>
-            <Input placeholder="글제목을 입력해주세요." style={{ height: "100%" }}/>
+            <Input
+              placeholder="글제목을 입력해주세요."
+              style={{ height: "100%" }}
+              value={noticeForm.title}
+              onChange={handleTitleChange}
+            />
           </Flex>
 
           <Flex align="center" gap={16} style={{ height: "40px" }}>
@@ -47,6 +106,7 @@ const NoticeForm = () => {
               placeholder="선택된 파일 없음"
               style={{ height: "100%", width: "458px" }}
               disabled
+              value={noticeForm.fileAttachment}
             />
             <Button
               data-icon="none"
@@ -93,7 +153,8 @@ const NoticeForm = () => {
             toolbar:
               "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
           }}
-          initialValue=""
+          onEditorChange={handleContentChange}
+          initialValue={noticeForm.content}
         />
       </Flex>
 
@@ -116,6 +177,7 @@ const NoticeForm = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleConfirm}
         >
           <span
             style={{
@@ -151,6 +213,7 @@ const NoticeForm = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleTemporarySave}
         >
           <span
             style={{
@@ -185,6 +248,7 @@ const NoticeForm = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleCancel}
         >
           <span
             style={{

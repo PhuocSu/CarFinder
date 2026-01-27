@@ -14,4 +14,12 @@ export interface NoticeResponse {
   page: number;
   limit: number;
   totalPages: number;
+  search: string;
+}
+
+export interface NoticeForm {
+  title: string;
+  fileAttachment?: string;
+  content: string;
+  isTemporarySave?: boolean;
 }

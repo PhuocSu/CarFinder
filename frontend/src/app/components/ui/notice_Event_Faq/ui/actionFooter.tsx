@@ -13,7 +13,7 @@ const ActionFooter = () => {
                 background: 'var(--button-primary-bg-enabled, #2F2C4D)'
             }}
             >
-                <div style={{ color: 'var(--button-primary-fg, white)', fontSize: 14, fontFamily: 'Noto Sans KR', fontWeight: '700', wordWrap: 'break-word' }}>검색</div>
+                <div style={{ color: 'var(--button-primary-fg, white)', fontSize: 14, fontFamily: 'Noto Sans KR', fontWeight: '700', wordWrap: 'break-word' }}>글쓰기</div>
             </Button>
         </Flex>
     );

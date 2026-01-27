@@ -27,8 +27,8 @@ export class NoticeController {
   }
 
   @Public()
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get('/write')
+  findOne(@Query('id') id: string) {
     return this.noticeService.findOne(+id);
   }
 

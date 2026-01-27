@@ -21,7 +21,7 @@ const NoticePage = () => {
 
             <NoticeList />
 
-            <NoticeActionFooter total={data?.total || 0} />
+            <NoticeActionFooter />
 
             <NoticePagination />
         </div>

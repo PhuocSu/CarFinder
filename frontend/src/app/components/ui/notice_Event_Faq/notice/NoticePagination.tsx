@@ -1,32 +1,43 @@
 "use client";
 import { Pagination } from "antd";
 import { useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { noticeState } from "@/store/noticeStore.atom";
+import { useNoticeQuery } from "@/app/api/notice/useNoticeQuery";
 const NoticePagination = () => {
-  const [current, setCurrent] = useState(1);
-  const total = 60;
-  const pageSize = 10;
+  const { page, limit, search } = useRecoilValue(noticeState);
+  const { data } = useNoticeQuery(page, limit, search);
+  const setNoticeState = useSetRecoilState(noticeState);
+
+  const handlePageChange = (page: number) => {
+    setNoticeState((prev) => ({
+      ...prev,
+      page: page,
+    }));
+  };
 
   return (
     <>
       <Pagination
-        defaultCurrent={1}
-        total={60}
-        pageSize={10}
+        current={page}
+        total={data?.total}
+        pageSize={limit}
         showSizeChanger={false}
         showQuickJumper={false}
+        onChange={handlePageChange}
         itemRender={(page, type, originalElement) => {
           if (type === "page") {
-            return page <= current ? <a>{page}</a> : null // display page <= current
+            return <a>{page}</a>;
           }
           if (type === "prev" || type === "next") {
             return null; // hide prev/next
           }
           return originalElement;
         }}
-        style={{ 
-          textAlign: "center", 
-          justifyContent: "center", 
-          marginTop: 20 
+        style={{
+          textAlign: "center",
+          justifyContent: "center",
+          marginTop: 20,
         }}
         className="custom-pagination"
       />
