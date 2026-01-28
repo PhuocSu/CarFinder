@@ -1,10 +1,13 @@
 "use client";
 
 import { useCreateNoticeMutation } from "@/app/api/notice/useCreationNoticeMutation";
+import { useNoticeDetailQuery } from "@/app/api/notice/useNoticeDetailQuery";
+import { useUpdateNoticeMutation } from "@/app/api/notice/useUpdateNoticeMutation";
 import { noticeFormState } from "@/store/noticeStore.atom";
-import { Button, Flex, Form, Input, Typography } from "antd";
+import { Button, Flex, Form, Input, message, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useRecoilState } from "recoil";
 
 // Dynamic import với tắt SSR
@@ -13,9 +16,15 @@ const Editor = dynamic(
   { ssr: false },
 );
 
-const NoticeForm = () => {
+interface NoticeFormProps {
+    noticeId?: string | null;
+}
+
+const NoticeForm = ({noticeId}: NoticeFormProps) => {
   const router = useRouter();
   const createNoticeMutation = useCreateNoticeMutation();
+  const updateNoticeMutation = useUpdateNoticeMutation();
+  const fetchNoticeDetailQuery = useNoticeDetailQuery(noticeId || "")
   const [noticeForm, setNoticeForm] = useRecoilState(noticeFormState);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,17 +49,57 @@ const NoticeForm = () => {
   };
 
   const handleConfirm = () => {
-    createNoticeMutation.mutate({
-      ...noticeForm,
-      isTemporarySave: false,
-    });
+    if(noticeId){
+      // Update mode
+      updateNoticeMutation.mutate({
+        id: noticeId!,
+        data: {
+          ...noticeForm,
+          isTemporarySave: false,
+        }
+      },{
+        onSuccess: () => {
+          message.success("업데이트 성공!");
+          router.push(`/notice`);
+        },
+        onError: (error: any) => {
+          console.error("업데이트 실패:", error);
+        }
+      });
+    }
+    else {
+      // Create mode
+      createNoticeMutation.mutate({
+        ...noticeForm,
+        isTemporarySave: false,
+      });
+    }
   };
 
   const handleTemporarySave = () => {
-    createNoticeMutation.mutate({
+    if(noticeId){
+      updateNoticeMutation.mutate({
+        id: noticeId!,
+        data: {
+          ...noticeForm,
+          isTemporarySave: true,
+        }
+      }, {
+        onSuccess: () => {
+          message.success("업데이트 성공!");
+          router.push(`/notice`);
+        },
+        onError: (error: any) => {
+          console.error("업데이트 실패:", error);
+        }
+      });
+    }
+    else {
+      createNoticeMutation.mutate({
       ...noticeForm,
       isTemporarySave: true,
     });
+    }
   };
 
   const handleCancel = () => {
@@ -63,6 +112,17 @@ const NoticeForm = () => {
     });
     router.back();
   };
+
+  useEffect(() => {
+    if (fetchNoticeDetailQuery.data && noticeId) {
+      setNoticeForm({
+        title: fetchNoticeDetailQuery.data.title,
+        content: fetchNoticeDetailQuery.data.content,
+        fileAttachment: fetchNoticeDetailQuery.data.fileAttachment || "",
+        isTemporarySave: fetchNoticeDetailQuery.data.isTemporarySave,
+      });
+    }
+  }, [fetchNoticeDetailQuery.data, noticeId]);
 
   return (
     <Flex vertical align="center" gap={"80px"} style={{ marginBottom: "80px" }}>
@@ -154,7 +214,7 @@ const NoticeForm = () => {
               "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
           }}
           onEditorChange={handleContentChange}
-          initialValue={noticeForm.content}
+          value={noticeForm.content}
         />
       </Flex>
 

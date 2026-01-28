@@ -1,11 +1,15 @@
 "use client"
 
 import NoticeForm from "@/app/components/ui/forms/Notice/NoticeForm"
+import { useSearchParams } from "next/navigation"
 
 const NoticeWrite = () => {
+    const searchParams = useSearchParams()
+    const id = searchParams.get("id")
+    
     return (
         <div style={{width: "1200px", margin: "0 auto"}}>
-            <NoticeForm />
+            <NoticeForm noticeId={id || undefined} />
         </div>
     )
 }

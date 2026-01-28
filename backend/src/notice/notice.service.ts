@@ -29,7 +29,9 @@ export class NoticeService {
       query.where('notice.title LIKE :search', { search: `%${search}%` });
     }
 
-    query.skip((page-1)*limit).take(limit).orderBy('notice.createdAt', 'DESC')
+    query.skip((page-1)*limit).take(limit)
+      .orderBy('notice.isTemporarySave', 'DESC')
+      .addOrderBy('notice.createdAt', 'DESC')
 
     const [data, total] = await query.getManyAndCount()
     return {

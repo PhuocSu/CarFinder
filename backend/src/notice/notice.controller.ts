@@ -34,8 +34,9 @@ export class NoticeController {
 
   @Roles(Role.ADMIN)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
-    return this.noticeService.update(+id, updateNoticeDto);
+  async update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
+    await this.noticeService.update(+id, updateNoticeDto);
+    return this.noticeService.findOne(+id);
   }
 
   @Roles(Role.ADMIN)
