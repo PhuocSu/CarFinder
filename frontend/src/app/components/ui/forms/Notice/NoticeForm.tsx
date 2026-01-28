@@ -20,6 +20,7 @@ interface NoticeFormProps {
     noticeId?: string | null;
 }
 
+
 const NoticeForm = ({noticeId}: NoticeFormProps) => {
   const router = useRouter();
   const createNoticeMutation = useCreateNoticeMutation();
@@ -33,6 +34,8 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
       title: e.target.value,
     }));
   };
+
+  console.log('Form content:', noticeForm.content);
   
   const handleContentChange = (content: string) => {
     setNoticeForm((prev) => ({
@@ -215,6 +218,7 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
           }}
           onEditorChange={handleContentChange}
           value={noticeForm.content}
+          
         />
       </Flex>
 
