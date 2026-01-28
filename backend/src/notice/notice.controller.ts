@@ -1,10 +1,38 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, HttpCode, HttpStatus } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  HttpCode,
+  HttpStatus,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { NoticeService } from './notice.service';
 import { CreateNoticeDto } from './dto/create-notice.dto';
 import { UpdateNoticeDto } from './dto/update-notice.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/users/entities/user.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { cloudinaryStorage } from 'src/config/multer-storage.config';
+import { File } from 'multer';
+
+interface MulterFile {
+  fieldname: string;
+  originalname: string;
+  encoding: string;
+  mimetype: string;
+  size: number;
+  destination: string;
+  filename: string;
+  path: string;
+  buffer: Buffer;
+}
 
 @Controller('notice')
 export class NoticeController {
@@ -21,7 +49,7 @@ export class NoticeController {
   findAll(
     @Query('search') search?: string,
     @Query('page') page = 1,
-    @Query('limit') limit = 10
+    @Query('limit') limit = 10,
   ) {
     return this.noticeService.findAll(search, page, limit);
   }
@@ -34,7 +62,10 @@ export class NoticeController {
 
   @Roles(Role.ADMIN)
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
+  async update(
+    @Param('id') id: string,
+    @Body() updateNoticeDto: UpdateNoticeDto,
+  ) {
     await this.noticeService.update(+id, updateNoticeDto);
     return this.noticeService.findOne(+id);
   }
@@ -44,5 +75,20 @@ export class NoticeController {
   @HttpCode(HttpStatus.NO_CONTENT)
   remove(@Param('id') id: string) {
     return this.noticeService.remove(+id);
+  }
+
+  @Roles(Role.ADMIN)
+ @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: cloudinaryStorage,
+    }),
+  )
+  upload(@UploadedFile() file: MulterFile) {
+    return {
+      url: file.path,
+      publicId: file.filename,
+      originalName: file.originalname,
+    };
   }
 }

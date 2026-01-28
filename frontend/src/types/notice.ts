@@ -2,6 +2,7 @@ export interface NoticeCards {
   id: number;
   title: string;
   fileAttachment: string;
+  fileAttachmentName?: string;
   content: string;
   isTemporarySave: boolean;
   createdAt: string;
@@ -20,6 +21,7 @@ export interface NoticeResponse {
 export interface NoticeForm {
   title: string;
   fileAttachment?: string;
+  fileAttachmentName?: string;
   content: string;
   isTemporarySave?: boolean;
 }

@@ -12,6 +12,9 @@ export class Notice {
     @Column({ nullable: true })
     fileAttachment: string;
 
+    @Column({ nullable: true })
+    fileAttachmentName: string;
+
     @Column('varchar', { length: 500 })
     content: string;
 

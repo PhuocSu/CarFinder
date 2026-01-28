@@ -17,7 +17,7 @@ const NoticeCard = ({ notice }: NoticeCardProps) => {
   const [isContentVisible, setIsContentVisible] = useState(false);
   const deleteMutation = useDeleteNoticeMutation();
 
-  console.log('Notice content:', notice.content);
+  console.log("Notice content:", notice.content);
 
   const handleDeleteModalOpen = () => {
     setIsModalOpen(true);
@@ -46,7 +46,12 @@ const NoticeCard = ({ notice }: NoticeCardProps) => {
   return (
     <Flex
       vertical
-      style={{ width: "100%", height: "100%", padding: "5px 0", borderBottom: "1px solid #E0E0E3", }}
+      style={{
+        width: "100%",
+        height: "100%",
+        padding: "5px 0",
+        borderBottom: "1px solid #E0E0E3",
+      }}
     >
       <Flex
         style={{
@@ -186,7 +191,7 @@ const NoticeCard = ({ notice }: NoticeCardProps) => {
       </Flex>
 
       {isContentVisible && (
-        <Flex>
+        <Flex vertical>
           <div
             style={{
               width: "100%",
@@ -194,6 +199,19 @@ const NoticeCard = ({ notice }: NoticeCardProps) => {
             }}
             dangerouslySetInnerHTML={{ __html: notice.content }}
           />
+
+          <div style={{ marginTop: 12 }}>
+            <img
+              src={notice.fileAttachment}
+              alt="Notice attachment"
+              style={{
+                maxWidth: "100%",
+                height: "auto",
+                borderRadius: 8,
+                border: "1px solid #e0e0e0",
+              }}
+            />
+          </div>
         </Flex>
       )}
 

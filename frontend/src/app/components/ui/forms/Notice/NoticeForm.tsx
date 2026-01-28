@@ -7,8 +7,9 @@ import { noticeFormState } from "@/store/noticeStore.atom";
 import { Button, Flex, Form, Input, message, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
+import uploadFile from "@/hooks/useFileUpload";
 
 // Dynamic import với tắt SSR
 const Editor = dynamic(
@@ -17,16 +18,24 @@ const Editor = dynamic(
 );
 
 interface NoticeFormProps {
-    noticeId?: string | null;
+  noticeId?: string | null;
 }
 
+const getFileNameFromUrl = (url: string) => {
+  const urlObj = new URL(url);
+  return urlObj.searchParams.get('filename') || url.split('/').pop();
+};
 
-const NoticeForm = ({noticeId}: NoticeFormProps) => {
+
+const NoticeForm = ({ noticeId }: NoticeFormProps) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null); // giữ tên file đã chọn trên UI
   const router = useRouter();
   const createNoticeMutation = useCreateNoticeMutation();
   const updateNoticeMutation = useUpdateNoticeMutation();
-  const fetchNoticeDetailQuery = useNoticeDetailQuery(noticeId || "")
+  const fetchNoticeDetailQuery = useNoticeDetailQuery(noticeId || "");
   const [noticeForm, setNoticeForm] = useRecoilState(noticeFormState);
+
+  const fileInputRef = useRef<HTMLInputElement>(null); //trường hợp: bạn upload xong nhưng input file vẫn giữ file cũ trong DOM
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNoticeForm((prev) => ({
@@ -35,42 +44,57 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
     }));
   };
 
-  console.log('Form content:', noticeForm.content);
-  
+  console.log("Form content:", noticeForm.content);
+
   const handleContentChange = (content: string) => {
     setNoticeForm((prev) => ({
       ...prev,
       content: content,
     }));
   };
-  
-  const handleFileChange = (file: string) => {
-    setNoticeForm((prev) => ({
-      ...prev,
-      fileAttachment: file,
-    }));
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const uploadedUrl = await uploadFile(file); // ✅ Gọi upload function
+
+      setSelectedFile(file);
+      setNoticeForm((prev) => ({
+        ...prev,
+        fileAttachment: uploadedUrl, // ✅ Lưu URL đã upload
+        fileAttachmentName: file.name,
+      }));
+
+      message.success("파일 업로드 성공!");
+    } catch (error) {
+      message.error("파일 업로드 실패");
+      console.error("Upload error:", error);
+    }
   };
 
   const handleConfirm = () => {
-    if(noticeId){
+    if (noticeId) {
       // Update mode
-      updateNoticeMutation.mutate({
-        id: noticeId!,
-        data: {
-          ...noticeForm,
-          isTemporarySave: false,
-        }
-      },{
-        onSuccess: () => {
-          message.success("업데이트 성공!");
-          router.push(`/notice`);
+      updateNoticeMutation.mutate(
+        {
+          id: noticeId!,
+          data: {
+            ...noticeForm,
+            isTemporarySave: false,
+          },
         },
-        onError: (error: any) => {
-          console.error("업데이트 실패:", error);
-        }
-      });
-    }
-    else {
+        {
+          onSuccess: () => {
+            message.success("업데이트 성공!");
+            router.push(`/notice`);
+          },
+          onError: (error: any) => {
+            console.error("업데이트 실패:", error);
+          },
+        },
+      );
+    } else {
       // Create mode
       createNoticeMutation.mutate({
         ...noticeForm,
@@ -80,28 +104,30 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
   };
 
   const handleTemporarySave = () => {
-    if(noticeId){
-      updateNoticeMutation.mutate({
-        id: noticeId!,
-        data: {
-          ...noticeForm,
-          isTemporarySave: true,
-        }
-      }, {
-        onSuccess: () => {
-          message.success("업데이트 성공!");
-          router.push(`/notice`);
+    if (noticeId) {
+      updateNoticeMutation.mutate(
+        {
+          id: noticeId!,
+          data: {
+            ...noticeForm,
+            isTemporarySave: true,
+          },
         },
-        onError: (error: any) => {
-          console.error("업데이트 실패:", error);
-        }
-      });
-    }
-    else {
+        {
+          onSuccess: () => {
+            message.success("업데이트 성공!");
+            router.push(`/notice`);
+          },
+          onError: (error: any) => {
+            console.error("업데이트 실패:", error);
+          },
+        },
+      );
+    } else {
       createNoticeMutation.mutate({
-      ...noticeForm,
-      isTemporarySave: true,
-    });
+        ...noticeForm,
+        isTemporarySave: true,
+      });
     }
   };
 
@@ -122,10 +148,17 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
         title: fetchNoticeDetailQuery.data.title,
         content: fetchNoticeDetailQuery.data.content,
         fileAttachment: fetchNoticeDetailQuery.data.fileAttachment || "",
+        fileAttachmentName: fetchNoticeDetailQuery.data.fileAttachmentName || "",
         isTemporarySave: fetchNoticeDetailQuery.data.isTemporarySave,
       });
+
+      // Hiển thị tên gốc nếu có
+      if (fetchNoticeDetailQuery.data.fileAttachmentName) {
+        const fakeFile = new File([], fetchNoticeDetailQuery.data.fileAttachmentName, { type: "image/jpeg" });
+        setSelectedFile(fakeFile);
+      }
     }
-  }, [fetchNoticeDetailQuery.data, noticeId]);
+  }, [fetchNoticeDetailQuery.data, noticeId, setNoticeForm]);
 
   return (
     <Flex vertical align="center" gap={"80px"} style={{ marginBottom: "80px" }}>
@@ -165,11 +198,20 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
             >
               파일첨부
             </Typography.Text>
+            <input
+              type="file"
+              id="file-upload"
+              ref={fileInputRef}
+              hidden
+              onChange={handleFileChange}
+            />
+
             <Input
               placeholder="선택된 파일 없음"
               style={{ height: "100%", width: "458px" }}
               disabled
-              value={noticeForm.fileAttachment}
+              readOnly
+              value={selectedFile?.name || ""}
             />
             <Button
               data-icon="none"
@@ -192,6 +234,7 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
                 gap: 4,
                 display: "inline-flex",
               }}
+              onClick={() => document.getElementById("file-upload")?.click()}
             >
               <div
                 style={{
@@ -218,7 +261,6 @@ const NoticeForm = ({noticeId}: NoticeFormProps) => {
           }}
           onEditorChange={handleContentChange}
           value={noticeForm.content}
-          
         />
       </Flex>
 

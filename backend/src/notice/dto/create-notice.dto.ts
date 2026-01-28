@@ -10,6 +10,10 @@ export class CreateNoticeDto {
     @IsOptional()
     fileAttachment?: string;
 
+    @Column({ nullable: true })
+    @IsOptional()
+    fileAttachmentName?: string;
+
     @Column('varchar', { length: 500 })
     @IsNotEmpty()
     content: string;

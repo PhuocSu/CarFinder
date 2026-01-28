@@ -17,6 +17,7 @@ import { ModelModule } from './model/model.module';
 import { FavoriteCarModule } from './favorite-car/favorite-car.module';
 import { CompareCarModule } from './compare-car/compare-car.module';
 import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-car.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -71,6 +72,11 @@ import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-c
     CompareCarModule,
 
     RecentlyViewedCarModule,
+
+    CloudinaryModule, 
+    // cần nên khai báo trong RootAsync 
+    // => tránh interceptor chạy đầu tiên trước khi đọc dữ liệu trong.env.development
+
   ],
   controllers: [AppController],
   providers: [
