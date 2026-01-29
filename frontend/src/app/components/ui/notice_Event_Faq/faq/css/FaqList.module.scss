@@ -1,0 +1,25 @@
+.custom-tabs {
+  :global {
+    .ant-tabs-tab {
+      color: #4f4c6b !important;
+      
+      &.ant-tabs-tab-active {
+        font-family: "Noto Sans KR";
+        font-style: normal;
+        font-size: 16px;
+        color: #4f4c6b !important;
+      }
+    }
+
+    .ant-tabs {
+      --ant-tabs-item-selected-color: #4f4c6b;
+    }
+    .ant-tabs-ink-bar {
+      display: none !important;
+    }
+
+    .ant-tabs-content-holder {
+      min-height: 200px;
+    }
+  }
+}

@@ -6,6 +6,7 @@ import api from "@/lib/axios";
 import { useState } from "react";
 import NoticeDeleteAcceptModal from "../notice_Event_Faq/notice/NoticeDeleteAcceptModal";
 import { useDeleteNoticeMutation } from "@/app/api/notice/useDeleteNoticeMutation";
+import { useAuth } from "@/hooks/useAuth";
 
 interface NoticeCardProps {
   notice: NoticeCards;

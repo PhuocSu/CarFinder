@@ -1,13 +1,13 @@
 "use client";
 
-import FaqCard from "@/app/components/ui/cards/FaqCard";
+import FaqPage from "@/app/components/ui/notice_Event_Faq/faq/FaqPage";
 
-const FaqPage = () => {
+const FaqPageComponent = () => {
   return (
-    <div>
-      <FaqCard />
+    <div style={{width: "1200px", margin: "0 auto"}}>
+      <FaqPage />
     </div>
   );
 };
 
-export default FaqPage;
+export default FaqPageComponent;

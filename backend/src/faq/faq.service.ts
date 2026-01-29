@@ -7,57 +7,57 @@ import { UpdateFaqDto } from './dto/update-faq.dto';
 
 @Injectable()
 export class FaqService {
-    constructor(
-        @InjectRepository(Faq)
-        private faqRepository: Repository<Faq>,
-    ) { }
+  constructor(
+    @InjectRepository(Faq)
+    private faqRepository: Repository<Faq>,
+  ) {}
 
-    async create(dto: CreateFaqDto) {
-        const faq = this.faqRepository.create(dto);
-        return await this.faqRepository.save(faq);
+  async create(dto: CreateFaqDto) {
+    const faq = this.faqRepository.create(dto);
+    return await this.faqRepository.save(faq);
+  }
+
+  async findAll(category?: Category, search?: string, page = 1, limit = 10) {
+    const query = this.faqRepository.createQueryBuilder('faq'); //alias trong database
+
+    //search theo title => trả về toàn bộ
+    if (search) {
+      query.where('faq.title Like :search', { search: `%${search}%` });
+    } else {
+      // không search -> cho phép lọc theo category
+      if (category && category !== Category.ALL) {
+        query.where('faq.category = :category', { category });
+      }
     }
 
-    async findAll(category?: Category, search?: string, page = 1, limit = 10) {
-        const query = this.faqRepository.createQueryBuilder('faq'); //alias trong database 
+    query
+      .skip((page - 1) * limit) //skip bản ghi đầu tiên
+      .take(limit) //lấy tối đa limit
+      .orderBy('faq.isTemporarySave', 'DESC')
+      .addOrderBy('faq.createdAt', 'DESC'); 
 
-        //search theo title => trả về toàn bộ
-        if (search) {
-            query.where('faq.title Like :search', { search: `%${search}%` })
-        } else {
-            // không search -> cho phép lọc theo category
-            if (category && category !== Category.ALL) {
-                query.where('faq.category = :category', { category })
-            }
-        }
+    const [data, total] = await query.getManyAndCount();
+    return {
+      items: data, //data
+      total, //current total for current enum
+      page, //current page for curent enum
+      limit, //limit each page
+      totalPages: Math.ceil(total / limit), //totalPages
+    };
+  }
 
-        query
-            .skip((page - 1) * limit) //skip bản ghi đầu tiên
-            .take(limit) //lấy tối đa limit
-            .orderBy('faq.createdAt', 'DESC')
+  async findOne(id: number) {
+    return await this.faqRepository.findOne({
+      where: { id },
+    });
+  }
 
-        const [data, total] = await query.getManyAndCount()
-        return {
-            items: data, //data
-            total, //current total for current enum
-            page, //current page for curent enum
-            limit, //limit each page
-            totalPages: Math.ceil(total / limit) //totalPages
-        }
+  async update(id: number, dto: UpdateFaqDto) {
+    await this.faqRepository.update(id, dto);
+    return this.findOne(id);
+  }
 
-    }
-
-    async findOne(id: number) {
-        return await this.faqRepository.findOne({
-            where: { id }
-        })
-    }
-
-    async update(id: number, dto: UpdateFaqDto) {
-        await this.faqRepository.update(id, dto);
-        return this.findOne(id);
-    }
-
-    async remove(id: number) {
-        return await this.faqRepository.delete(id);
-    }
+  async remove(id: number) {
+    return await this.faqRepository.delete(id);
+  }
 }

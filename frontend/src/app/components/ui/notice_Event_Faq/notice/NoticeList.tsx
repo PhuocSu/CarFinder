@@ -6,6 +6,8 @@ import NoticeActionFooter from "./NoticeActionFooter";
 import { useNoticeQuery } from "@/app/api/notice/useNoticeQuery";
 import { useRecoilValue } from "recoil";
 import { noticeState } from "@/store/noticeStore.atom";
+import { useAuth } from "@/hooks/useAuth";
+import { useMemo } from "react";
 
 const NoticeList = () => {
   const noticeData = useRecoilValue(noticeState);
@@ -17,13 +19,24 @@ const NoticeList = () => {
     searchTerm,
   );
 
+    const { user } = useAuth();
+
+  const filteredData = useMemo(() => {
+    if (!data?.items) return [];
+    
+    return data.items.filter((item) => {
+      if (user?.role === "ADMIN") return true;
+      return !item.isTemporarySave;
+    });
+  }, [data, user]);
+
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
-
+  
   return (
     <div>
       <Flex vertical>
-        {data?.items.map((item) => (
+        {filteredData.map((item) => (
           <NoticeCard key={item.id} notice={item} />
         ))}
       </Flex>

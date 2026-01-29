@@ -1,5 +1,4 @@
-// enums/exterior-color.enum.ts
-enum ExteriorColor {
+export enum ExteriorColor {
   WHITE = "WHITE",
   BLACK = "BLACK",
   MOUSE_GRAY = "MOUSE_GRAY",
