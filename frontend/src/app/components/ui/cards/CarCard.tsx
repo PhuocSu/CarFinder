@@ -28,7 +28,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
   console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);
   return (
     <Flex className={styles["card--container"]} vertical style={{ width: "100%", borderRadius: "8px" }}>
-      <Flex vertical style={{ position: "relative", padding: "12px" }}>
+      <Flex vertical style={{ position: "relative"}}>
         <div style={{ height: "220px", background: "#F5F5F5" }}>
           <Image
             style={{ height: "100%", width: "100%" }}
@@ -94,7 +94,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
       </Flex>
 
       <Flex style={{ marginTop: "12px", width: "100%" }}>
-        <Flex vertical style={{ padding: "0 12px" }}>
+        <Flex vertical style={{ padding: "0 12px 12px" }}>
           {/* Car Name */}
           <Typography.Text
             style={{

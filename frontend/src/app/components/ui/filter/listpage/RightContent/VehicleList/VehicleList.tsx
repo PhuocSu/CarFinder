@@ -2,10 +2,10 @@
 
 import { Col, Flex, Row, Typography } from "antd";
 import { useVehiclesQuery, Vehicle } from "@/app/api/listPage/useVehiclesQuery";
-import CarCard from "@/app/components/ui/cards/CarCard";
 import VehiclePagination from "@/app/components/ui/pagination/VehiclePagination";
 import { useRecoilValue } from "recoil";
 import { vehicleFilterReadSelector } from "@/selectors/VehicleFilter.selectors";
+import CarCard from "@/app/components/ui/cards/CarCard";
 
 
 const VehicleList = () => {
