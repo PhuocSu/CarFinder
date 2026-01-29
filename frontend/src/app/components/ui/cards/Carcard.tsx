@@ -12,6 +12,7 @@ import { useToggleFavoriteMutation } from "@/app/api/favorite/useToggleFavoriteM
 import { useFavoriteQuery } from "@/app/api/favorite/useFavoriteQuery";
 import { compareCarState } from "@/store/compareCar.atom";
 import { useToggleCompareMutation } from "@/app/api/compare/useToggleCompareMutation";
+import styles from "./css/CarCard.module.scss";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
@@ -26,8 +27,8 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
   
   console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);
   return (
-    <Flex vertical style={{ width: "100%", borderRadius: "8px" }}>
-      <Flex vertical style={{ position: "relative" }}>
+    <Flex className={styles["card--container"]} vertical style={{ width: "100%", borderRadius: "8px" }}>
+      <Flex vertical style={{ position: "relative", padding: "12px" }}>
         <div style={{ height: "220px", background: "#F5F5F5" }}>
           <Image
             style={{ height: "100%", width: "100%" }}
