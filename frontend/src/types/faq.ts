@@ -1,5 +1,6 @@
 import { Category } from "@/enums/category.enum";
 
+// đẻ get => hiển thị
 export interface FaqCards {
   id: number;
   title: string;
@@ -12,6 +13,7 @@ export interface FaqCards {
   updatedAt: string;
 }
 
+// để get
 export interface FaqResponse {
   items: FaqCards[];
   total: number;
@@ -19,4 +21,13 @@ export interface FaqResponse {
   limit: number;
   totalPages: number;
   search: string;
+}
+
+// để post
+export interface FaqForm {
+  title: string;
+  category: Category;
+  fileAttachment?: string;
+  content: string;
+  isTemporarySave?: boolean;
 }

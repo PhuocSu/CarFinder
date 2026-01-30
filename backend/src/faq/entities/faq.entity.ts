@@ -33,6 +33,9 @@ export class Faq {
     @Column({ nullable: true }) // Cho phép null nếu không bắt buộc
     fileAttachment: string;
 
+    @Column({ nullable: true }) // Cho phép null nếu không bắt buộc
+    fileAttachmentName: string;
+
     @Column('varchar', { length: 500 })
     content: string;
 

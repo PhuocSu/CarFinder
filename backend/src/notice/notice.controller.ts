@@ -19,20 +19,9 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/users/entities/user.entity';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { cloudinaryStorage } from 'src/config/multer-storage.config';
+import { cloudinaryStorage } from 'src/others/config/multer-storage.config';
 import { File } from 'multer';
-
-interface MulterFile {
-  fieldname: string;
-  originalname: string;
-  encoding: string;
-  mimetype: string;
-  size: number;
-  destination: string;
-  filename: string;
-  path: string;
-  buffer: Buffer;
-}
+import type MulterFile from 'src/others/types/MulterFile.type';
 
 @Controller('notice')
 export class NoticeController {
@@ -78,7 +67,7 @@ export class NoticeController {
   }
 
   @Roles(Role.ADMIN)
- @Post('upload')
+  @Post('upload')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: cloudinaryStorage,

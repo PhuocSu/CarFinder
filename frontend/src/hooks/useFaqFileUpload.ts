@@ -1,10 +1,10 @@
 import api from "@/lib/axios";
 
-const uploadFile = async (file: File) => {
+const faqUploadFile = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
 
-  const res = await api.post("/notice/upload", formData, {
+  const res = await api.post("/faq/upload", formData, {
     headers: {
       "Content-Type": "multipart/form-data",
     },
@@ -13,4 +13,4 @@ const uploadFile = async (file: File) => {
   return res.data.url as string;
 };
 
-export default uploadFile;
+export default faqUploadFile;

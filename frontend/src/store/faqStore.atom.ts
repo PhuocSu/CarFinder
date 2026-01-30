@@ -1,5 +1,6 @@
 import { atom } from "recoil";
-import { FaqResponse } from "@/types/faq";
+import { FaqForm, FaqResponse } from "@/types/faq";
+import { Category } from "@/enums/category.enum";
 
 export const faqState = atom<FaqResponse>({
   key: "FaqFilterState",
@@ -10,5 +11,16 @@ export const faqState = atom<FaqResponse>({
     limit: 10,
     totalPages: 0,
     search: "",
+  },
+});
+
+export const faqFormState = atom<FaqForm>({
+  key: "faqFormState",
+  default: {
+    title: "",
+    category: Category.VEHICLE_AND_CONTRACT_PROCEDURE,
+    fileAttachment: "",
+    content: "",
+    isTemporarySave: false,
   },
 });

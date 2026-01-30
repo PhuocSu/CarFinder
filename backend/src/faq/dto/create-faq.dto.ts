@@ -20,6 +20,10 @@ export class CreateFaqDto {
     @IsString()
     fileAttachment?: string;
 
+    @IsOptional()
+    @IsString()
+    fileAttachmentName?: string;
+
     @IsNotEmpty()
     @IsString()
     content: string;

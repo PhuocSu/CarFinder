@@ -17,7 +17,7 @@ import { ModelModule } from './model/model.module';
 import { FavoriteCarModule } from './favorite-car/favorite-car.module';
 import { CompareCarModule } from './compare-car/compare-car.module';
 import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-car.module';
-import { CloudinaryModule } from './cloudinary/cloudinary.module';
+import { CloudinaryModule } from './others/cloudinary/cloudinary.module';
 
 @Module({
   imports: [

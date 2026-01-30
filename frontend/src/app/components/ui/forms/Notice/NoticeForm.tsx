@@ -3,13 +3,13 @@
 import { useCreateNoticeMutation } from "@/app/api/notice/useCreationNoticeMutation";
 import { useNoticeDetailQuery } from "@/app/api/notice/useNoticeDetailQuery";
 import { useUpdateNoticeMutation } from "@/app/api/notice/useUpdateNoticeMutation";
+import noticeUploadFile from "@/hooks/useNoticeFileUpload";
 import { noticeFormState } from "@/store/noticeStore.atom";
 import { Button, Flex, Form, Input, message, Typography } from "antd";
 import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
-import uploadFile from "@/hooks/useFileUpload";
 
 // Dynamic import với tắt SSR
 const Editor = dynamic(
@@ -23,9 +23,8 @@ interface NoticeFormProps {
 
 const getFileNameFromUrl = (url: string) => {
   const urlObj = new URL(url);
-  return urlObj.searchParams.get('filename') || url.split('/').pop();
+  return urlObj.searchParams.get("filename") || url.split("/").pop();
 };
-
 
 const NoticeForm = ({ noticeId }: NoticeFormProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null); // giữ tên file đã chọn trên UI
@@ -36,6 +35,15 @@ const NoticeForm = ({ noticeId }: NoticeFormProps) => {
   const [noticeForm, setNoticeForm] = useRecoilState(noticeFormState);
 
   const fileInputRef = useRef<HTMLInputElement>(null); //trường hợp: bạn upload xong nhưng input file vẫn giữ file cũ trong DOM
+
+  useEffect(() => {
+    setNoticeForm({
+      title: "",
+      content: "",
+      fileAttachment: "",
+      isTemporarySave: false,
+    });
+  }, []);
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNoticeForm((prev) => ({
@@ -57,7 +65,7 @@ const NoticeForm = ({ noticeId }: NoticeFormProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const uploadedUrl = await uploadFile(file); // ✅ Gọi upload function
+      const uploadedUrl = await noticeUploadFile(file); // ✅ Gọi upload function
 
       setSelectedFile(file);
       setNoticeForm((prev) => ({
@@ -148,13 +156,18 @@ const NoticeForm = ({ noticeId }: NoticeFormProps) => {
         title: fetchNoticeDetailQuery.data.title,
         content: fetchNoticeDetailQuery.data.content,
         fileAttachment: fetchNoticeDetailQuery.data.fileAttachment || "",
-        fileAttachmentName: fetchNoticeDetailQuery.data.fileAttachmentName || "",
+        fileAttachmentName:
+          fetchNoticeDetailQuery.data.fileAttachmentName || "",
         isTemporarySave: fetchNoticeDetailQuery.data.isTemporarySave,
       });
 
       // Hiển thị tên gốc nếu có
       if (fetchNoticeDetailQuery.data.fileAttachmentName) {
-        const fakeFile = new File([], fetchNoticeDetailQuery.data.fileAttachmentName, { type: "image/jpeg" });
+        const fakeFile = new File(
+          [],
+          fetchNoticeDetailQuery.data.fileAttachmentName,
+          { type: "image/jpeg" },
+        );
         setSelectedFile(fakeFile);
       }
     }

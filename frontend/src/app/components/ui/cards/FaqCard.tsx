@@ -3,6 +3,7 @@
 import { useAuth } from "@/hooks/useAuth";
 import { FaqCards } from "@/types/faq";
 import { Button, Flex, Image, Typography } from "antd";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 interface FaqCardProps {
@@ -11,10 +12,19 @@ interface FaqCardProps {
 
 const FaqCard = ({ faq }: FaqCardProps) => {
   const { user } = useAuth();
+  const router = useRouter();
   const [isContentVisible, setIsContentVisible] = useState(false);
 
   const handleToggleContent = () => {
     setIsContentVisible(!isContentVisible);
+  };
+
+  const handleEdit = () => {
+    router.push(`/faq/write?id=${faq.id}`);
+  };
+
+  const handleTemporarySave = () => {
+    router.push(`/faq/write?id=${faq.id}`);
   };
 
   return (
@@ -77,7 +87,9 @@ const FaqCard = ({ faq }: FaqCardProps) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
+                    cursor: "pointer"
                   }}
+                  onClick={handleTemporarySave}
                 >
                   <span
                     style={{
@@ -108,26 +120,31 @@ const FaqCard = ({ faq }: FaqCardProps) => {
         {/* Buttons */}
         {user?.role === "ADMIN" && (
           <Flex style={{ width: "120px" }} gap={8}>
+            {!faq.isTemporarySave && (
+              <Button
+                size="small"
+                style={{
+                  width: "100%",
+                  height: 32,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  background: "white",
+                  border: "1px solid #CECED3",
+                  borderRadius: 2,
+                  color: "#666670",
+                  fontSize: 13,
+                  fontFamily: "Pretendard",
+                  fontWeight: 400,
+                }}
+                onClick={handleEdit}
+              >
+                수정
+              </Button>
+            )}
             <Button
               size="small"
               style={{
-                height: 32,
-                paddingLeft: 12,
-                paddingRight: 12,
-                background: "white",
-                border: "1px solid #CECED3",
-                borderRadius: 2,
-                color: "#666670",
-                fontSize: 13,
-                fontFamily: "Pretendard",
-                fontWeight: 400,
-              }}
-            >
-              수정
-            </Button>
-            <Button
-              size="small"
-              style={{
+                width: "100%",
                 height: 32,
                 paddingLeft: 12,
                 paddingRight: 12,
