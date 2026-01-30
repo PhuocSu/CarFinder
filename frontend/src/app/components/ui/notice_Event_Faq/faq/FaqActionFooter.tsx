@@ -4,10 +4,16 @@ import { Button, Flex, Typography } from "antd";
 import { useRecoilValue } from "recoil";
 import { faqState } from "@/store/faqStore.atom";
 import { useFaqQuery } from "@/app/api/faq/useFaqQuery";
+import { useRouter } from "next/navigation";
 
 const FaqActionFooter = () => {
+  const router = useRouter();
   const faqData = useRecoilValue(faqState);
   const { data } = useFaqQuery(faqData.page, faqData.limit, faqData.search);
+
+  const handleWriteClick = () => {
+    router.push("/faq/write");
+  };
   return (
     <Flex justify="space-between" align="center">
       <Typography.Text>
@@ -51,6 +57,7 @@ const FaqActionFooter = () => {
             fontWeight: "700",
             wordWrap: "break-word",
           }}
+          onClick={handleWriteClick}
         >
           글쓰기
         </div>

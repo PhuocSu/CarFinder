@@ -8,6 +8,8 @@ import styles from "./css/FaqList.module.scss";
 import { useFaqQuery } from "@/app/api/faq/useFaqQuery";
 import FaqCard from "../../cards/FaqCard";
 import { useMemo } from "react";
+import { useRecoilValue } from "recoil";
+import { faqState } from "@/store/faqStore.atom";
 import { useAuth } from "@/hooks/useAuth";
 
 const CategoryLabel: Record<Category, string> = {
@@ -25,7 +27,9 @@ const onChange = (key: string) => {
 
 const FaqList = () => {
   const { user } = useAuth();
-  const { data } = useFaqQuery(1, 10);
+  const faqData = useRecoilValue(faqState);
+  const { data } = useFaqQuery(faqData.page, faqData.limit, faqData.search);
+  
   const filteredData = useMemo(() => {
     if (!data?.items) return [];
 

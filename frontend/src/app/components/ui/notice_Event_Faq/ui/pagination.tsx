@@ -9,14 +9,14 @@ const PaginationComponent = () => {
   return (
     <>
       <Pagination
-        defaultCurrent={1}
+        current={1}
         total={60}
         pageSize={10}
         showSizeChanger={false}
         showQuickJumper={false}
         itemRender={(page, type, originalElement) => {
           if (type === "page") {
-            return page <= current ? <a>{page}</a> : null // display page <= current
+            return <a>{page}</a>;
           }
           if (type === "prev" || type === "next") {
             return null; // hide prev/next

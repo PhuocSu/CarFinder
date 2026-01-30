@@ -2,7 +2,15 @@
 
 import { Editor } from "@tinymce/tinymce-react";
 import { Button, Flex, Input, Select, Typography } from "antd";
-import { FAQ_CATEGORY_OPTIONS } from "@/constants/faq/faqCategoryOptions";
+import { Category } from "@/enums/category.enum";
+
+const FAQ_CATEGORY_OPTIONS = [
+  { value: Category.VEHICLE_AND_CONTRACT_PROCEDURE, label: "차량 및 계약 절차 관련" },
+  { value: Category.CONTRACT_CONDITIONS, label: "계약 조건 관련" },
+  { value: Category.PAYMENT_AND_COSTS, label: "결제/비용 관련" },
+  { value: Category.VEHICLE_ACCEPTANCE, label: "인수관련" },
+  { value: Category.OTHERS, label: "기타" },
+];
 
 const FaqForm = () => {
   return (

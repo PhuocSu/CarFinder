@@ -60,7 +60,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
           gap={"8px"}
           style={{ position: "absolute", top: "8px", left: "8px" }}
         >
-          {vehicle.vehicleBadge.map((badge: string, index: number) => (
+          {vehicle.vehicleBadge?.map((badge: string, index: number) => (
             <div
               key={index}
               style={{

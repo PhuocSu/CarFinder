@@ -1,23 +1,34 @@
 "use client";
 import { Pagination } from "antd";
 import { useState } from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { faqState } from "@/store/faqStore.atom";
+import { useFaqQuery } from "@/app/api/faq/useFaqQuery";
 
 const FaqPagination = () => {
-  const [current, setCurrent] = useState(1);
-  const total = 60;
-  const pageSize = 10;
+  const { page, limit, search } = useRecoilValue(faqState);
+  const { data } = useFaqQuery(page, limit, search);
+  const setFaqData = useSetRecoilState(faqState);
+
+  const handlePageChange = (page: number) => {
+    setFaqData((prev) => ({
+      ...prev,
+      page: page
+    }));
+  };
 
   return (
     <>
       <Pagination
-        defaultCurrent={1}
-        total={60}
-        pageSize={10}
+        current={page}
+        total={data?.total || 0}
+        pageSize={limit}
         showSizeChanger={false}
         showQuickJumper={false}
+        onChange={handlePageChange}
         itemRender={(page, type, originalElement) => {
           if (type === "page") {
-            return page <= current ? <a>{page}</a> : null // display page <= current
+            return <a>{page}</a>;
           }
           if (type === "prev" || type === "next") {
             return null; // hide prev/next
