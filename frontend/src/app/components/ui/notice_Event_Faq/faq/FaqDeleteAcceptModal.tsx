@@ -8,7 +8,7 @@ interface FaqDeleteAcceptModalProps {
   loading?: boolean;
 }
 
-const FaqDeleteAcceptModal = ({
+const useFaqDeleteAcceptModal = ({
   open,
   onOk,
   onCancel,
@@ -39,4 +39,4 @@ const FaqDeleteAcceptModal = ({
   );
 };
 
-export default FaqDeleteAcceptModal;
+export default useFaqDeleteAcceptModal;

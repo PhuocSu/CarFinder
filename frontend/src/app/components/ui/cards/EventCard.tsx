@@ -52,8 +52,9 @@ const EventCard = ({ event }: EventCardProps) => {
     >
       <div style={{ position: "relative" }}>
         <Image
-          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          src={event.fileAttachment}
           preview={false}
+          style={{ width: "245px", height: "266px" }}
         />
 
         {event.isTemporarySave == true && (

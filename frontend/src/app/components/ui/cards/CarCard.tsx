@@ -32,7 +32,7 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
         <div style={{ height: "220px", background: "#F5F5F5" }}>
           <Image
             style={{ height: "100%", width: "100%" }}
-            src={vehicle.carImage[0]}
+            src={vehicle.CarImage?.length > 0 ? vehicle.CarImage[0] : "/images/default-car-image-detail.png"}
             alt="CarImage"
             preview={false}
           />

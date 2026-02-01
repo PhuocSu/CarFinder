@@ -5,6 +5,8 @@ import { FaqCards } from "@/types/faq";
 import { Button, Flex, Image, Typography } from "antd";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDeleteFaqMutation } from "@/app/api/faq/useDeleteFaqMutation";
+import FaqDeleteAcceptModal from "../notice_Event_Faq/ui/DeleteAcceptModal";
 
 interface FaqCardProps {
   faq: FaqCards;
@@ -14,6 +16,24 @@ const FaqCard = ({ faq }: FaqCardProps) => {
   const { user } = useAuth();
   const router = useRouter();
   const [isContentVisible, setIsContentVisible] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const deleteMutation = useDeleteFaqMutation();
+
+  const handleDeleteModalOpen = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteModalConfirm = () => {
+    deleteMutation.mutate(faq.id, {
+      onSuccess: () => {
+        setIsModalOpen(false);
+      },
+    });
+  };
 
   const handleToggleContent = () => {
     setIsContentVisible(!isContentVisible);
@@ -87,7 +107,7 @@ const FaqCard = ({ faq }: FaqCardProps) => {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                   onClick={handleTemporarySave}
                 >
@@ -156,6 +176,7 @@ const FaqCard = ({ faq }: FaqCardProps) => {
                 fontFamily: "Pretendard",
                 fontWeight: 400,
               }}
+              onClick={handleDeleteModalOpen}
             >
               삭제
             </Button>
@@ -202,6 +223,14 @@ const FaqCard = ({ faq }: FaqCardProps) => {
           </div>
         </Flex>
       )}
+
+      <FaqDeleteAcceptModal
+        open={isModalOpen}
+        onOk={handleDeleteModalConfirm}
+        onCancel={handleDeleteModalClose}
+        loading={deleteMutation.isPending}
+      />
+
     </Flex>
   );
 };
