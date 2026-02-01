@@ -1,6 +1,6 @@
 import api from "@/lib/axios";
 
-const faqUploadFile = async (file: File) => {
+const useUploadFile = async (file: File) => {
   const formData = new FormData();
   formData.append("file", file);
 
@@ -13,4 +13,4 @@ const faqUploadFile = async (file: File) => {
   return res.data.url as string;
 };
 
-export default faqUploadFile;
+export default useUploadFile;

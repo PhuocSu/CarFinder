@@ -11,6 +11,9 @@ export class CreateEventDto {
     fileAttachment: string
 
     @IsNotEmpty()
+    fileAttachmentName: string
+
+    @IsNotEmpty()
     startDate: Date
 
     @IsNotEmpty()

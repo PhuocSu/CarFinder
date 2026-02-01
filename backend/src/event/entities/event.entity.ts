@@ -16,6 +16,9 @@ export class Event {
     fileAttachment: string
 
     @Column()
+    fileAttachmentName: string
+
+    @Column()
     startDate: Date
 
     @Column()

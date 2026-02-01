@@ -21,14 +21,14 @@ export class EventController {
     findAll(
         @Query('search') search?: string,
         @Query('page') page = 1,
-        @Query('limit') limit = 10
+        @Query('limit') limit = 8
     ) {
         return this.eventService.findAll(search, page, limit);
     }
 
     @Public()
-    @Get(':id')
-    findOne(@Param('id') id: number) {
+    @Get('/write')
+    findOne(@Query('id') id: number) {
         return this.eventService.findOne(id);
     }
 

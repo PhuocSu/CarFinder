@@ -1,13 +1,14 @@
 "use client";
 
-import EventCard from "../components/ui/cards/EventCard";
+import EventPage from "../components/ui/notice_Event_Faq/event/EventPage";
 
-const EventPage = () => {
+
+const EventPageComponent = () => {
     return (
-        <div>
-            <EventCard />
+        <div style={{width: "1200px", margin: "0 auto"}}>
+            <EventPage />
         </div>
     );
 };
 
-export default EventPage;
+export default EventPageComponent;

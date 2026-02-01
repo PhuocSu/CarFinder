@@ -10,7 +10,7 @@ import { faqFormState } from "@/store/faqStore.atom";
 import { useRouter } from "next/navigation";
 import { useUpdateFaqMutation } from "@/app/api/faq/useUpdateFaqMutation";
 import { useFaqDetailQuery } from "@/app/api/faq/useFaqDetailQuery";
-import faqUploadFile from "@/hooks/useFaqFileUpload";
+import useUploadFile from "@/hooks/useFileUpload";
 
 const FAQ_CATEGORY_OPTIONS = [
   {
@@ -79,7 +79,7 @@ const FaqForm = ({ faqId }: FaqFormProps) => {
     const file = e.target.files?.[0];
     if (!file) return;
     try {
-      const uploadedUrl = await faqUploadFile(file); // ✅ Gọi upload function
+      const uploadedUrl = await useUploadFile(file); // ✅ Gọi upload function
 
       setSelectedFile(file);
       setFaqForm((prev) => ({

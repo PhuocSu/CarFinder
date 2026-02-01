@@ -1,14 +1,102 @@
 "use client";
 
+import { EventCards } from "@/types/event";
+import { formatDate } from "@/utils/formatDate";
 import { Button, Flex, Image, Typography } from "antd";
+import styles from "./css/EventCard.module.scss";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useDeleteEventMutation } from "@/app/api/event/useDeleteEventMutation";
+import EventDeleteAcceptModal from "../notice_Event_Faq/event/EventDeleteAcceptModal";
 
-const EventCard = () => {
+interface EventCardProps {
+  event: EventCards;
+}
+
+const EventCard = ({ event }: EventCardProps) => {
+  const router = useRouter();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const deleteMutation = useDeleteEventMutation();
+
+  const handleDeleteModalOpen = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Ngăn event bubbling
+    console.log("🔓 Mở modal");
+    setIsModalOpen(true);
+  };
+
+  const handleDeleteModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleDeleteModalConfirm = () => {
+    deleteMutation.mutate(event.id, {
+      onSuccess: () => {
+        setIsModalOpen(false);
+      },
+    });
+  };
+
+  const handleEdit = () => {
+    router.push(`/event/write?id=${event.id}`);
+  };
+
+  const handleTemporarySave = () => {
+    router.push(`/event/write?id=${event.id}`);
+  };
+
   return (
     <Flex
       vertical
-      style={{ width: "245px", padding: "20px", border: "1px solid #E0E0E3" }}
+      className={styles["card--container"]}
+      style={{ width: "285px", padding: "20px", border: "1px solid #E0E0E3" }}
     >
-      <Image src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png" />
+      <div style={{ position: "relative" }}>
+        <Image
+          src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
+          preview={false}
+        />
+
+        {event.isTemporarySave == true && (
+          <div
+            style={{
+              width: "77px",
+              height: "24px",
+              paddingLeft: 10,
+              paddingRight: 10,
+              background: "#555555",
+              borderRadius: 10,
+              justifyContent: "flex-start",
+              alignItems: "center",
+              gap: 8,
+              display: "inline-flex",
+              cursor: "pointer",
+              position: "absolute",
+              top: 5,
+              right: 5,
+            }}
+            onClick={handleTemporarySave}
+          >
+            <div
+              style={{
+                width: "100%",
+                height: "100%",
+                textAlign: "right",
+                justifyContent: "center",
+                alignItems: "center",
+                display: "flex",
+                flexDirection: "column",
+                color: "white",
+                fontSize: 12,
+                fontFamily: "Noto Sans KR",
+                fontWeight: "400",
+                wordWrap: "break-word",
+              }}
+            >
+              임시저장
+            </div>
+          </div>
+        )}
+      </div>
 
       <Typography.Text
         style={{
@@ -21,10 +109,10 @@ const EventCard = () => {
           fontFamily: "Noto Sans KR",
           fontWeight: "700",
           wordWrap: "break-word",
-          marginTop: "10px"
+          marginTop: "10px",
         }}
       >
-        702 Prime 의 이벤트 소식을 접해보세요 접해보세요.
+        {event.title}
       </Typography.Text>
 
       <Typography.Text
@@ -38,10 +126,10 @@ const EventCard = () => {
           fontFamily: "Noto Sans KR",
           fontWeight: "400",
           wordWrap: "break-word",
-          marginTop: "10px"
+          marginTop: "10px",
         }}
       >
-        2025.05.02 ~ 2024.02.02
+        {formatDate(event.startDate)} ~ {formatDate(event.endDate)}
       </Typography.Text>
 
       <Flex gap={8} style={{ marginTop: "10px" }}>
@@ -64,6 +152,7 @@ const EventCard = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleEdit}
         >
           <span
             style={{
@@ -96,6 +185,7 @@ const EventCard = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={(e) => handleDeleteModalOpen(e)}
         >
           <span
             style={{
@@ -110,6 +200,13 @@ const EventCard = () => {
           </span>
         </Button>
       </Flex>
+
+      <EventDeleteAcceptModal
+        open={isModalOpen}
+        onOk={handleDeleteModalConfirm}
+        onCancel={handleDeleteModalClose}
+        loading={deleteMutation.isPending}
+      />
     </Flex>
   );
 };

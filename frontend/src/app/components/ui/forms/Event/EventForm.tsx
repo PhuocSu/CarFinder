@@ -1,16 +1,176 @@
 "use client";
 
+import { useCreateEventMutation } from "@/app/api/event/useCreationEventMutation";
+import { useEventDetailQuery } from "@/app/api/event/useEventDetailQuery";
+import { useUpdateEventMutation } from "@/app/api/event/useUpdateEventMutation";
+import useUploadFile from "@/hooks/useFileUpload";
+import { eventFormState } from "@/store/eventStore.atom";
 import { Editor } from "@tinymce/tinymce-react";
-import { Button, ConfigProvider, DatePickerProps, Flex, Input, Typography } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  DatePickerProps,
+  Flex,
+  Input,
+  message,
+  Typography,
+} from "antd";
 import { DatePicker } from "antd";
 
 import koKR from "antd/es/locale/ko_KR";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { useRecoilState } from "recoil";
 
-const { RangePicker } = DatePicker;
+interface EventFormProps {
+  eventId?: string;
+}
 
-const EventForm = () => {
+const EventForm = ({ eventId }: EventFormProps) => {
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const router = useRouter();
+  const [eventForm, setEventForm] = useRecoilState(eventFormState);
+  const createEventMutation = useCreateEventMutation();
+  const updateEventMutation = useUpdateEventMutation();
+  const fetchEventDetailQuery = useEventDetailQuery(eventId || "");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setEventForm({
+      title: "",
+      subTitle: "",
+      fileAttachment: "",
+      startDate: "",
+      endDate: "",
+      content: "",
+      isTemporarySave: false,
+    });
+  }, []);
+
+  useEffect(() => {
+    if (fetchEventDetailQuery.data && eventId) {
+      setEventForm({
+        title: fetchEventDetailQuery.data.title,
+        subTitle: fetchEventDetailQuery.data.subTitle,
+        fileAttachment: fetchEventDetailQuery.data.fileAttachment || "",
+        fileAttachmentName: fetchEventDetailQuery.data.fileAttachmentName || "",
+        content: fetchEventDetailQuery.data.content,
+        startDate: fetchEventDetailQuery.data.startDate,
+        endDate: fetchEventDetailQuery.data.endDate,
+        isTemporarySave: fetchEventDetailQuery.data.isTemporarySave,
+      });
+    }
+  }, [fetchEventDetailQuery.data, eventId]);
+
+  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEventForm((prev) => ({
+      ...prev,
+      title: e.target.value,
+    }));
+  };
+
+  const handleSubTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEventForm((prev) => ({
+      ...prev,
+      subTitle: e.target.value,
+    }));
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    try {
+      const uploadedUrl = await useUploadFile(file); // ✅ Gọi upload function
+
+      setSelectedFile(file);
+      setEventForm((prev) => ({
+        ...prev,
+        fileAttachment: uploadedUrl, // ✅ Lưu URL đã upload
+        fileAttachmentName: file.name,
+      }));
+
+      message.success("파일 업로드 성공!");
+    } catch (error) {
+      message.error("파일 업로드 실패");
+      console.error("Upload error:", error);
+    }
+  };
+
+  const handleStartDateChange: DatePickerProps["onChange"] = (
+    date,
+    dateString,
+  ) => {
+    setEventForm((prev) => ({
+      ...prev,
+      startDate: (dateString as string) || "", // dateString đã là string format
+    }));
+  };
+
+  const handleEndDateChange: DatePickerProps["onChange"] = (
+    date,
+    dateString,
+  ) => {
+    setEventForm((prev) => ({
+      ...prev,
+      endDate: (dateString as string) || "", // dateString đã là string format
+    }));
+  };
+
+  const handleContentChange = (content: string) => {
+    setEventForm((prev) => ({
+      ...prev,
+      content: content,
+    }));
+  };
+
+  const handleConfirm = () => {
+    if (eventId) {
+      updateEventMutation.mutate({
+        id: eventId!,
+        data: {
+          ...eventForm,
+          isTemporarySave: false,
+        },
+      });
+    } else {
+      createEventMutation.mutate({
+        ...eventForm,
+      });
+    }
+  };
+
+  const handleTemporarySave = () => {
+    if (eventId) {
+      updateEventMutation.mutate({
+        id: eventId!,
+        data: {
+          ...eventForm,
+          isTemporarySave: true,
+        },
+      });
+    } else {
+      createEventMutation.mutate({
+        ...eventForm,
+        isTemporarySave: true,
+      });
+    }
+  };
+
+  const handleCancel = () => {
+    setEventForm({
+      title: "",
+      subTitle: "",
+      fileAttachment: "",
+      startDate: "",
+      endDate: "",
+      content: "",
+      isTemporarySave: false,
+    });
+    router.back();
+  };
+
   return (
     <Flex vertical align="center" gap={"80px"} style={{ marginBottom: "80px" }}>
       <Typography.Text
@@ -38,6 +198,8 @@ const EventForm = () => {
             <Input
               placeholder="글제목을 입력해주세요."
               style={{ height: "100%" }}
+              value={eventForm.title}
+              onChange={handleTitleChange}
             />
           </Flex>
 
@@ -51,6 +213,8 @@ const EventForm = () => {
             <Input
               placeholder="글제목을 입력해주세요."
               style={{ height: "100%" }}
+              value={eventForm.subTitle}
+              onChange={handleSubTitleChange}
             />
           </Flex>
 
@@ -60,10 +224,24 @@ const EventForm = () => {
             >
               파일첨부
             </Typography.Text>
+
+            <input
+              type="file"
+              id="file-upload"
+              ref={fileInputRef}
+              hidden
+              onChange={handleFileChange}
+            />
+
             <Input
               placeholder="선택된 파일 없음"
               style={{ height: "100%", width: "458px" }}
               disabled
+              value={
+                eventId
+                  ? eventForm.fileAttachmentName
+                  : selectedFile?.name || ""
+              }
             />
             <Button
               data-icon="none"
@@ -86,6 +264,7 @@ const EventForm = () => {
                 gap: 4,
                 display: "inline-flex",
               }}
+              onClick={() => document.getElementById("file-upload")?.click()}
             >
               <div
                 style={{
@@ -109,11 +288,16 @@ const EventForm = () => {
             </Typography.Text>
 
             {/* Date entry and Due date */}
-            <Flex gap={"12px"} style={{height: "40px" }}>
+            <Flex gap={"12px"} style={{ height: "40px" }}>
               <ConfigProvider locale={koKR}>
                 <DatePicker
                   style={{ width: 224 }}
                   placeholder="시작일을 선택해주세요."
+                  format="YYYY-MM-DD"
+                  value={
+                    eventForm.startDate ? dayjs(eventForm.startDate) : null
+                  }
+                  onChange={handleStartDateChange}
                 />
               </ConfigProvider>
 
@@ -121,6 +305,9 @@ const EventForm = () => {
                 <DatePicker
                   style={{ width: 224 }}
                   placeholder="종료일을 선택해주세요."
+                  format="YYYY-MM-DD"
+                  value={eventForm.endDate ? dayjs(eventForm.endDate) : null}
+                  onChange={handleEndDateChange}
                 />
               </ConfigProvider>
             </Flex>
@@ -170,7 +357,8 @@ const EventForm = () => {
             toolbar:
               "undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat",
           }}
-          initialValue=""
+          onEditorChange={handleContentChange}
+          value={eventForm.content}
         />
       </Flex>
 
@@ -193,6 +381,7 @@ const EventForm = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleConfirm}
         >
           <span
             style={{
@@ -228,6 +417,7 @@ const EventForm = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleTemporarySave}
         >
           <span
             style={{
@@ -262,6 +452,7 @@ const EventForm = () => {
             gap: 4,
             display: "inline-flex",
           }}
+          onClick={handleCancel}
         >
           <span
             style={{
