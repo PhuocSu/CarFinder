@@ -8,12 +8,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useDeleteEventMutation } from "@/app/api/event/useDeleteEventMutation";
 import EventDeleteAcceptModal from "../notice_Event_Faq/event/EventDeleteAcceptModal";
+import { useAuth } from "@/hooks/useAuth";
 
 interface EventCardProps {
   event: EventCards;
 }
 
 const EventCard = ({ event }: EventCardProps) => {
+  const { user } = useAuth();
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const deleteMutation = useDeleteEventMutation();
@@ -57,7 +59,7 @@ const EventCard = ({ event }: EventCardProps) => {
           style={{ width: "245px", height: "266px" }}
         />
 
-        {event.isTemporarySave == true && (
+        {user?.role === "ADMIN" && event.isTemporarySave === true && (
           <div
             style={{
               width: "77px",
@@ -167,39 +169,42 @@ const EventCard = ({ event }: EventCardProps) => {
             수정
           </span>
         </Button>
-        <Button
-          data-icon="none"
-          data-shownumber="true"
-          data-size="small"
-          data-state="enabled"
-          data-style="tertiary"
-          style={{
-            flex: 1,
-            paddingLeft: 12,
-            paddingRight: 12,
-            background: "var(--button-tertiary-bg-enabled, white)",
-            borderRadius: 2,
-            outline: "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
-            outlineOffset: "-1px",
-            justifyContent: "center",
-            alignItems: "center",
-            gap: 4,
-            display: "inline-flex",
-          }}
-          onClick={(e) => handleDeleteModalOpen(e)}
-        >
-          <span
+        {!event.isTemporarySave && (
+          <Button
+            data-icon="none"
+            data-shownumber="true"
+            data-size="small"
+            data-state="enabled"
+            data-style="tertiary"
             style={{
-              color: "var(--button-tertiary-fg-enabled, #666670)",
-              fontSize: 13,
-              fontFamily: "Pretendard",
-              fontWeight: "400",
-              wordWrap: "break-word",
+              flex: 1,
+              paddingLeft: 12,
+              paddingRight: 12,
+              background: "var(--button-tertiary-bg-enabled, white)",
+              borderRadius: 2,
+              outline:
+                "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
+              outlineOffset: "-1px",
+              justifyContent: "center",
+              alignItems: "center",
+              gap: 4,
+              display: "inline-flex",
             }}
+            onClick={(e) => handleDeleteModalOpen(e)}
           >
-            삭제
-          </span>
-        </Button>
+            <span
+              style={{
+                color: "var(--button-tertiary-fg-enabled, #666670)",
+                fontSize: 13,
+                fontFamily: "Pretendard",
+                fontWeight: "400",
+                wordWrap: "break-word",
+              }}
+            >
+              삭제
+            </span>
+          </Button>
+        )}
       </Flex>
 
       <EventDeleteAcceptModal
