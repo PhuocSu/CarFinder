@@ -4,6 +4,8 @@ import { Badge, Image } from "antd";
 import styles from "./RightSidebar.module.scss";
 import { useRouter } from "next/navigation";
 import { useCompare } from "@/hooks/useCompare";
+import { useRecoilValue } from "recoil";
+import { compareCarState } from "@/store/compareCar.atom";
 
 interface RightSidebarProps {
   onOpen: () => void;
@@ -11,7 +13,7 @@ interface RightSidebarProps {
 
 const RightSidebar = ({onOpen}: RightSidebarProps) => {
   const router = useRouter();
-
+  const compareCars = useRecoilValue(compareCarState);
   const { open } = useCompare();
 
   const handleFavoriteClick = () => {
@@ -48,7 +50,7 @@ const RightSidebar = ({onOpen}: RightSidebarProps) => {
       </div>
 
       <div className={styles["right-sidebar__badge"]} onClick={handleCompareClick}>
-        <Badge count={5} style={{ backgroundColor: "#4F4C6B" }}>
+        <Badge count={compareCars.length} style={{ backgroundColor: "#4F4C6B" }}>
           <Image src="/images/sidebar/CompareBadge.svg" preview={false} />
         </Badge>
         <span>비교하기</span>
