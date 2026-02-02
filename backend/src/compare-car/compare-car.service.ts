@@ -56,7 +56,7 @@ export class CompareCarService {
         where: {
           user: { id: userId },
         },
-        relations: ['car'],
+        relations: ['car', 'car.subModel', 'car.subModel.model'],
         order: {
           createdAt: 'DESC',
         },

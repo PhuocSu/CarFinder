@@ -25,7 +25,7 @@ const RightSidebar = ({onOpen}: RightSidebarProps) => {
   return (
     <div className={styles["right-sidebar"]}>
       <div className={styles["right-sidebar__badge"]} onClick={onOpen}>
-        <Badge count={5} style={{ backgroundColor: "#4F4C6B" }}>
+        <Badge style={{ backgroundColor: "#4F4C6B" }}>
           <Image
             src="/images/sidebar/RecentlyViewedBagde.svg"
             preview={false}
@@ -38,7 +38,7 @@ const RightSidebar = ({onOpen}: RightSidebarProps) => {
       </div>
 
       <div className={styles["right-sidebar__badge"]} onClick={handleFavoriteClick}>
-        <Badge count={5} style={{ backgroundColor: "#4F4C6B" }}>
+        <Badge style={{ backgroundColor: "#4F4C6B" }}>
           <Image src="/images/sidebar/FavoriteBadge.svg" preview={false} />
         </Badge>
         <span>관심차량</span>
