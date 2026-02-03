@@ -13,7 +13,7 @@ const NoticeList = () => {
   const noticeData = useRecoilValue(noticeState);
   const searchTerm = noticeData.search;
 
-  const { data, isLoading, error } = useNoticeQuery(
+  const { data, isFetching , error } = useNoticeQuery(
     noticeData.page,
     noticeData.limit,
     searchTerm,
@@ -30,7 +30,7 @@ const NoticeList = () => {
     });
   }, [data, user]);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isFetching ) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
   
   return (

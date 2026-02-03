@@ -10,7 +10,7 @@ import CarCard from "@/app/components/ui/cards/CarCard";
 
 const VehicleList = () => {
   const filter = useRecoilValue(vehicleFilterReadSelector);
-  const { data: vehicles, isLoading, isError } = useVehiclesQuery();
+  const { data: vehicles, isFetching, isError } = useVehiclesQuery();
 
   // console.log("vehicles data:", vehicles);
   // console.log("filter state:", filter);
@@ -38,7 +38,7 @@ const VehicleList = () => {
         </Typography.Text>
 
         <Row gutter={[20, 20]}>
-          {isLoading ? (
+          {isFetching ? (
             <div>Loading...</div>
           ) : (
             vehicles?.data
@@ -67,7 +67,7 @@ const VehicleList = () => {
         </Typography.Text>
 
         <Row gutter={[20, 20]}>
-          {isLoading ? (
+          {isFetching ? (
             <div>Loading...</div>
           ) : (
             vehicles?.data
