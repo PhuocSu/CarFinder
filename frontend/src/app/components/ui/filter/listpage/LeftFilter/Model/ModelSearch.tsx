@@ -9,61 +9,46 @@ import { useModelQuery } from "@/app/api/listPage/useModelQuery";
 const ModelSearch = () => {
   // format dữ liệu trả về sau này
   const { data: models = [] } = useModelQuery();
-  const [,setVehicleFilter] = useRecoilState(vehicleFilterState);
-
+  const [filter, setFilter] = useRecoilState(vehicleFilterState);
+  const selectedModelIds = filter.modelIds ?? [];
+  const selectedSubModelIds = filter.subModelIds ?? [];
   const [activeModelId, setActiveModelId] = useState<number | null>(null); //model hiện tại đang mở submenu
-  const [selectedModelIds, setSelectedModelIds] = useState<number[]>([]); // danh sách Model
-  const [selectedSubModelIds, setSelectedSubModelIds] = useState<number[]>([]); //danh sách SubModel
   const [isOpen, setIsOpen] = useState(true);
 
-  const filter = useRecoilValue(vehicleFilterState);
-
-  useEffect(() => {
-    setVehicleFilter((prev) => ({
-      ...prev,
-      modelIds: selectedModelIds.length > 0 ? selectedModelIds : [],
-      subModelIds: selectedSubModelIds.length > 0 ? selectedSubModelIds : [],
-      page: 1,
-    }));
-  }, [selectedSubModelIds, selectedModelIds]);
-
-  useEffect(() => {
-    if (filter.modelIds?.length === 0 && selectedModelIds.length > 0 || filter.subModelIds?.length === 0 && selectedSubModelIds.length > 0) {
-      setSelectedModelIds([]);
-      setSelectedSubModelIds([]);
-      setActiveModelId(null);
-    }
-  }, [filter.modelIds, filter.subModelIds]);
-
   // toggle submodel
-  const toggleSubModel = (id: number) => {
-    setSelectedSubModelIds((prev) => {
-      if (prev.includes(id)) {
-        return prev.filter((subId) => subId !== id);
-      } else {
-        return [...prev, id];
-      }
-    });
-  };
+  const toggleSubModel = (subModelId: number) => {
+  setFilter((prev) => ({
+    ...prev,
+    subModelIds: prev.subModelIds?.includes(subModelId)
+      ? prev.subModelIds.filter((id) => id !== subModelId)
+      : [...(prev.subModelIds || []), subModelId],
+    page: 1,
+  }));
+};
 
-  const toggleModel = (id: number) => {
-    setSelectedModelIds((prev) => {
-      if (prev.includes(id)) {
-        // Bỏ chọn model => clear subModel thuộc model đó
-        setSelectedSubModelIds((prevSub) =>
-          prevSub.filter((subId) => {
-            const model = models.find((m) => m.id === id);
-            return !model?.subModels.some((sub) => sub.id === subId);
-          })
-        );
-        // nếu đã chọn
-        return prev.filter((modelId) => modelId !== id);
-      } else {
-        // nếu chưa chọn
-        return [...prev, id];
-      }
-    });
-  };
+
+  const toggleModel = (modelId: number) => {
+  setFilter((prev) => {
+    const isSelected = prev.modelIds?.includes(modelId);
+
+    const model = models.find((m) => m.id === modelId);
+    const subIdsOfModel = model?.subModels.map((s) => s.id) ?? [];
+
+    return {
+      ...prev,
+      modelIds: isSelected
+        ? prev.modelIds?.filter((id) => id !== modelId)
+        : [...(prev.modelIds || []), modelId],
+
+      subModelIds: isSelected
+        ? prev.subModelIds?.filter((id) => !subIdsOfModel.includes(id))
+        : prev.subModelIds,
+
+      page: 1,
+    };
+  });
+};
+
 
   return (
     <Flex
@@ -202,7 +187,7 @@ const ModelSearch = () => {
                       >
                         {model.subModels.map((subModel) => {
                           const isSubSelected = selectedSubModelIds.includes(
-                            subModel.id
+                            subModel.id,
                           );
 
                           return (

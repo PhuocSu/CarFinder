@@ -7,9 +7,31 @@ import { useCompare } from "@/hooks/useCompare";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import RecentlyViewed from "../components/ui/sideBar/RecentlyViewed/RecentlyViewed";
 import Compare from "../components/ui/sideBar/Compare/Compare";
+import { useSearchParams } from "next/navigation";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
+import { useEffect } from "react";
 
 const ListPage = () => {
     const { isOpen, open, close } = useRecentlyViewed();
+    const searchParams = useSearchParams();
+    const [filter, setFilter] = useRecoilState(vehicleFilterState);
+
+    useEffect(() => {
+        const search = searchParams.get('search');
+        const badges = searchParams.get('badges'); //lấy giá trị từ query string
+        const modelIds = searchParams.get('modelIds'); 
+
+        setFilter({
+            ...filter,
+            search: search || '',
+            badges: badges ? badges.split(',') : [],
+            modelIds: modelIds ? [parseInt(modelIds)] : [],
+            page: 1, // Reset page khi mới filter
+        });
+    }, [searchParams]);
+
+
     return (
         <div style={{ width: "1200px", height: "100%", margin: "40px auto", display: "flex", gap: "20px", position: "relative" }}>
             <RightSidebar onOpen={open} />

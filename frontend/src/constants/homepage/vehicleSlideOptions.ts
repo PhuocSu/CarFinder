@@ -6,12 +6,12 @@ export type Vehicle = {
 
 export const VEHICLES : Vehicle[] = [
     {
-        id: 1,
+        id: 4,
         name: "티볼리",
         image: "/images/car/Tivoli.svg"
     },
     {
-        id: 2,
+        id: 5,
         name: "렉스턴",
         image: "/images/car/rexton.svg"
     },
@@ -21,12 +21,12 @@ export const VEHICLES : Vehicle[] = [
         image: "/images/car/Actyon.svg"
     },
     {
-        id: 4,
+        id: 6,
         name: "토레스",
         image: "/images/car/torres.svg"
     },
     {
-        id: 5,
+        id: 7,
         name: "코란도",
         image: "/images/car/Korando.svg"
     }

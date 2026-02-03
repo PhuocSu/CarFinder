@@ -9,11 +9,26 @@ import "swiper/css";
 import "swiper/css/navigation";
 
 import styles from "./css/VehicleCarousel.module.scss";
-import { VEHICLES } from "@/constants/homepage/vehicleSlideOptions";
+import { Vehicle, VEHICLES } from "@/constants/homepage/vehicleSlideOptions";
+import { useRouter } from "next/navigation";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
 const LOOP_VEHICLES = [...VEHICLES, ...VEHICLES];
 
 const VehicleCarousel = () => {
+  const router = useRouter();
+  const [, setFilter] = useRecoilState(vehicleFilterState);
+  const handleVehicleClick = (vehicle: Vehicle) => {
+    setFilter(prev => ({
+      ...prev,
+      modelIds: [vehicle.id],
+      page: 1,
+    }));
+    
+    router.push(`/listPage?modelIds=${vehicle.id}`);
+  };
+
   return (
     <div className={styles.wrapper}>
       {/* Custom arrows */}
@@ -43,9 +58,12 @@ const VehicleCarousel = () => {
           <SwiperSlide key={`${vehicle.id}-${index}`}>
             {({ isActive }) => (
               <div
+                key={index}
+                onClick={() => handleVehicleClick(vehicle)}
                 className={`${styles.item} ${
                   isActive ? styles.active : ""
                 }`}
+                style={{ cursor: "pointer" }}
               >
                 <Image
                   src={vehicle.image}

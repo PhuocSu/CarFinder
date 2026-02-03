@@ -14,37 +14,25 @@ const badgeOptions = Object.entries(VehicleBadge).map(([key, value]) => ({
 }));
 
 const BadgeSearch = () => {
-  const [selectedBadges, setSelectedBadges] = useState<string[]>([]);
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
-  const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
-  const filter = useRecoilValue(vehicleFilterState);
 
-  useEffect(() => {
-    setVehicleFilter((prev) => ({
+  const [filter, setFilter] = useRecoilState(vehicleFilterState);
+  const selectedBadges = filter.badges ?? [];
+
+  const toggleBadge = (value: VehicleBadge) => {
+  setFilter((prev) => {
+    const exists = prev.badges?.includes(value);
+
+    return {
       ...prev,
-      badges: selectedBadges.length > 0 ? selectedBadges : [],
+      badges: exists
+        ? prev.badges.filter((b) => b !== value)
+        : [...(prev.badges ?? []), value],
       page: 1,
-    }));
-  }, [selectedBadges]);
+    };
+  });
+};
 
-  useEffect(() => {
-    // Khi reset filter (badges = []) => sync lại selectedBadges xóa đi UI click
-    if (filter.badges.length === 0 && selectedBadges.length > 0) {
-      setSelectedBadges([]);
-    }
-  }, [filter.badges]);
-
-  const toggleBadge = (value: string) => {
-    setSelectedBadges((prev) => {
-      if (prev.includes(value)) {
-        // nếu đã chọn
-        return prev.filter((badge) => badge !== value);
-      } else {
-        // nếu chưa chọn
-        return [...prev, value];
-      }
-    });
-  };
 
   return (
     <Flex
