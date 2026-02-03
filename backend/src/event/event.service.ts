@@ -40,9 +40,30 @@ export class EventService {
     };
   }
 
-  async findOne(id: number) {
-    return await this.eventRepository.findOne({ where: { id } });
-  }
+async findOne(id: number) {
+  const currentEvent = await this.eventRepository.findOne({ where: { id } });
+  if (!currentEvent) return null;
+
+  // lấy danh sách như findAll
+  const allEvents = await this.eventRepository
+    .createQueryBuilder('event')
+    .orderBy('event.isTemporarySave', 'DESC')
+    .addOrderBy('event.createdAt', 'DESC')
+    .getMany();
+
+  // tìm vị trí hiện tại
+  const currentIndex = allEvents.findIndex(event => event.id === id);
+  
+  // lấy prev và next
+  const prevEvent = currentIndex > 0 ? allEvents[currentIndex - 1] : null;
+  const nextEvent = currentIndex < allEvents.length - 1 ? allEvents[currentIndex + 1] : null;
+
+  return {
+    ...currentEvent,
+    prevEventId: prevEvent?.id || null,
+    nextEventId: nextEvent?.id || null,
+  };
+}
 
   async update(id: number, dto: UpdateEventDto) {
     await this.eventRepository.update(id, dto);

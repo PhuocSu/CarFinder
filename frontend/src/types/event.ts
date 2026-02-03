@@ -10,6 +10,8 @@ export interface EventCards {
   isTemporarySave: boolean;
   createdAt: string;
   updatedAt: string;
+  prevEventId?: number | null;
+  nextEventId?: number | null;
 }
 
 export interface EventResponse {

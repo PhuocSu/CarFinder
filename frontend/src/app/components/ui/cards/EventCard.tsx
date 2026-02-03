@@ -46,17 +46,22 @@ const EventCard = ({ event }: EventCardProps) => {
     router.push(`/event/write?id=${event.id}`);
   };
 
+  const handleView = () => {
+    router.push(`/event/view/${event.id}`);
+  };
+
   return (
     <Flex
       vertical
       className={styles["card--container"]}
       style={{ width: "285px", padding: "20px", border: "1px solid #E0E0E3" }}
     >
-      <div style={{ position: "relative" }}>
+      <div style={{ position: "relative" }} >
         <Image
           src={event.fileAttachment}
           preview={false}
           style={{ width: "245px", height: "266px" }}
+          onClick={handleView}
         />
 
         {user?.role === "ADMIN" && event.isTemporarySave === true && (
@@ -101,7 +106,8 @@ const EventCard = ({ event }: EventCardProps) => {
         )}
       </div>
 
-      <Typography.Text
+      <div onClick={handleView}>
+        <Typography.Text
         style={{
           width: "100%",
           justifyContent: "center",
@@ -134,6 +140,7 @@ const EventCard = ({ event }: EventCardProps) => {
       >
         {formatDate(event.startDate)} ~ {formatDate(event.endDate)}
       </Typography.Text>
+      </div>
 
       <Flex gap={8} style={{ marginTop: "10px" }}>
         <Button
