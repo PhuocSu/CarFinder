@@ -6,15 +6,13 @@ import { PRICE_STEPS } from "@/enums/price.enum";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
 
-
-
 const PriceSearch = () => {
-  const filter = useRecoilValue(vehicleFilterState);
-  const [, setVehicleFilter] = useRecoilState(vehicleFilterState);
+  const [filter, setFilter] = useRecoilState(vehicleFilterState);
 
   const [isOpen, setIsOpen] = useState(true); //đang hiển thị danh sách (nút mở/đóng)
-  const [selectedStartPrice, setSelectedStartPrice] = useState<number | null>(null);
-  const [selectedEndPrice, setSelectedEndPrice] = useState<number | null>(null);
+  const selectedStartPrice = filter.priceMin ?? null;
+  const selectedEndPrice = filter.priceMax ?? null;
+
   const hasPriceSelected =
     selectedStartPrice !== null || selectedEndPrice !== null;
 
@@ -22,36 +20,28 @@ const PriceSearch = () => {
     ? PRICE_STEPS.filter((price) => price.value >= selectedStartPrice)
     : PRICE_STEPS;
 
-  //reset filter
-  useEffect(() => {
-    const isPriceReset = filter.priceMin === undefined &&
-    filter.priceMax === undefined &&
-    (selectedStartPrice !== null || selectedEndPrice !== null);
-    
-    if(isPriceReset) {
-      setSelectedStartPrice(null);
-      setSelectedEndPrice(null);
-    }
-  }, [filter.priceMin, filter.priceMax]);
-
-  useEffect(() => {
-    setVehicleFilter((prev) => ({
+  const handleStartPriceChange = (value: number) => {
+    setFilter(prev => ({
       ...prev,
-      priceMin: selectedStartPrice ?? undefined,
-      priceMax: selectedEndPrice ?? undefined,
+      priceMin: value,
       page: 1,
     }));
-  }, [selectedStartPrice, selectedEndPrice]);
-
-  useEffect(() => {
-    if (
-      selectedStartPrice &&
-      selectedEndPrice &&
-      selectedStartPrice > selectedEndPrice
-    ) {
-      setSelectedEndPrice(null);
-    }
-  }, [selectedStartPrice]);
+  };
+  const handleEndPriceChange = (value: number) => {
+    setFilter(prev => ({
+      ...prev,
+      priceMax: value,
+      page: 1,
+    }));
+  };
+  const clearPriceFilter = () => {
+    setFilter(prev => ({
+      ...prev,
+      priceMin: undefined,
+      priceMax: undefined,
+      page: 1,
+    }));
+  };
 
   return (
     <Flex
@@ -108,7 +98,7 @@ const PriceSearch = () => {
             <Select
               style={{ width: 122, height: 40 }}
               value={selectedStartPrice ?? undefined}
-              onChange={(value) => setSelectedStartPrice(value ?? null)}
+              onChange={handleStartPriceChange}
               allowClear
               options={PRICE_STEPS}
               placeholder="최소"
@@ -119,7 +109,7 @@ const PriceSearch = () => {
             <Select
               style={{ width: 122, height: 40 }}
               value={selectedEndPrice ?? undefined}
-              onChange={(value) => setSelectedEndPrice(value ?? null)}
+              onChange={handleEndPriceChange}
               allowClear
               options={endPriceOptions}
               placeholder="최대"

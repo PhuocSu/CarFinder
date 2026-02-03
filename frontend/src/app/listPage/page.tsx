@@ -20,15 +20,19 @@ const ListPage = () => {
     useEffect(() => {
         const search = searchParams.get('search');
         const badges = searchParams.get('badges'); //lấy giá trị từ query string
-        const modelIds = searchParams.get('modelIds'); 
+        const modelIds = searchParams.get('modelIds');
+        const priceMin = searchParams.get('priceMin');
+        const priceMax = searchParams.get('priceMax');
 
-        setFilter({
-            ...filter,
+        setFilter(prev => ({
+            ...prev,
             search: search || '',
             badges: badges ? badges.split(',') : [],
             modelIds: modelIds ? [parseInt(modelIds)] : [],
+            priceMin: priceMin ? parseInt(priceMin) : undefined,
+            priceMax: priceMax ? parseInt(priceMax) : undefined,
             page: 1, // Reset page khi mới filter
-        });
+        }));
     }, [searchParams]);
 
 
