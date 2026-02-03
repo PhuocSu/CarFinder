@@ -24,7 +24,7 @@ const PriceSearch = () => {
     setFilter(prev => ({
       ...prev,
       priceMin: value,
-      page: 1,
+      page: 1,  
     }));
   };
   const handleEndPriceChange = (value: number) => {

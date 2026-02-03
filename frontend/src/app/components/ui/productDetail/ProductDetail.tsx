@@ -3,6 +3,7 @@
 import { useState } from "react";
 import ImageSlide from "../imageSlide/ImageSlide";
 import ImageModal from "../imageSlide/ImageModal";
+import ProductDetailComponent from "../forms/ProductDetail/ProductDetail";
 
 const images = [
   "/images/car_sample_in_detail_page.webp",
@@ -35,6 +36,9 @@ const ProductDetail = () => {
         images={images}
         onClose={() => setOpenPreview(false)}
       />
+
+      <ProductDetailComponent />
+
     </div>
   );
 };

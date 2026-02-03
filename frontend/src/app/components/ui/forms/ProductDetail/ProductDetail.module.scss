@@ -1,0 +1,37 @@
+.container {
+  border-radius: 4px;
+  border: 1px solid var(--base-stroke-color-base-stroke-20, #e0e0e3);
+  background: #fff;
+}
+.title {
+  width: 100%;
+  color: var(--base-fg-color-base-fg-60, #4a4a50);
+  font-size: 18px;
+  font-family: "Noto Sans KR";
+  font-weight: 700;
+  word-wrap: break-word;
+}
+
+.basic-vehicle-info__title {
+  color: var(--base-fg-color-base-fg-50, #666670);
+
+  /* KR/Body/body-lg */
+  font-family: "Noto Sans KR";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.4px;
+}
+
+.basic-vehicle-info__value {
+  color: var(--base-fg-color-base-fg-60, #4a4a50);
+
+  /* KR/Title/title-sm */
+  font-family: "Noto Sans KR";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px; /* 150% */
+  letter-spacing: -0.4px;
+}
