@@ -9,7 +9,7 @@ export class RecentlyViewedCarController {
 
   @Post(":carId")
   addCarToRecentlyViewed(@Param('carId') carId: number, @Req() req: any) {
-    return this.recentlyViewedCarService.toggle(req.user.sub, carId);
+    return this.recentlyViewedCarService.trackView(req.user.sub, carId);
   }
 
   @Get()

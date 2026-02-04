@@ -10,7 +10,7 @@ export class RecentlyViewedCarService {
   @InjectRepository(RecentlyViewedCar)
   private recentlyViewedCarRepository: Repository<RecentlyViewedCar>;
 
-  async toggle(userId: number, carId: number) {
+  async trackView(userId: number, carId: number) {
     try {
       const exist = await this.recentlyViewedCarRepository
         .createQueryBuilder('recentlyViewed')
@@ -19,14 +19,17 @@ export class RecentlyViewedCarService {
         .getOne();
 
         if(exist){
-          await this.recentlyViewedCarRepository.remove(exist);
-          return {status: 'removed'}
+          // update time
+          exist.updatedAt = new Date();
+          await this.recentlyViewedCarRepository.save(exist);
+          return {status: 'updated'}
         }
 
         const recentlyViewed = this.recentlyViewedCarRepository.create({
           user: { id: userId },
           car: { id: carId },
         });
+
         await this.recentlyViewedCarRepository.save(recentlyViewed);
         return {status: 'added'}
       
@@ -42,9 +45,9 @@ export class RecentlyViewedCarService {
         where: {
           user: { id: userId },
         },
-        relations: ['car'],
+        relations: ['car', 'car.subModel', 'car.subModel.model'],
         order: {
-          createdAt: 'DESC',
+          updatedAt: 'DESC',
         },
       });
     } catch (error) {

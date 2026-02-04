@@ -14,6 +14,7 @@ import { compareCarState } from "@/store/compareCar.atom";
 import { useToggleCompareMutation } from "@/app/api/compare/useToggleCompareMutation";
 import styles from "./css/CarCard.module.scss";
 import { useRouter } from "next/navigation";
+import { useTrackViewedMutation } from "@/app/api/recentlyViewed/useTrackViewedMutation";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
@@ -26,8 +27,11 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
   const toggleCompare = useToggleCompareMutation();
   const isCompare = compareCars.includes(vehicle.id);
 
+  const trackViewed = useTrackViewedMutation();
+
   const handleProductDetail = () => {
     router.push(`/productDetail?id=${vehicle.id}`);
+    trackViewed.mutate(vehicle.id);
   }
 
   console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);

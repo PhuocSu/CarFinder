@@ -3,12 +3,22 @@
 import { CloseOutlined } from "@ant-design/icons";
 import styles from "./RecentlyViewed.module.scss";
 import { Flex, Image, Typography } from "antd";
+import { useRecentlyViewedQuery } from "@/app/api/recentlyViewed/useRecentlyViewedQuery";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { calculateFinalPrice } from "@/utils/countPrice";
+import { RecentlyViewedItem } from "@/types/recentlyViewed";
+import { useAuth } from "@/hooks/useAuth";
 
 interface RecentlyViewedProps {
   onClose: () => void;
 }
 
-const RecentlyViewed = ({onClose}: RecentlyViewedProps) => {
+const RecentlyViewed = ({ onClose }: RecentlyViewedProps) => {
+  const {user} = useAuth();
+  const { data: ViewedData, isLoading, isError } = useRecentlyViewedQuery(user?.sub);
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError) return <div>Error...</div>;
 
   return (
     <div className={styles["div__container"]}>
@@ -27,10 +37,7 @@ const RecentlyViewed = ({onClose}: RecentlyViewedProps) => {
             padding: "14px",
           }}
         >
-          <CloseOutlined
-            style={{ cursor: "pointer" }}
-            onClick={onClose}
-          />
+          <CloseOutlined style={{ cursor: "pointer" }} onClick={onClose} />
         </div>
 
         <div
@@ -40,179 +47,45 @@ const RecentlyViewed = ({onClose}: RecentlyViewedProps) => {
             overflowY: "scroll",
           }}
         >
-          <Flex vertical className={styles["car__container"]}>
-            <Typography.Text className={styles["createdAt"]}>
-              2025-12-14
-            </Typography.Text>
+          {ViewedData?.map((item: RecentlyViewedItem) => {
+            return (
+              <Flex vertical className={styles["car__container"]}>
+                <Typography.Text className={styles["createdAt"]}>
+                  {new Date(item.updatedAt).toLocaleDateString()}
+                </Typography.Text>
 
-            <Image
-              className={styles["image"]}
-              src="/images/car_sample.webp"
-              preview={false}
-            />
+                <Image
+                  className={styles["image"]}
+                  src={item.car.carImage?.[0] || "/images/default-car-image-detail.png"}
+                  preview={false}
+                />
 
-            <Typography.Text className={styles["car__name"]}>
-              티볼리 베리 뉴 티볼리 1.5 가솔린 2WD V3
-            </Typography.Text>
+                <Typography.Text className={styles["car__name"]}>
+                  {item.car.subModel?.model?.modelName}
+                  {item.car.subModel?.subModelName} {item.car.brandName}
+                </Typography.Text>
 
-            <Flex gap={8}>
-              <Typography.Text className={styles["price__percent"]}>
-                6%
-              </Typography.Text>
-              <Typography.Text className={styles["base__price"]}>
-                15,800,000 원
-              </Typography.Text>
-            </Flex>
+                {item.car.discountPercent > 0 && (
+                  <Flex gap={8}>
+                    <Typography.Text className={styles["price__percent"]}>
+                      {item.car.discountPercent}%
+                    </Typography.Text>
+                    <Typography.Text className={styles["base__price"]}>
+                      {item.car.basePrice.toLocaleString()} 원
+                    </Typography.Text>
+                  </Flex>
+                )}
 
-            <Typography.Text className={styles["price__discount"]}>
-              14,700,000원
-            </Typography.Text>
-          </Flex>
-
-          <Flex vertical className={styles["car__container"]}>
-            <Typography.Text className={styles["createdAt"]}>
-              2025-12-14
-            </Typography.Text>
-
-            <Image
-              className={styles["image"]}
-              src="/images/car_sample.webp"
-              preview={false}
-            />
-
-            <Typography.Text className={styles["car__name"]}>
-              티볼리 베리 뉴 티볼리 1.5 가솔린 2WD V3
-            </Typography.Text>
-
-            <Flex gap={8}>
-              <Typography.Text className={styles["price__percent"]}>
-                6%
-              </Typography.Text>
-              <Typography.Text className={styles["base__price"]}>
-                15,800,000 원
-              </Typography.Text>
-            </Flex>
-
-            <Typography.Text className={styles["price__discount"]}>
-              14,700,000원
-            </Typography.Text>
-          </Flex>
-
-          <Flex vertical className={styles["car__container"]}>
-            <Typography.Text className={styles["createdAt"]}>
-              2025-12-14
-            </Typography.Text>
-
-            <Image
-              className={styles["image"]}
-              src="/images/car_sample.webp"
-              preview={false}
-            />
-
-            <Typography.Text className={styles["car__name"]}>
-              티볼리 베리 뉴 티볼리 1.5 가솔린 2WD V3
-            </Typography.Text>
-
-            <Flex gap={8}>
-              <Typography.Text className={styles["price__percent"]}>
-                6%
-              </Typography.Text>
-              <Typography.Text className={styles["base__price"]}>
-                15,800,000 원
-              </Typography.Text>
-            </Flex>
-
-            <Typography.Text className={styles["price__discount"]}>
-              14,700,000원
-            </Typography.Text>
-          </Flex>
-
-          <Flex vertical className={styles["car__container"]}>
-            <Typography.Text className={styles["createdAt"]}>
-              2025-12-14
-            </Typography.Text>
-
-            <Image
-              className={styles["image"]}
-              src="/images/car_sample.webp"
-              preview={false}
-            />
-
-            <Typography.Text className={styles["car__name"]}>
-              티볼리 베리 뉴 티볼리 1.5 가솔린 2WD V3
-            </Typography.Text>
-
-            <Flex gap={8}>
-              <Typography.Text className={styles["price__percent"]}>
-                6%
-              </Typography.Text>
-              <Typography.Text className={styles["base__price"]}>
-                15,800,000 원
-              </Typography.Text>
-            </Flex>
-
-            <Typography.Text className={styles["price__discount"]}>
-              14,700,000원
-            </Typography.Text>
-          </Flex>
-
-          <Flex vertical className={styles["car__container"]}>
-            <Typography.Text className={styles["createdAt"]}>
-              2025-12-14
-            </Typography.Text>
-
-            <Image
-              className={styles["image"]}
-              src="/images/car_sample.webp"
-              preview={false}
-            />
-
-            <Typography.Text className={styles["car__name"]}>
-              티볼리 베리 뉴 티볼리 1.5 가솔린 2WD V3
-            </Typography.Text>
-
-            <Flex gap={8}>
-              <Typography.Text className={styles["price__percent"]}>
-                6%
-              </Typography.Text>
-              <Typography.Text className={styles["base__price"]}>
-                15,800,000 원
-              </Typography.Text>
-            </Flex>
-
-            <Typography.Text className={styles["price__discount"]}>
-              14,700,000원
-            </Typography.Text>
-          </Flex>
-
-          <Flex vertical className={styles["car__container"]}>
-            <Typography.Text className={styles["createdAt"]}>
-              2025-12-14
-            </Typography.Text>
-
-            <Image
-              className={styles["image"]}
-              src="/images/car_sample.webp"
-              preview={false}
-            />
-
-            <Typography.Text className={styles["car__name"]}>
-              티볼리 베리 뉴 티볼리 1.5 가솔린 2WD V3
-            </Typography.Text>
-
-            <Flex gap={8}>
-              <Typography.Text className={styles["price__percent"]}>
-                6%
-              </Typography.Text>
-              <Typography.Text className={styles["base__price"]}>
-                15,800,000 원
-              </Typography.Text>
-            </Flex>
-
-            <Typography.Text className={styles["price__discount"]}>
-              14,700,000원
-            </Typography.Text>
-          </Flex>
+                <Typography.Text className={styles["price__discount"]}>
+                  {calculateFinalPrice(
+                    item.car.basePrice,
+                    item.car.discountPercent,
+                  ).toLocaleString()}
+                  원
+                </Typography.Text>
+              </Flex>
+            );
+          })}
         </div>
       </div>
     </div>
