@@ -31,6 +31,10 @@ export default function Header() {
     setIsAuthenticated(!!token);
   };
 
+  const handleHomepage = () => {
+    router.push('/')
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("username");
@@ -76,6 +80,8 @@ export default function Header() {
               alt="KGM 인증중고차"
               width={288}
               height={32}
+              onClick={handleHomepage}
+              style={{cursor: "pointer"}}
             />
           </div>
 

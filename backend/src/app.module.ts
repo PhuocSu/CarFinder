@@ -19,6 +19,9 @@ import { CompareCarModule } from './compare-car/compare-car.module';
 import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-car.module';
 import { CloudinaryModule } from './others/cloudinary/cloudinary.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RecentlySearchHistoryController } from './recently-search-history/recently-search-history.controller';
+import { RecentlySearchHistoryService } from './recently-search-history/recently-search-history.service';
+import { RecentlySearchHistoryModule } from './recently-search-history/recently-search-history.module';
 
 @Module({
   imports: [
@@ -76,7 +79,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 
     RecentlyViewedCarModule,
 
-    CloudinaryModule, 
+    CloudinaryModule,
+
+    RecentlySearchHistoryModule,
+
     // cần nên khai báo trong RootAsync 
     // => tránh interceptor chạy đầu tiên trước khi đọc dữ liệu trong.env.development
 
