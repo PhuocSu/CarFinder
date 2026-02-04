@@ -3,7 +3,8 @@ import { CreateRecentlyViewedCarDto } from './dto/create-recently-viewed-car.dto
 import { UpdateRecentlyViewedCarDto } from './dto/update-recently-viewed-car.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RecentlyViewedCar } from './entities/recently-viewed-car.entity';
-import { Repository } from 'typeorm';
+import { LessThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class RecentlyViewedCarService {
@@ -55,4 +56,17 @@ export class RecentlyViewedCarService {
       throw new Error(error);
     }
   }
+
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async cleanOldRecentlyViewed() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 00:00 hôm nay
+
+    await this.recentlyViewedCarRepository.delete({
+      updatedAt: LessThan(today),
+    });
+
+    console.log('[CRON] Cleaned old recently viewed cars');
+  }
+
 }

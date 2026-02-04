@@ -18,6 +18,7 @@ import { FavoriteCarModule } from './favorite-car/favorite-car.module';
 import { CompareCarModule } from './compare-car/compare-car.module';
 import { RecentlyViewedCarModule } from './recently-viewed-car/recently-viewed-car.module';
 import { CloudinaryModule } from './others/cloudinary/cloudinary.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
@@ -25,6 +26,8 @@ import { CloudinaryModule } from './others/cloudinary/cloudinary.module';
       isGlobal: true, // Dùng ở mọi module
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
     }),
+
+    ScheduleModule.forRoot(),
 
     ThrottlerModule.forRoot({
       throttlers: [
