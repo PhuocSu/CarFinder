@@ -5,8 +5,20 @@ import React from "react";
 import { Col, Row } from "antd";
 import BasicVehicleInfo from "./BasicVehicleInfo/BasicVehicleInfo";
 import PriceInfo from "./PriceInfo/PriceInfo";
+import { useSearchParams } from "next/navigation";
+import { useVehicleDetailQuery } from "@/app/api/productDetail/useProductDetailQuery";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { useRecoilState } from "recoil";
+import { vehicleFilterState } from "@/store/VehicleFilter.atom";
+import { Vehicle } from "@/app/api/listPage/useVehiclesQuery";
 
-const ProductDetailComponent = () => {
+const ProductDetailComponent = ({ vehicleDetail }: { vehicleDetail: Vehicle }) => {
+  // const params = useSearchParams();
+  // const { data: vehicleDetail, isFetching, isError } = useVehicleDetailQuery(params.get("id"));
+
+  // if (isFetching) return <div>Loading...</div>;
+  // if (isError) return <div>Error loading vehicle</div>;
+
   return (
     <div style={{ marginTop: "40px" }}>
       <Flex>
@@ -22,16 +34,16 @@ const ProductDetailComponent = () => {
               wordWrap: "break-word",
             }}
           >
-            더 뉴렉스턴 스포츠 칸 쿨멘 2.2 4 WD 노블레스
+            {getVehicleFullName(vehicleDetail!)}
           </Typography.Text>
 
-          <BasicVehicleInfo />
+          <BasicVehicleInfo vehicle={vehicleDetail!}/>
 
         </Flex>
 
         {/* Right content */}
         <Flex vertical style={{ width: "406px" }}>
-            <PriceInfo />
+          <PriceInfo vehicle={vehicleDetail!}/>
         </Flex>
       </Flex>
     </div>

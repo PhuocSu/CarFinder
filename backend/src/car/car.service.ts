@@ -39,7 +39,7 @@ export class CarService {
     try {
       return await this.carRepository.findOne({
         where: { id },
-        relations: ['subModel'],
+        relations: ['subModel', 'subModel.model'],
       });
     } catch (error) {
       console.log('Error finding car:', error);

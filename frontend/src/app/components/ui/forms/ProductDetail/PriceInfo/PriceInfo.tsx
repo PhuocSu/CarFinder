@@ -7,15 +7,20 @@ import { favoriteCarState } from "@/store/favoriteCar.atom";
 import { useToggleFavoriteMutation } from "@/app/api/favorite/useToggleFavoriteMutation";
 import { compareCarState } from "@/store/compareCar.atom";
 import { useToggleCompareMutation } from "@/app/api/compare/useToggleCompareMutation";
+import { Vehicle } from "@/app/api/listPage/useVehiclesQuery";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { formatNumber } from "@/utils/formatNumber";
+import { calculateFinalPrice } from "@/utils/countPrice";
 
-const PriceInfo = () => {
+const PriceInfo = ({vehicle}: {vehicle: Vehicle}) => {
+      const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
       const favoriteCars = useRecoilValue(favoriteCarState);
       const toggleFavorite = useToggleFavoriteMutation();
-      const isFavorite = favoriteCars.includes(1); //để tạm: vehicle.id
+      const isFavorite = favoriteCars.includes(vehicle.id); //để tạm: vehicle.id
     
       const compareCars = useRecoilValue(compareCarState);
       const toggleCompare = useToggleCompareMutation();
-      const isCompare = compareCars.includes(1);
+      const isCompare = compareCars.includes(vehicle.id);
 
   return (
     <Flex
@@ -34,7 +39,7 @@ const PriceInfo = () => {
           wordWrap: "break-word",
         }}
       >
-        123마1243
+        {vehicle.carRegNo}
       </Typography.Text>
 
       <Flex vertical gap={8}>
@@ -48,15 +53,15 @@ const PriceInfo = () => {
             wordWrap: "break-word",
           }}
         >
-          베리 뉴 티볼리 1.5 터보 가솔린 2WD V3 스페셜
+          {getVehicleFullName(vehicle)}
         </Typography.Text>
 
         <Flex gap={12}>
-          <Typography.Text>2022년형</Typography.Text>
+          <Typography.Text>{vehicle.manufacturerYear}년형</Typography.Text>
           <div>.</div>
-          <Typography.Text>1,023,232km</Typography.Text>
+          <Typography.Text>{formatNumber(vehicle.mileage)}km</Typography.Text>
           <div>.</div>
-          <Typography.Text>가솔린</Typography.Text>
+          <Typography.Text>{vehicle.fuelType}</Typography.Text>
         </Flex>
       </Flex>
 
@@ -85,7 +90,7 @@ const PriceInfo = () => {
             color: "var(--base-fg-color-base-fg-50, #666670)",
           }}
         >
-          25,600,000원 <span style={{ color: "rgb(99, 100, 250)" }}>(10%)</span>
+          {formatNumber(vehicle.basePrice)}원 <span style={{ color: "rgb(99, 100, 250)" }}>({vehicle.discountPercent}%)</span>
         </Typography.Text>
       </Flex>
 
@@ -108,7 +113,7 @@ const PriceInfo = () => {
             fontWeight: 700,
           }}
         >
-          23,040,000원
+          {formatNumber(finalPrice)}원
         </Typography.Text>
       </Flex>
 
@@ -138,7 +143,7 @@ const PriceInfo = () => {
           }
           alt="CompareIcon"
           preview={false}
-          onClick={() => toggleCompare.mutate(1)} //vehicle.id
+          onClick={() => toggleCompare.mutate(vehicle.id)} //vehicle.id
         />
 
         <Image
@@ -150,7 +155,7 @@ const PriceInfo = () => {
           }
           alt="FavoriteIcon"
           preview={false}
-          onClick={() => toggleFavorite.mutate(1)} //vehicle.id
+          onClick={() => toggleFavorite.mutate(vehicle.id)} //vehicle.id
         />
       </Flex>
     </Flex>

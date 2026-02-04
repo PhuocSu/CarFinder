@@ -70,7 +70,9 @@
 }
 
 .thumb img {
-  object-fit: cover;
+    max-width: 148px;
+    max-height: 80px;
+    object-fit: cover;
 }
 
 .active {

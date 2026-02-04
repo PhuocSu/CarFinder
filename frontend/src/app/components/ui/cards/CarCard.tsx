@@ -13,10 +13,11 @@ import { useFavoriteQuery } from "@/app/api/favorite/useFavoriteQuery";
 import { compareCarState } from "@/store/compareCar.atom";
 import { useToggleCompareMutation } from "@/app/api/compare/useToggleCompareMutation";
 import styles from "./css/CarCard.module.scss";
+import { useRouter } from "next/navigation";
 
 const CarCard = ({ vehicle }: { vehicle: any }) => {
   const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
-
+  const router = useRouter();
   const favoriteCars = useRecoilValue(favoriteCarState);
   const toggleFavorite = useToggleFavoriteMutation();
   const isFavorite = favoriteCars.includes(vehicle.id);
@@ -24,11 +25,15 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
   const compareCars = useRecoilValue(compareCarState);
   const toggleCompare = useToggleCompareMutation();
   const isCompare = compareCars.includes(vehicle.id);
-  
+
+  const handleProductDetail = () => {
+    router.push(`/productDetail?id=${vehicle.id}`);
+  }
+
   console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);
   return (
-    <Flex className={styles["card--container"]} vertical style={{ width: "100%", borderRadius: "8px" }}>
-      <Flex vertical style={{ position: "relative"}}>
+    <Flex className={styles["card--container"]} vertical style={{ width: "100%", borderRadius: "8px" }} onClick={handleProductDetail}>
+      <Flex vertical style={{ position: "relative" }}>
         <div style={{ height: "220px", background: "#F5F5F5" }}>
           <Image
             style={{ height: "100%", width: "100%" }}
@@ -38,13 +43,16 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
           />
         </div>
 
-        <Flex style={{ position: "absolute", bottom: "8px", right: "8px" }}>
+        <Flex style={{ position: "absolute", bottom: "8px", right: "8px", zIndex: 1 }}>
           <Image
             style={{ padding: "6px", cursor: "pointer" }}
             src={isCompare ? "/images/CompareIconFilled.svg" : "/images/CompareIcon.svg"}
             alt="CompareIcon"
             preview={false}
-            onClick={() => toggleCompare.mutate(vehicle.id)}
+            onClick={(e) => {
+              e.stopPropagation(); // Ngăn không bubble lên parent
+              toggleCompare.mutate(vehicle.id);
+            }}
           />
 
           <Image
@@ -52,7 +60,10 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
             src={isFavorite ? "/images/FavoriteIconFilled.svg" : "/images/FavoriteIcon.svg"}
             alt="FavoriteIcon"
             preview={false}
-            onClick={() => toggleFavorite.mutate(vehicle.id)}
+            onClick={(e) => {
+              e.stopPropagation(); // Ngăn không bubble lên parent
+              toggleFavorite.mutate(vehicle.id);
+            }}
           />
         </Flex>
 

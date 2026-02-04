@@ -57,7 +57,7 @@ const ImageSlide = ({ images, onPreview }: ImageSlideProps) => {
               }`}
               onClick={() => setCurrent(index)}
             >
-              <Image src={img} alt="thumb" fill />
+              <Image src={img} alt="thumb" fill objectFit="cover" />
             </div>
           );
         })}
