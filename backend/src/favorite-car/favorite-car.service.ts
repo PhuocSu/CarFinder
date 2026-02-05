@@ -23,7 +23,7 @@ export class FavoriteCarService {
         return { status: 'removed' };
       }
 
-      
+
 
       const favorite = this.favoriteCarRepository.create({
         user: { id: userId },
@@ -53,4 +53,29 @@ export class FavoriteCarService {
       throw new Error(error);
     }
   }
+
+  async getTopFavoriteCars(limit: number = 3) {
+    try {
+      return await this.favoriteCarRepository
+        .createQueryBuilder('favorite')
+        .leftJoinAndSelect('favorite.car', 'car')
+        .leftJoinAndSelect('car.subModel', 'subModel')
+        .leftJoinAndSelect('subModel.model', 'model')
+        .select('car.id', 'carId')
+        .addSelect('car.brandName', 'brandName')
+        .addSelect('car.carRegNo', 'carRegNo')
+        .addSelect('car.basePrice', 'basePrice')
+        .addSelect('car.discountPercent', 'discountPercent')
+        .addSelect('car.carImage', 'carImage')
+        .addSelect('COUNT(favorite.id)', 'favoriteCount')
+        .groupBy('car.id')
+        .orderBy('favoriteCount', 'DESC')
+        .limit(limit)
+        .getRawMany();
+    } catch (error) {
+      console.log('Error getting top favorite cars:', error);
+      throw new Error('Failed to get top favorite cars');
+    }
+  }
+
 }
