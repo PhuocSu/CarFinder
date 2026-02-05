@@ -19,21 +19,20 @@ export class RecentlyViewedCarService {
         .andWhere('recentlyViewed.car_id = :carId', { carId })
         .getOne();
 
-        if(exist){
-          // update time
-          exist.updatedAt = new Date();
-          await this.recentlyViewedCarRepository.save(exist);
-          return {status: 'updated'}
-        }
+      if (exist) {
+        // update time
+        exist.updatedAt = new Date();
+        await this.recentlyViewedCarRepository.save(exist);
+        return { status: 'updated' };
+      }
 
-        const recentlyViewed = this.recentlyViewedCarRepository.create({
-          user: { id: userId },
-          car: { id: carId },
-        });
+      const recentlyViewed = this.recentlyViewedCarRepository.create({
+        user: { id: userId },
+        car: { id: carId },
+      });
 
-        await this.recentlyViewedCarRepository.save(recentlyViewed);
-        return {status: 'added'}
-      
+      await this.recentlyViewedCarRepository.save(recentlyViewed);
+      return { status: 'added' };
     } catch (error) {
       console.log('Error adding to recently viewed list:', error);
       throw new Error(error);
@@ -52,21 +51,22 @@ export class RecentlyViewedCarService {
         },
       });
     } catch (error) {
-      console.log('Error getting recently viewed list:',error);
+      console.log('Error getting recently viewed list:', error);
       throw new Error(error);
     }
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async cleanOldRecentlyViewed() {
+    console.log('[CRON] Running at:', new Date().toISOString());
+
     const today = new Date();
     today.setHours(0, 0, 0, 0); // 00:00 hôm nay
 
     await this.recentlyViewedCarRepository.delete({
-      updatedAt: LessThan(today),
+      createdAt: LessThan(today),
     });
 
     console.log('[CRON] Cleaned old recently viewed cars');
   }
-
 }
