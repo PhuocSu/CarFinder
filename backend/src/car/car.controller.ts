@@ -8,6 +8,8 @@ import {
   Delete,
   Query,
   ParseArrayPipe,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { CarService } from './car.service';
 import { CreateCarDto } from './dto/create-car.dto';
@@ -68,6 +70,14 @@ export class CarController {
       Number(page),
       Number(pageSize),
     );
+  }
+
+  @Public()
+  @Get('top')
+  getTopFavoriteCars(
+    @Query('limit', new DefaultValuePipe(3), ParseIntPipe) limit: number,
+  ) {
+    return this.carService.getTopFavoriteCars(limit);
   }
 
   @Get(':id')

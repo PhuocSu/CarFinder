@@ -13,12 +13,24 @@ import { useFavoriteQuery } from "@/app/api/favorite/useFavoriteQuery";
 import { compareCarState } from "@/store/compareCar.atom";
 import { useToggleCompareMutation } from "@/app/api/compare/useToggleCompareMutation";
 import styles from "./css/CarCard.module.scss";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useTrackViewedMutation } from "@/app/api/recentlyViewed/useTrackViewedMutation";
 
-const CarCard = ({ vehicle }: { vehicle: any }) => {
-  const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
+const CarCard = ({
+  vehicle,
+  rankIndex = 0,
+}: {
+  vehicle: any;
+  rankIndex?: number;
+}) => {
+  const finalPrice = calculateFinalPrice(
+    vehicle.basePrice,
+    vehicle.discountPercent,
+  );
   const router = useRouter();
+  const pathname = usePathname(); 
+  const isHomepage = pathname === "/";
+
   const favoriteCars = useRecoilValue(favoriteCarState);
   const toggleFavorite = useToggleFavoriteMutation();
   const isFavorite = favoriteCars.includes(vehicle.id);
@@ -29,28 +41,80 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
 
   const trackViewed = useTrackViewedMutation();
 
+    const getTopBadge = (index: number) => {
+    switch(index) {
+      case 0: return "/images/homepage/Top1.svg";
+      case 1: return "/images/homepage/Top2.svg";
+      case 2: return "/images/homepage/Top3.svg";
+      default: return null;
+    }
+  };
+
   const handleProductDetail = () => {
     router.push(`/productDetail?id=${vehicle.id}`);
     trackViewed.mutate(vehicle.id);
-  }
+  };
 
-  console.log("Favorite Car: ", favoriteCars, "isFavorite:", isFavorite, "vehicleId:", vehicle.id);
+  console.log(
+    "Favorite Car: ",
+    favoriteCars,
+    "isFavorite:",
+    isFavorite,
+    "vehicleId:",
+    vehicle.id,
+  );
   return (
-    <Flex className={styles["card--container"]} vertical style={{ width: "100%", borderRadius: "8px" }} onClick={handleProductDetail}>
+    <Flex
+      className={styles["card--container"]}
+      vertical
+      style={{ width: "100%", borderRadius: "8px" }}
+      onClick={handleProductDetail}
+    >
       <Flex vertical style={{ position: "relative" }}>
         <div style={{ height: "220px", background: "#F5F5F5" }}>
           <Image
             style={{ height: "100%", width: "100%" }}
-            src={vehicle.carImage?.length > 0 ? vehicle.carImage[0] : "/images/default-car-image-detail.png"}
+            src={
+              vehicle.carImage?.length > 0
+                ? vehicle.carImage[0]
+                : "/images/default-car-image-detail.png"
+            }
             alt="CarImage"
             preview={false}
           />
         </div>
 
-        <Flex style={{ position: "absolute", bottom: "8px", right: "8px", zIndex: 1 }}>
+        {isHomepage && rankIndex < 3 && (
+          <Image
+            style={{ 
+              position: "absolute", 
+              top: "-220px", 
+              right: "10px", 
+              width: "40px", 
+              height: "40px",
+              zIndex: 2
+            }}
+            src={getTopBadge(rankIndex)!}
+            alt={`Top${rankIndex + 1}`}
+            preview={false}
+          />
+        )}
+
+        <Flex
+          style={{
+            position: "absolute",
+            bottom: "8px",
+            right: "8px",
+            zIndex: 1,
+          }}
+        >
           <Image
             style={{ padding: "6px", cursor: "pointer" }}
-            src={isCompare ? "/images/CompareIconFilled.svg" : "/images/CompareIcon.svg"}
+            src={
+              isCompare
+                ? "/images/CompareIconFilled.svg"
+                : "/images/CompareIcon.svg"
+            }
             alt="CompareIcon"
             preview={false}
             onClick={(e) => {
@@ -60,8 +124,12 @@ const CarCard = ({ vehicle }: { vehicle: any }) => {
           />
 
           <Image
-            style={{ padding: "6px", cursor: "pointer", }}
-            src={isFavorite ? "/images/FavoriteIconFilled.svg" : "/images/FavoriteIcon.svg"}
+            style={{ padding: "6px", cursor: "pointer" }}
+            src={
+              isFavorite
+                ? "/images/FavoriteIconFilled.svg"
+                : "/images/FavoriteIcon.svg"
+            }
             alt="FavoriteIcon"
             preview={false}
             onClick={(e) => {

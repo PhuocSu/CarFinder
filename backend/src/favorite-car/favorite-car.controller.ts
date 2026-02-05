@@ -1,5 +1,6 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Req, Query } from '@nestjs/common';
 import { FavoriteCarService } from './favorite-car.service';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('favorite-cars')
 export class FavoriteCarController {
@@ -13,11 +14,5 @@ export class FavoriteCarController {
   @Get()
   getFavoriteList(@Req() req: any) {
     return this.favoriteCarService.getFavoriteList(req.user.sub);
-  }
-
-  // Trong favorite-car.controller.ts
-  @Get('top')
-  getTopFavoriteCars(@Query('limit') limit: number = 3) {
-    return this.favoriteCarService.getTopFavoriteCars(limit);
   }
 }

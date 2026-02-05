@@ -54,6 +54,11 @@ export const useToggleFavoriteMutation = () => {
       queryClient.invalidateQueries({
         queryKey: ["favorite-cars", user?.sub],
       });
+
+      // Update query cache = useTopFavoriteQuery => mỗi lần toggle favorite thì top favorite cũng thay đổi
+      queryClient.invalidateQueries({
+        queryKey: ["top-favorite-cars"],
+      });
     },
   });
 };
