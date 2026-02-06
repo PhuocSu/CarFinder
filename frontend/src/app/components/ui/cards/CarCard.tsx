@@ -71,7 +71,7 @@ const CarCard = ({
       onClick={handleProductDetail}
     >
       <Flex vertical style={{ position: "relative" }}>
-        <div style={{ height: "220px", background: "#F5F5F5" }}>
+        <div style={{ width: "100%", height: "220px", background: "#F5F5F5", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Image
             style={{ height: "100%", width: "100%" }}
             src={
