@@ -6,6 +6,12 @@ import styles from "../ProductDetail.module.scss";
 import { Vehicle } from "@/app/api/listPage/useVehiclesQuery";
 import { formatDate } from "@/utils/formatDate";
 import { formatNumber } from "@/utils/formatNumber";
+import FuelType from "@/enums/fuel.enum";
+import { EXTERIOR_COLOR_OPTIONS } from "@/constants/listPage/exterior-color/exterior-color-options";
+import { getExteriorColorLabel } from "@/utils/getExteriorColorLabel";
+import ExteriorColor from "@/enums/exterior-color.enum";
+import { getInteriorColorLabel } from "@/utils/getInteriorColorLabel";
+import { InteriorColor } from "@/enums/interior-color.enum";
 
 const BasicVehicleInfo = ({ vehicle }: { vehicle: Vehicle }) => {
   return (
@@ -34,16 +40,16 @@ const BasicVehicleInfo = ({ vehicle }: { vehicle: Vehicle }) => {
 
         <Row style={{ width: "100%" }}>
           <Col className={styles["basic-vehicle-info__title"]} span={6}>연료</Col>
-          <Col className={styles["basic-vehicle-info__value"]} span={6}>{vehicle.fuelType}</Col>
+          <Col className={styles["basic-vehicle-info__value"]} span={6}>{FuelType[vehicle.fuelType as keyof typeof FuelType]}</Col>
           <Col className={styles["basic-vehicle-info__title"]} span={6}>배기량</Col>
           <Col className={styles["basic-vehicle-info__value"]} span={6}>{formatNumber(vehicle.engineDisplacement)}cc</Col>
         </Row>
 
         <Row style={{ width: "100%" }}>
           <Col className={styles["basic-vehicle-info__title"]} span={6}>외관컬러</Col>
-          <Col className={styles["basic-vehicle-info__value"]} span={6}>{vehicle.exteriorColor}</Col>
+          <Col className={styles["basic-vehicle-info__value"]} span={6}>{getExteriorColorLabel(vehicle.exteriorColor as ExteriorColor)}</Col>
           <Col className={styles["basic-vehicle-info__title"]} span={6}>내장컬러</Col>
-          <Col className={styles["basic-vehicle-info__value"]} span={6}>{vehicle.interiorColor}</Col>
+          <Col className={styles["basic-vehicle-info__value"]} span={6}>{getInteriorColorLabel(vehicle.interiorColor as InteriorColor)}</Col>
         </Row>
 
         <Row style={{ width: "100%" }}>
