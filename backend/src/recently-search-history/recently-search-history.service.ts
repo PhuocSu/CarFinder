@@ -19,7 +19,8 @@ export class RecentlySearchHistoryService {
     return this.recentSearchHistoryRepository.find({
       where: { user: { id: userId } },
       order: { createdAt: 'DESC' },
-      take: 10,
+      relations: ['user'],
+      take: 5,
     });
   }
 

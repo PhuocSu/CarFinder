@@ -6,7 +6,7 @@ export class RecentSearchHistory {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User)
+  @ManyToOne((user) => User, (user) => user.recentSearchHistories)
   user: User;
 
   @Column({ type: 'json' })

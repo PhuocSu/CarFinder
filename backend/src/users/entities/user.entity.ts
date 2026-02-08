@@ -10,6 +10,7 @@ import { Session } from '../../sessions/entities/session.entity';
 import { RecentlyViewedCar } from 'src/recently-viewed-car/entities/recently-viewed-car.entity';
 import { FavoriteCar } from 'src/favorite-car/entities/favorite-car.entity';
 import { CompareCar } from 'src/compare-car/entities/compare-car.entity';
+import { RecentSearchHistory } from 'src/recently-search-history/entity/recently-search-history.entity';
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -93,4 +94,7 @@ export class User {
 
   @OneToMany(() => CompareCar, (compareCar) => compareCar.user)
   comparedCars: CompareCar[];
+  
+  @OneToMany(() => RecentSearchHistory, (recentSearchHistory) => recentSearchHistory.user)
+  recentSearchHistories: RecentSearchHistory[];
 }
