@@ -78,20 +78,20 @@ const RecentSearchModal = ({
             return (
               <Flex
                 key={item.id}
-                gap={5}
                 justify="space-between"
                 style={{
                   cursor: "pointer",
                   padding: "16px",
+                  marginBottom: "8px",
                   border:
                     "1px solid var(--base-stroke-color-base-stroke-20, #E0E0E3)",
                 }}
               >
-                <div>
+                <Flex vertical>
                   {renderTokens(line1Tokens)}
                   {renderTokens(line2Tokens)}
                   {renderTokens(line3Tokens)}
-                </div>
+                </Flex>
 
                 <CloseOutlined
                   style={{ cursor: "pointer" }}
