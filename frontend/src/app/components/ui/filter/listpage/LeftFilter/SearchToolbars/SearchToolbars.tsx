@@ -3,12 +3,12 @@
 import { Button, Flex, Image, Typography } from "antd";
 import styles from "./SearchToolbars.module.scss";
 import { useVehicleFilter } from "@/hooks/useVehicleFilter";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import RecentSearchModal from "./RecentSearchModal/RecentSearchModal";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { recentSearchHistoryState } from "@/store/RecentSearchHistory.atom";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
-import addRecentSearch from "@/utils/addRecentSearch";
+import addRecentSearch, { isSameFilter, shouldSaveRecentSearch } from "@/utils/addRecentSearch";
 import { useSaveRecentSearchMutation } from "@/app/api/recentlySearchHistory/useSaveRecentSearchMutation";
 
 const SearchToolbars = () => {
@@ -19,25 +19,42 @@ const SearchToolbars = () => {
   const { mutate: saveHistory } = useSaveRecentSearchMutation();
 
 
+  // Track previous filter to detect actual changes
+  const [previousFilter, setPreviousFilter] = useState(filter);
+ 
+  // Only save on page leave, not on every filter change
   useEffect(() => {
-  const onBeforeUnload = () => {
-    setHistory((prev) => addRecentSearch(prev, filter));
-    saveHistory(filter);
-  };
-
-  window.addEventListener("beforeunload", onBeforeUnload);
-  return () => {
-    window.removeEventListener("beforeunload", onBeforeUnload);
-    // lưu khi rời trang bằng SPA navigation
-    setHistory((prev) => addRecentSearch(prev, filter));
-    saveHistory(filter);
-  };
-}, [filter, setHistory, saveHistory]);
-
-
+    const onBeforeUnload = () => {
+      if (shouldSaveRecentSearch(filter) && !isSameFilter(filter, previousFilter)) {
+        setHistory((prev) => addRecentSearch(prev, filter));
+        saveHistory(filter);
+      }
+    };
+ 
+    window.addEventListener("beforeunload", onBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", onBeforeUnload);
+      // Only save when actually leaving page, not on filter changes
+      if (shouldSaveRecentSearch(filter) && !isSameFilter(filter, previousFilter)) {
+        setHistory((prev) => addRecentSearch(prev, filter));
+        saveHistory(filter);
+      }
+    };
+  }, []); // Empty dependency array - only run once
+ 
+  // Update previous filter when it actually changes significantly
+  useEffect(() => {
+    if (!isSameFilter(filter, previousFilter)) {
+      setPreviousFilter(filter);
+    }
+  }, [filter, previousFilter]);
+ 
   const handleReset = () => {
-    setHistory((prev) => addRecentSearch(prev, filter));
-    saveHistory(filter);
+    // Save current filter BEFORE reset
+    if (shouldSaveRecentSearch(filter)) {
+      setHistory((prev) => addRecentSearch(prev, filter));
+      saveHistory(filter);
+    }
     resetAllFilters();
   };
 

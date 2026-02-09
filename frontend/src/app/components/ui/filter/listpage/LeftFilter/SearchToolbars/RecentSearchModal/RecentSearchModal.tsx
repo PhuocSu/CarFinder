@@ -56,6 +56,8 @@ const RecentSearchModal = ({
             const line2Tokens = formatSearchFilterTokens(
               {
                 badges: filters.badges,
+                yearMin: filters.yearMin,
+                yearMax: filters.yearMax,
                 priceMin: filters.priceMin,
                 priceMax: filters.priceMax,
                 mileageMin: filters.mileageMin,

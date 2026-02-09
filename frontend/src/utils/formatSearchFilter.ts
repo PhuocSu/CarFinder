@@ -1,3 +1,10 @@
+import { EXTERIOR_COLOR_OPTIONS } from "@/constants/listPage/exterior-color/exterior-color-options";
+import ExteriorColor from "@/enums/exterior-color.enum";
+import FuelType from "@/enums/fuel.enum";
+import { getExteriorColorLabel } from "./getExteriorColorLabel";
+import { getInteriorColorLabel } from "./getInteriorColorLabel";
+import { InteriorColor } from "@/enums/interior-color.enum";
+
 // formatSearchFilter.ts
 type SubModelLookup = {
   id: number;
@@ -138,6 +145,7 @@ export const formatSearchFilterTokens = (
       separator,
     );
   }
+
   if (filters.priceMin && filters.priceMax) {
     pushTokenWithSeparator(
       tokens,
@@ -145,12 +153,9 @@ export const formatSearchFilterTokens = (
       separator,
     );
   }
+
   if (filters.mileageMin && filters.mileageMax) {
-    pushTokenWithSeparator(
-      tokens,
-      `${filters.mileageMin.toLocaleString()} - ${filters.mileageMax.toLocaleString()}`,
-      separator,
-    );
+    pushTokenWithSeparator(tokens, `${filters.mileageMin.toLocaleString()} - ${filters.mileageMax.toLocaleString()}`, separator);
   }
 
   const fuelTypesRaw = filters.fuelTypes ?? filters.fuelType;
@@ -161,20 +166,32 @@ export const formatSearchFilterTokens = (
       : [];
 
   if (fuelTypes.length > 0) {
-    pushTokenWithSeparator(tokens, fuelTypes.join(subSeparator), separator);
+    const fuelTypeLabels = fuelTypes.map(fuelType => {
+      // Convert string to enum key
+      const enumKey = fuelType.toUpperCase() as keyof typeof FuelType;
+      return FuelType[enumKey] || fuelType; // Fallback to original if not found
+    });
+    pushTokenWithSeparator(tokens, fuelTypeLabels.join(subSeparator), separator);
   }
 
   if (filters.exColors && filters.exColors.length > 0) {
+    const exColorLabels = filters.exColors.map((color: ExteriorColor) => {
+      return getExteriorColorLabel(color); 
+    });
+
     pushTokenWithSeparator(
       tokens,
-      filters.exColors.join(subSeparator),
+      exColorLabels.join(subSeparator),
       separator,
     );
   }
   if (filters.inColors && filters.inColors.length > 0) {
+    const inColorLabels = filters.inColors.map((color: InteriorColor) => {
+      return getInteriorColorLabel(color); 
+    });
     pushTokenWithSeparator(
       tokens,
-      filters.inColors.join(subSeparator),
+      inColorLabels.join(subSeparator),
       separator,
     );
   }
