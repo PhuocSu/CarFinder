@@ -17,6 +17,10 @@ const ExteriorColorSearch = () => {
   );
   const selectedCount = selectedButtons.size;
 
+  useEffect(() => {
+    setSelectedButtons(new Set((filter.exColors || []) as ExColorKey[]));
+  }, [filter.exColors]);
+
   // reset filter
   useEffect(() => {
     const isExColorReset =

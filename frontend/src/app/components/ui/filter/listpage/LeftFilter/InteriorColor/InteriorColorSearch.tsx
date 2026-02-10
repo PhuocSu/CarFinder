@@ -18,6 +18,11 @@ const InteriorColorSearch = () => {
   );
   const selectedCount = selectedButtons.size;
 
+  //set old filter in RecentSearchHistory
+  useEffect(() => {
+    setSelectedButtons(new Set((filter.inColors || []) as InColorKey[]));
+  }, [filter.inColors]);
+
   // reset filter
   useEffect(() => {
     const isInteriorColorReset =

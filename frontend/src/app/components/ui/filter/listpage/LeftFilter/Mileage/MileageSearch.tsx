@@ -22,6 +22,12 @@ const MileageSearch = () => {
     ? MILEAGE_STEPS.filter((mileage) => mileage.value >= selectedStartMileage)
     : MILEAGE_STEPS;
 
+    // set old previous item in RecentSearchHistory
+    useEffect(() => {
+      setSelectedStartMileage(filter.mileageMin ?? null);
+      setSelectedEndMileage(filter.mileageMax ?? null);
+    }, [filter.mileageMin, filter.mileageMax]);
+
     // reset filter
     useEffect(() => {
       const isMileageReset = filter.mileageMin === undefined &&

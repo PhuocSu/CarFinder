@@ -28,6 +28,11 @@ const FuelSearch = () => {
 
   const selectedCount = selectedButtons.size;
 
+  // Thêm sau dòng selectedCount
+  useEffect(() => {
+    setSelectedButtons(new Set((filter.fuelTypes || []) as FuelKey[]));
+  }, [filter.fuelTypes]);
+
   useEffect(() => {
     const isFuelReset =
       (!filter.fuelTypes || filter.fuelTypes.length === 0) &&

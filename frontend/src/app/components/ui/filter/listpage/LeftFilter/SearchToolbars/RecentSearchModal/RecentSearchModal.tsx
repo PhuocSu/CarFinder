@@ -48,7 +48,11 @@ const RecentSearchModal = ({
   const renderTokens = (ts: ReturnType<typeof formatSearchFilterTokens>) => (
     <div>
       {ts.map((t, i) =>
-        t.bold ? <strong key={i}>{t.text}</strong> : <span key={i}>{t.text}</span>
+        t.bold ? (
+          <strong key={i}>{t.text}</strong>
+        ) : (
+          <span key={i}>{t.text}</span>
+        ),
       )}
     </div>
   );
@@ -76,7 +80,7 @@ const RecentSearchModal = ({
 
             const line1Tokens = formatSearchFilterTokens(
               { modelIds: filters.modelIds, subModelIds: filters.subModelIds },
-              { models, badgeOptions: VEHICLE_BADGE_OPTIONS }
+              { models, badgeOptions: VEHICLE_BADGE_OPTIONS },
             );
 
             const line2Tokens = formatSearchFilterTokens(
@@ -89,7 +93,7 @@ const RecentSearchModal = ({
                 mileageMin: filters.mileageMin,
                 mileageMax: filters.mileageMax,
               },
-              { models, badgeOptions: VEHICLE_BADGE_OPTIONS }
+              { models, badgeOptions: VEHICLE_BADGE_OPTIONS },
             );
 
             const line3Tokens = formatSearchFilterTokens(
@@ -98,7 +102,7 @@ const RecentSearchModal = ({
                 exColors: filters.exColors,
                 inColors: filters.inColors,
               },
-              { models, badgeOptions: VEHICLE_BADGE_OPTIONS }
+              { models, badgeOptions: VEHICLE_BADGE_OPTIONS },
             );
 
             return (
@@ -122,7 +126,10 @@ const RecentSearchModal = ({
 
                 <CloseOutlined
                   style={{ cursor: "pointer" }}
-                  onClick={() => deleteHistory(item.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteHistory(item.id);
+                  }}
                 />
               </Flex>
             );

@@ -20,19 +20,18 @@ const BadgeSearch = () => {
   const selectedBadges = filter.badges ?? [];
 
   const toggleBadge = (value: VehicleBadge) => {
-  setFilter((prev) => {
-    const exists = prev.badges?.includes(value);
+    setFilter((prev) => {
+      const exists = prev.badges?.includes(value);
 
-    return {
-      ...prev,
-      badges: exists
-        ? prev.badges.filter((b) => b !== value)
-        : [...(prev.badges ?? []), value],
-      page: 1,
-    };
-  });
-};
-
+      return {
+        ...prev,
+        badges: exists
+          ? prev.badges.filter((b) => b !== value)
+          : [...(prev.badges ?? []), value],
+        page: 1,
+      };
+    });
+  };
 
   return (
     <Flex

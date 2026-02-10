@@ -19,6 +19,12 @@ const YearSearch = () => {
   const hasYearSelected =
     selectedStartYear !== null || selectedEndYear !== null;
 
+  // set old previous item in RecentSearchHistory
+  useEffect(() => {
+    setSelectedStartYear(filter.yearMin ?? null);
+    setSelectedEndYear(filter.yearMax ?? null);
+  }, [filter.yearMin, filter.yearMax]);
+
   //Refresh filter
   useEffect(() => {
     const isYearReset =
