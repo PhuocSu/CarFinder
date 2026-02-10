@@ -9,7 +9,7 @@ const SignUpConsentPage = () => {
   const searchParams = useSearchParams()
   const type = searchParams?.get('type') || 'member';
   return (
-    <div style={{ width: "100%", marginTop: "30px", marginBottom: "142px" }}>
+    <div style={{ width: "1200px", margin: "30px auto 142px", padding: "0 20px" }}>
       {type === "member" ? <SignupMember /> : <SignupCorporate />}
     </div>
   );

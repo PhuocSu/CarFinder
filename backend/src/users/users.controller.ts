@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { BaseCreateUserDto } from './dto/create/base-create-user.dto';
 import { CreateAdminDto } from './dto/create/create-admin.dto';
@@ -98,5 +98,15 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);
+  }
+
+  @Public()
+  @Post('check-custId')
+  async checkCustId(@Query('custId') custId: string) {
+    const exists = await this.usersService.checkCustIdExists(custId);
+    return {
+      exists,
+      message: exists ? 'custId already exists' : 'custId is available'
+    };
   }
 }

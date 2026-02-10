@@ -6,8 +6,8 @@ const SignUpOnboardingPage = () => {
   return (
     <div
       style={{
-        width: "100%",
-        marginTop: "30px",
+        width: "1200px",
+        margin: "30px auto 0",
         marginBottom: "142px",
       }}
     >

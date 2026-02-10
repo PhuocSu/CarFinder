@@ -1,9 +1,34 @@
 "use client";
 
+import { useCheckCustIdMutation } from "@/app/api/auth/useCheckCustIdMutation";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { Button, Flex, Input, Radio, Typography } from "antd";
+import { Button, Flex, Input, message, Radio, Typography } from "antd";
+import { useState } from "react";
 
 const SignupMember = () => {
+  const [custId, setCustId] = useState("");
+  const { mutate: checkCustId, isPending } = useCheckCustIdMutation();
+  const handleCheckCustId = () => {
+    if (!custId.trim()) {
+      message.error("custId를 입력해주세요");
+      return;
+    }
+    checkCustId(custId, {
+      onSuccess: (data) => {
+        console.log("Mutation success:", data);
+        if (data.exists === true) {
+          message.error("이미 사용 중인 custId입니다");
+        } else {
+          message.success("사용 가능한 custId입니다");
+        }
+      },
+      onError: (error) => {
+        console.error("Mutation error:", error);
+        message.error("검사 중 오류가 발생했습니다");
+      }
+    });
+  };
+
   return (
     <Flex
       vertical
@@ -83,24 +108,26 @@ const SignupMember = () => {
             {/* Input + Button + Ghi chú */}
             <Flex flex={8} vertical gap={8}>
               <Flex gap={8} style={{ height: 40 }}>
-                <Input placeholder="CUST-001 CUST_ID" />
-                <Button type="primary" style={{ height: 40, whiteSpace: "nowrap", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <Input
+                  placeholder="CUST-001 CUST_ID"
+                  value={custId}
+                  onChange={(e) => setCustId(e.target.value)}
+                />
+                <Button
+                  type="primary"
+                  style={{
+                    height: 40,
+                    whiteSpace: "nowrap",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  loading={isPending}
+                  onClick={handleCheckCustId}
+                >
                   중복확인
                 </Button>
               </Flex>
-              {/* <Flex>
-                <Typography.Text
-                  style={{
-                    color: "#767676",
-                    fontSize: 13,
-                    fontFamily: "Noto Sans KR",
-                    fontWeight: 400,
-                    lineHeight: "18px",
-                  }}
-                >
-                  6~12자 이내 영문, 숫자
-                </Typography.Text>
-              </Flex> */}
             </Flex>
           </Flex>
         </Flex>
@@ -180,28 +207,6 @@ const SignupMember = () => {
               </Flex>
             </Flex>
           </Flex>
-
-          <Flex flex={1}>
-            <Flex flex={2}>
-              <Typography.Text
-                style={{
-                  fontSize: 16,
-                  fontFamily: "Noto Sans KR",
-                  fontWeight: 400,
-                  color: "#4A4A50",
-                }}
-              >
-                이메일
-              </Typography.Text>
-            </Flex>
-
-            <Flex flex={8} vertical gap={8}>
-              <Flex gap={8} style={{ height: 40 }}>
-                <Input placeholder="CUST-001 EMAIL" />
-              </Flex>
-            </Flex>
-          </Flex>
-          
         </Flex>
 
         {/* ============CustBirthdt and custAddress===========*/}

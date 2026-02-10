@@ -7,11 +7,20 @@ import { useState } from "react";
 
 const OnboardingPage = () => {
   const router = useRouter();
-  const [selectedType, setSelectedType] = useState<"member" | "corporate">("member");
+  const [isSelected, setIsSelected] = useState(true);
+
+  const [selectedType, setSelectedType] = useState<"member" | "corporate">(
+    "member",
+  );
 
   const handleSelect = () => {
-    if(!selectedType) return;
+    if (!selectedType) return;
     router.push(`/sign-up-consent?type=${selectedType}`);
+  };
+
+  const handleTypeSelect = (type: "member" | "corporate") => {
+    setSelectedType(type);
+    setIsSelected(true);
   };
 
   return (
@@ -54,12 +63,18 @@ const OnboardingPage = () => {
       <Flex gap={20}>
         {/* 일반회원 */}
         <Card
-          onClick={() => setSelectedType("member")}
+          onClick={() => handleTypeSelect("member")}
           style={{
             width: 590,
             height: 234,
             borderRadius: 2,
-            border: "1px solid #E0E0E3",
+            border: selectedType === "member" && isSelected 
+              ? "1px solid #37373E" 
+              : "1px solid #E0E0E3",
+            backgroundColor: selectedType === "member" && isSelected 
+              ? "#F5F5F7" 
+              : "#FFFFFF",
+            cursor: "pointer",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -95,13 +110,18 @@ const OnboardingPage = () => {
 
         {/* 기업회원 */}
         <Card
-          onClick={() => setSelectedType("corporate")}
+          onClick={() => handleTypeSelect("corporate")}
           style={{
             width: 590,
             height: 234,
             borderRadius: 2,
-            border: "1px solid #37373E",
-            background: "#F9F9F9",
+            border: selectedType === "corporate" && isSelected 
+              ? "1px solid #37373E" 
+              : "1px solid #E0E0E3",
+            backgroundColor: selectedType === "corporate" && isSelected 
+              ? "#F5F5F7" 
+              : "#FFFFFF",
+            cursor: "pointer",
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
@@ -119,7 +139,13 @@ const OnboardingPage = () => {
               }}
             >
               {/* svg ở đây */}
-              <Image src="/images/building1-svgrepo-com.svg" alt="Building" width={50} height={50} preview={false}/>
+              <Image
+                src="/images/building1-svgrepo-com.svg"
+                alt="Building"
+                width={50}
+                height={50}
+                preview={false}
+              />
             </div>
             <Typography.Text
               style={{
@@ -137,7 +163,7 @@ const OnboardingPage = () => {
 
       {/* Button */}
       <Button
-      onClick={handleSelect}
+        onClick={handleSelect}
         type="primary"
         size="large"
         style={{

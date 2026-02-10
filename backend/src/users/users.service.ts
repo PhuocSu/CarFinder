@@ -118,4 +118,9 @@ export class UsersService {
   async remove(id: number) {
     return await this.userRepository.delete(id);
   }
+
+  async checkCustIdExists(custId: string): Promise<boolean> {
+    const user = await this.userRepository.findOne({ where: { custId } });
+    return !!user; 
+  }
 }
