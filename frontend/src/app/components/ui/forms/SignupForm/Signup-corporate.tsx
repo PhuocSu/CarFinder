@@ -1,14 +1,159 @@
 "use client";
 
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { Flex, Input, Radio, Typography } from "antd";
-import { Button } from "antd/es/radio";
+import { Button, DatePicker, Flex, Input, Radio, Typography } from "antd";
 import { useState } from "react";
+import useCreateBusinessMutation from "@/app/api/users/useCreateBusinessMutation";
+import useCreateAgencyMutation from "@/app/api/users/useCreateAgencyMutation";
+import CompletedSignup from "@/app/components/ui/forms/SignupForm/CompletedSignup";
+import { useRouter } from "next/navigation";
+import { message } from "antd";
+import { useCheckCustIdMutation } from "@/app/api/auth/useCheckCustIdMutation";
 
 const SignupCorporate = () => {
   const [businessType, setBusinessType] = useState<"business" | "corporate">(
-    "business"
+    "business",
   );
+  const [isSignupComplete, setIsSignupComplete] = useState(false);
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [checkedId, setCheckedId] = useState("");
+  const [formData, setFormData] = useState({
+    custName: "",
+    custId: "",
+    custPw: "",
+    custPwConfirm: "",
+    reprsntName: "",
+    corpRegNo: "",
+    corpTellNo: "",
+    bnsmRegNo: "",
+    bnsmRegCert: "",
+    corpFaxNo: "",
+    corpEmail: "",
+    custRep: "",
+    custRepPhone: "",
+    repDepTit: "",
+    birthDate: "",
+    custAddr: "",
+  });
+
+  const dateFormat = 'YYYY/MM/DD';
+  const router = useRouter();
+
+  const createBusinessMutation = useCreateBusinessMutation();
+  const createAgencyMutation = useCreateAgencyMutation();
+  const { mutate: checkCustId, isPending } = useCheckCustIdMutation();
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Reset ID check status if ID is changed
+    if (field === 'custId' && value !== checkedId) {
+      setIsIdChecked(false);
+    }
+  };
+
+  const handleDateChange = (date: any, dateString: string | null) => {
+    // Convert YYYY/MM/DD to YYYY-MM-DD format for ISO 8601 compliance
+    if (dateString) {
+      const isoDate = dateString.replace(/\//g, '-');
+      setFormData(prev => ({
+        ...prev,
+        birthDate: isoDate
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        birthDate: ""
+      }));
+    }
+  };
+
+  const handleGoBack = () => {
+    router.push("/signup/onboarding");
+  };
+
+  const handleCheckCustId = () => {
+    if (!formData.custId) {
+      message.error("아이디를 입력해주세요");
+      return;
+    }
+    
+    checkCustId(formData.custId, {
+      onSuccess: (response: any) => {
+        console.log("Check ID response:", response);
+        // Check if the response indicates success or failure
+        if (response.success || response.available || !response.exists) {
+          message.success("사용 가능한 custId입니다");
+          setIsIdChecked(true);
+          setCheckedId(formData.custId);
+        } else {
+          message.error("이미 사용 중인 custId입니다");
+          setIsIdChecked(false);
+        }
+      },
+      onError: (error: any) => {
+        console.log("Check ID error:", error);
+        const errorMessage = error.response?.data?.message || "아이디 중복 확인에 실패했습니다";
+        message.error(errorMessage);
+        setIsIdChecked(false);
+      }
+    });
+  };
+
+  const handleSubmit = () => {
+    // Validation - only check required fields based on business type
+    const requiredFields = [
+      'custName', 'custId', 'custPw',
+      'reprsntName', 'custRep', 'custRepPhone'
+    ];
+    
+    // Add corpRegNo and corpTellNo only for corporate type
+    if (businessType === 'corporate') {
+      requiredFields.push('corpRegNo', 'corpTellNo');
+    }
+    
+    const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
+    
+    if (missingFields.length > 0) {
+      message.error(`필수 필드를 모두 입력해주세요: ${missingFields.join(', ')}`);
+      console.log("Missing fields:", missingFields);
+      console.log("Form data:", formData);
+      return;
+    }
+
+    if (formData.custPw !== formData.custPwConfirm) {
+      message.error("비밀번호가 일치하지 않습니다");
+      return;
+    }
+
+    if (!isIdChecked || formData.custId !== checkedId) {
+      message.error("아이디 중복확인을 해주세요");
+      return;
+    }
+
+    // Choose mutation based on business type
+    const submitData = {
+      ...formData,
+      birthDate: formData.birthDate || undefined,
+      custAddr: formData.custAddr || undefined,
+    };
+
+    const mutation = businessType === "corporate" ? createBusinessMutation : createAgencyMutation;
+    
+    mutation.mutate(submitData, {
+      onSuccess: () => {
+        setIsSignupComplete(true);
+      }
+    });
+  };
+
+  // Show success component if signup is complete
+  if (isSignupComplete) {
+    return <CompletedSignup />;
+  }
 
   return (
     <div>
@@ -161,7 +306,11 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   상호명<span style={{ color: "#DC0000" }}> *</span>
                 </Typography.Text>
-                <Input placeholder="CUST-001 CUST_NM" />
+                <Input 
+                  placeholder="CUST-001 CUST_NM" 
+                  value={formData.custName}
+                  onChange={(e) => handleInputChange("custName", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -180,9 +329,15 @@ const SignupCorporate = () => {
                 </Flex>
 
                 {/* Input + Button + Ghi chú */}
-                <Flex flex={8} vertical>
+                <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 CUST_ID" />
+                    <Input
+                      placeholder="CUST-001 CUST_ID"
+                      value={formData.custId}
+                      onChange={(e) =>
+                        handleInputChange("custId", e.target.value)
+                      }
+                    />
                     <Button
                       type="primary"
                       style={{
@@ -192,6 +347,8 @@ const SignupCorporate = () => {
                         alignItems: "center",
                         justifyContent: "center",
                       }}
+                      loading={isPending}
+                      onClick={handleCheckCustId}
                     >
                       중복확인
                     </Button>
@@ -213,6 +370,8 @@ const SignupCorporate = () => {
                   iconRender={(visible) =>
                     visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                   }
+                  value={formData.custPw}
+                  onChange={(e) => handleInputChange("custPw", e.target.value)}
                 />
               </Flex>
 
@@ -238,6 +397,8 @@ const SignupCorporate = () => {
                       iconRender={(visible) =>
                         visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                       }
+                      value={formData.custPwConfirm}
+                      onChange={(e) => handleInputChange("custPwConfirm", e.target.value)}
                     />
                   </Flex>
                 </Flex>
@@ -251,7 +412,10 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   대표자명<span style={{ color: "#DC0000" }}> *</span>
                 </Typography.Text>
-                <Input placeholder="CUST-001 REPRSNT_NM" />
+                <Input placeholder="CUST-001 REPRSNT_NM" 
+                  value={formData.reprsntName}
+                  onChange={(e) => handleInputChange("reprsntName", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -271,7 +435,10 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 BSNM_REG_NO" />
+                    <Input placeholder="CUST-001 BSNM_REG_NO" 
+                      value={formData.bnsmRegNo}
+                      onChange={(e) => handleInputChange("bnsmRegNo", e.target.value)}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -284,7 +451,10 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   회사 전화번호 <span style={{ color: "#DC0000" }}> *</span>
                 </Typography.Text>
-                <Input placeholder="CUST-001 CORP_TELL_NO" />
+                <Input placeholder="CUST-001 CORP_TELL_NO" 
+                  value={formData.corpTellNo}
+                  onChange={(e) => handleInputChange("corpTellNo", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -304,7 +474,12 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 BIRTH_DT" />
+                    <DatePicker
+                      format={dateFormat}
+                      onChange={handleDateChange}
+                      style={{ width: "100%" }}
+                      placeholder="CUST-001 BIRTH_DT"
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -317,7 +492,10 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   사업자등록증
                 </Typography.Text>
-                <Input placeholder="CUST-001 BSNM_REG_CERT" />
+                <Input placeholder="CUST-001 BSNM_REG_CERT" 
+                  value={formData.bnsmRegCert}
+                  onChange={(e) => handleInputChange("bnsmRegCert", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -337,7 +515,10 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 CORP_FAX_NO" />
+                    <Input placeholder="CUST-001 CORP_FAX_NO" 
+                      value={formData.corpFaxNo}
+                      onChange={(e) => handleInputChange("corpFaxNo", e.target.value)}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -366,7 +547,10 @@ const SignupCorporate = () => {
                   <Typography.Text style={{ width: "318px", display: "flex" }}>
                     성명<span style={{ color: "#DC0000" }}> *</span>
                   </Typography.Text>
-                  <Input placeholder="CUST-001 CUST_REP" />
+                  <Input placeholder="CUST-001 CUST_REP" 
+                    value={formData.custRep}
+                    onChange={(e) => handleInputChange("custRep", e.target.value)}
+                  />
                 </Flex>
 
                 {/* Flex 2 chiếm 50% */}
@@ -387,7 +571,10 @@ const SignupCorporate = () => {
 
                   <Flex flex={8} vertical gap={8}>
                     <Flex gap={8} style={{ height: 40 }}>
-                      <Input placeholder="CUST-001 CUST_REP_PHONE" />
+                      <Input placeholder="CUST-001 CUST_REP_PHONE" 
+                        value={formData.custRepPhone}
+                        onChange={(e) => handleInputChange("custRepPhone", e.target.value)}
+                      />
                     </Flex>
                   </Flex>
                 </Flex>
@@ -399,7 +586,10 @@ const SignupCorporate = () => {
                   <Typography.Text style={{ width: "318px", display: "flex" }}>
                     부서/직급
                   </Typography.Text>
-                  <Input placeholder="CUST-001 REP_DEP_TIT" />
+                  <Input placeholder="CUST-001 REP_DEP_TIT" 
+                    value={formData.repDepTit}
+                    onChange={(e) => handleInputChange("repDepTit", e.target.value)}
+                  />
                 </Flex>
 
                 {/* Empty flex to maintain layout - invisible */}
@@ -430,7 +620,11 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   상호명<span style={{ color: "#DC0000" }}> *</span>
                 </Typography.Text>
-                <Input placeholder="CUST-001 CUST_NM" />
+                <Input 
+                  placeholder="CUST-001 CUST_NM" 
+                  value={formData.custName}
+                  onChange={(e) => handleInputChange("custName", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -449,9 +643,15 @@ const SignupCorporate = () => {
                 </Flex>
 
                 {/* Input + Button + Ghi chú */}
-                <Flex flex={8} vertical>
+                <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 CUST_ID" />
+                    <Input
+                      placeholder="CUST-001 CUST_ID"
+                      value={formData.custId}
+                      onChange={(e) =>
+                        handleInputChange("custId", e.target.value)
+                      }
+                    />
                     <Button
                       type="primary"
                       style={{
@@ -461,6 +661,8 @@ const SignupCorporate = () => {
                         alignItems: "center",
                         justifyContent: "center",
                       }}
+                      loading={isPending}
+                      onClick={handleCheckCustId}
                     >
                       중복확인
                     </Button>
@@ -482,6 +684,8 @@ const SignupCorporate = () => {
                   iconRender={(visible) =>
                     visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                   }
+                  value={formData.custPw}
+                  onChange={(e) => handleInputChange("custPw", e.target.value)}
                 />
               </Flex>
 
@@ -507,6 +711,8 @@ const SignupCorporate = () => {
                       iconRender={(visible) =>
                         visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                       }
+                      value={formData.custPwConfirm}
+                      onChange={(e) => handleInputChange("custPwConfirm", e.target.value)}
                     />
                   </Flex>
                 </Flex>
@@ -520,7 +726,10 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   대표자명<span style={{ color: "#DC0000" }}> *</span>
                 </Typography.Text>
-                <Input placeholder="CUST-001 REPRSNT_NM" />
+                <Input placeholder="CUST-001 REPRSNT_NM" 
+                  value={formData.reprsntName}
+                  onChange={(e) => handleInputChange("reprsntName", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -553,7 +762,10 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   회사 전화번호 <span style={{ color: "#DC0000" }}> *</span>
                 </Typography.Text>
-                <Input placeholder="CUST-001 CORP_TELL_NO" />
+                <Input placeholder="CUST-001 CORP_TELL_NO" 
+                  value={formData.corpTellNo}
+                  onChange={(e) => handleInputChange("corpTellNo", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -573,7 +785,10 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 BSNM_REG_NO" />
+                    <Input placeholder="CUST-001 BSNM_REG_NO" 
+                      value={formData.bnsmRegNo}
+                      onChange={(e) => handleInputChange("bnsmRegNo", e.target.value)}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -586,7 +801,10 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   사업자등록증
                 </Typography.Text>
-                <Input placeholder="CUST-001 BSNM_REG_CERT" />
+                <Input placeholder="CUST-001 BSNM_REG_CERT" 
+                  value={formData.bnsmRegCert}
+                  onChange={(e) => handleInputChange("bnsmRegCert", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -606,7 +824,12 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 BIRTH_DT" />
+                    <DatePicker
+                      format={dateFormat}
+                      onChange={handleDateChange}
+                      style={{ width: "100%" }}
+                      placeholder="CUST-001 BIRTH_DT"
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -619,7 +842,11 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   사업장주소
                 </Typography.Text>
-                <Input placeholder="CUST-001 ADDR" />
+                <Input 
+                  placeholder="CUST-001 ADDR" 
+                  value={formData.custAddr}
+                  onChange={(e) => handleInputChange("custAddr", e.target.value)}
+                />
               </Flex>
 
               {/* Flex 2 chiếm 50% */}
@@ -639,7 +866,10 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 CORP_FAX_NO" />
+                    <Input placeholder="CUST-001 CORP_FAX_NO" 
+                      value={formData.corpFaxNo}
+                      onChange={(e) => handleInputChange("corpFaxNo", e.target.value)}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
@@ -650,7 +880,11 @@ const SignupCorporate = () => {
                 <Typography.Text style={{ width: "318px", display: "flex" }}>
                   이메일
                 </Typography.Text>
-                <Input placeholder="CUST-001 CUST_EMAIL" />
+                <Input 
+                  placeholder="CUST-001 EMAIL" 
+                  value={formData.corpEmail}
+                  onChange={(e) => handleInputChange("corpEmail", e.target.value)}
+                />
               </Flex>
 
               {/* Empty flex to maintain layout - invisible */}
@@ -680,7 +914,10 @@ const SignupCorporate = () => {
                   <Typography.Text style={{ width: "318px", display: "flex" }}>
                     성명<span style={{ color: "#DC0000" }}> *</span>
                   </Typography.Text>
-                  <Input placeholder="CUST-001 CUST_REP" />
+                  <Input placeholder="CUST-001 CUST_REP" 
+                    value={formData.custRep}
+                    onChange={(e) => handleInputChange("custRep", e.target.value)}
+                  />
                 </Flex>
 
                 {/* Flex 2 chiếm 50% */}
@@ -701,7 +938,10 @@ const SignupCorporate = () => {
 
                   <Flex flex={8} vertical gap={8}>
                     <Flex gap={8} style={{ height: 40 }}>
-                      <Input placeholder="CUST-001 CUST_REP_PHONE" />
+                      <Input placeholder="CUST-001 CUST_REP_PHONE" 
+                        value={formData.custRepPhone}
+                        onChange={(e) => handleInputChange("custRepPhone", e.target.value)}
+                      />
                     </Flex>
                   </Flex>
                 </Flex>
@@ -713,7 +953,10 @@ const SignupCorporate = () => {
                   <Typography.Text style={{ width: "318px", display: "flex" }}>
                     부서/직급
                   </Typography.Text>
-                  <Input placeholder="CUST-001 REP_DEP_TIT" />
+                  <Input placeholder="CUST-001 REP_DEP_TIT" 
+                    value={formData.repDepTit}
+                    onChange={(e) => handleInputChange("repDepTit", e.target.value)}
+                  />
                 </Flex>
 
                 {/* Empty flex to maintain layout - invisible */}
@@ -724,75 +967,82 @@ const SignupCorporate = () => {
         )}
 
         {/* Button here */}
-            <Flex style={{ height: "56px", marginTop: "80px" }}>
-              <Flex gap={10} style={{ width: "900px", margin: "0 auto" }}>
-                <Button
-                  data-icon="none"
-                  data-shownumber="true"
-                  data-size="X-large"
-                  data-state="enabled"
-                  data-style="tertiary"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    background: "var(--button-tertiary-bg-enabled, white)",
-                    borderRadius: 2,
-                    outline:
-                      "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
-                    outlineOffset: "-1px",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 4,
-                    display: "inline-flex",
-                  }}
-                >
-                  <div
-                    style={{
-                      color: "var(--button-tertiary-fg-enabled, #666670)",
-                      fontSize: 16,
-                      fontFamily: "Inter",
-                      fontWeight: "700",
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    이전
-                  </div>
-                </Button>
-                <Button
-                  data-icon="none"
-                  data-shownumber="true"
-                  data-size="X-large"
-                  data-state="enabled"
-                  data-style="primary"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    paddingLeft: 20,
-                    paddingRight: 20,
-                    background: "var(--button-primary-bg-enabled, #2F2C4D)",
-                    borderRadius: 2,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    gap: 4,
-                    display: "inline-flex",
-                  }}
-                >
-                  <div
-                    style={{
-                      color: "var(--button-primary-fg, white)",
-                      fontSize: 16,
-                      fontFamily: "Inter",
-                      fontWeight: "700",
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    다음
-                  </div>
-                </Button>
-              </Flex>
-            </Flex> 
+        <Flex style={{ height: "56px", marginTop: "80px" }}>
+          <Flex gap={10} style={{ width: "900px", margin: "0 auto" }}>
+            <Button
+              data-icon="none"
+              data-shownumber="true"
+              data-size="X-large"
+              data-state="enabled"
+              data-style="tertiary"
+              style={{
+                width: "100%",
+                height: "100%",
+                paddingLeft: 20,
+                paddingRight: 20,
+                background: "var(--button-tertiary-bg-enabled, white)",
+                borderRadius: 2,
+                outline:
+                  "1px var(--button-tertiary-stroke-enabled, #CECED3) solid",
+                outlineOffset: "-1px",
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 4,
+                display: "inline-flex",
+              }}
+              onClick={handleGoBack}
+            >
+              <div
+                style={{
+                  color: "var(--button-tertiary-fg-enabled, #666670)",
+                  fontSize: 16,
+                  fontFamily: "Inter",
+                  fontWeight: "700",
+                  wordWrap: "break-word",
+                }}
+              >
+                이전
+              </div>
+            </Button>
+            <Button
+              data-icon="none"
+              data-shownumber="true"
+              data-size="X-large"
+              data-state={(!isIdChecked || formData.custId !== checkedId) ? "disabled" : "enabled"}
+              data-style="primary"
+              style={{
+                width: "100%",
+                height: "100%",
+                paddingLeft: 20,
+                paddingRight: 20,
+                background: (!isIdChecked || formData.custId !== checkedId) 
+                  ? "color-mix(in srgb, var(--button-primary-bg-enabled, #2F2C4D) 50%, transparent)"
+                  : "var(--button-primary-bg-enabled, #2F2C4D)",
+                borderRadius: 2,
+                justifyContent: "center",
+                alignItems: "center",
+                gap: 4,
+                display: "inline-flex",
+                cursor: (!isIdChecked || formData.custId !== checkedId) ? "not-allowed" : "pointer",
+              }}
+              onClick={handleSubmit}
+              loading={businessType === "corporate" ? createBusinessMutation.isPending : createAgencyMutation.isPending}
+              disabled={!isIdChecked || formData.custId !== checkedId}
+            >
+              <div
+                style={{
+                  color: "var(--button-primary-fg, white)",
+                  fontSize: 16,
+                  fontFamily: "Inter",
+                  fontWeight: "700",
+                  wordWrap: "break-word",
+                }}
+              >
+                다음
+              </div>
+            </Button>
+          </Flex>
+        </Flex>
       </Flex>
     </div>
   );

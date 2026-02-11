@@ -1,33 +1,127 @@
 "use client";
 
 import { useCheckCustIdMutation } from "@/app/api/auth/useCheckCustIdMutation";
+import useCreateIndividualMutation from "@/app/api/users/useCreateIndividualMutation";
+import CompletedSignup from "@/app/components/ui/forms/SignupForm/CompletedSignup";
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { Button, Flex, Input, message, Radio, Typography } from "antd";
+import { Button, DatePicker, Flex, Input, message, Radio, Typography } from "antd";
 import { useState } from "react";
+import dayjs from "dayjs";
+import { useRouter } from "next/navigation";
 
 const SignupMember = () => {
-  const [custId, setCustId] = useState("");
+  const dateFormat = 'YYYY/MM/DD';
+  const router = useRouter();
+  const [isSignupComplete, setIsSignupComplete] = useState(false);
+  const [isIdChecked, setIsIdChecked] = useState(false);
+  const [checkedId, setCheckedId] = useState("");
+  const [formData, setFormData] = useState({
+    custName: "",
+    custId: "",
+    custPw: "",
+    custPwConfirm: "",
+    hpNo: "",
+    email: "",
+    birthDate: "",
+    custAddr: "",
+  });
+  
   const { mutate: checkCustId, isPending } = useCheckCustIdMutation();
+  const { mutate: createIndividual, isPending: isCreating } = useCreateIndividualMutation();
   const handleCheckCustId = () => {
-    if (!custId.trim()) {
+    if (!formData.custId.trim()) {
       message.error("custId를 입력해주세요");
       return;
     }
-    checkCustId(custId, {
+    checkCustId(formData.custId, {
       onSuccess: (data) => {
         console.log("Mutation success:", data);
         if (data.exists === true) {
           message.error("이미 사용 중인 custId입니다");
+          setIsIdChecked(false);
         } else {
           message.success("사용 가능한 custId입니다");
+          setIsIdChecked(true);
+          setCheckedId(formData.custId);
         }
       },
       onError: (error) => {
         console.error("Mutation error:", error);
         message.error("검사 중 오류가 발생했습니다");
+        setIsIdChecked(false);
       }
     });
   };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
+    
+    // Reset ID check status if ID is changed
+    if (field === 'custId' && value !== checkedId) {
+      setIsIdChecked(false);
+    }
+  };
+
+  const handleDateChange = (date: any, dateString: string | null) => {
+    // Convert YYYY/MM/DD to YYYY-MM-DD format for ISO 8601 compliance
+    if (dateString) {
+      const isoDate = dateString.replace(/\//g, '-');
+      setFormData(prev => ({
+        ...prev,
+        birthDate: isoDate
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        birthDate: ""
+      }));
+    }
+  };
+
+  const handleGoBack = () => {
+    router.push("/signup/onboarding");
+  };
+
+  const handleSubmit = () => {
+    // Validation
+    if (!formData.custName || !formData.custId || !formData.custPw || !formData.hpNo || !formData.email) {
+      message.error("필수 필드를 모두 입력해주세요");
+      return;
+    }
+
+    if (formData.custPw !== formData.custPwConfirm) {
+      message.error("비밀번호가 일치하지 않습니다");
+      return;
+    }
+
+    // Check if ID has been validated
+    if (!isIdChecked || formData.custId !== checkedId) {
+      message.error("아이디 중복확인을 해주세요");
+      return;
+    }
+
+    // Create individual user
+    createIndividual({
+      custName: formData.custName,
+      custId: formData.custId,
+      custPw: formData.custPw,
+      hpNo: formData.hpNo,
+      email: formData.email,
+      birthDate: formData.birthDate || undefined,
+      custAddr: formData.custAddr || undefined,
+    }, {
+      onSuccess: () => {
+        setIsSignupComplete(true);
+      }
+    });
+  };
+
+  if (isSignupComplete) {
+    return <CompletedSignup />;
+  }
 
   return (
     <Flex
@@ -87,7 +181,11 @@ const SignupMember = () => {
             <Typography.Text style={{ width: "318px", display: "flex" }}>
               상호명<span style={{ color: "#DC0000" }}> *</span>
             </Typography.Text>
-            <Input placeholder="CUST-001 CUST_NM" />
+            <Input 
+              placeholder="CUST-001 CUST_NM" 
+              value={formData.custName}
+              onChange={(e) => handleInputChange("custName", e.target.value)}
+            />
           </Flex>
 
           {/* Flex 2 chiếm 50% */}
@@ -110,8 +208,8 @@ const SignupMember = () => {
               <Flex gap={8} style={{ height: 40 }}>
                 <Input
                   placeholder="CUST-001 CUST_ID"
-                  value={custId}
-                  onChange={(e) => setCustId(e.target.value)}
+                  value={formData.custId}
+                  onChange={(e) => handleInputChange("custId", e.target.value)}
                 />
                 <Button
                   type="primary"
@@ -145,6 +243,8 @@ const SignupMember = () => {
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
+              value={formData.custPw}
+              onChange={(e) => handleInputChange("custPw", e.target.value)}
             />
           </Flex>
 
@@ -170,6 +270,8 @@ const SignupMember = () => {
                   iconRender={(visible) =>
                     visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
                   }
+                  value={formData.custPwConfirm}
+                  onChange={(e) => handleInputChange("custPwConfirm", e.target.value)}
                 />
               </Flex>
             </Flex>
@@ -183,7 +285,11 @@ const SignupMember = () => {
             <Typography.Text style={{ width: "318px", display: "flex" }}>
               휴대전화번호<span style={{ color: "#DC0000" }}> *</span>
             </Typography.Text>
-            <Input placeholder="CUST-001 HP_NO" />
+            <Input 
+              placeholder="CUST-001 HP_NO" 
+              value={formData.hpNo}
+              onChange={(e) => handleInputChange("hpNo", e.target.value)}
+            />
           </Flex>
 
           {/* Flex 2 chiếm 50% */}
@@ -203,7 +309,11 @@ const SignupMember = () => {
 
             <Flex flex={8} vertical gap={8}>
               <Flex gap={8} style={{ height: 40 }}>
-                <Input placeholder="CUST-001 EMAIL" />
+                <Input 
+                  placeholder="CUST-001 EMAIL" 
+                  value={formData.email}
+                  onChange={(e) => handleInputChange("email", e.target.value)}
+                />
               </Flex>
             </Flex>
           </Flex>
@@ -216,7 +326,12 @@ const SignupMember = () => {
             <Typography.Text style={{ width: "318px", display: "flex" }}>
               생년월일
             </Typography.Text>
-            <Input placeholder="CUST-001 BIRTH_DT" />
+            <DatePicker 
+              format={dateFormat}
+              onChange={handleDateChange}
+              style={{ width: "100%" }}
+              placeholder="CUST-001 BIRTH_DT"
+            />
           </Flex>
 
           {/* Flex 2 chiếm 50% */}
@@ -236,7 +351,11 @@ const SignupMember = () => {
 
             <Flex flex={8} vertical gap={8}>
               <Flex gap={8} style={{ height: 40 }}>
-                <Input placeholder="CUST-001 ADDR" />
+                <Input 
+                  placeholder="CUST-001 ADDR" 
+                  value={formData.custAddr}
+                  onChange={(e) => handleInputChange("custAddr", e.target.value)}
+                />
               </Flex>
             </Flex>
           </Flex>
@@ -266,6 +385,7 @@ const SignupMember = () => {
                 gap: 4,
                 display: "inline-flex",
               }}
+              onClick={handleGoBack}
             >
               <div
                 style={{
@@ -283,20 +403,26 @@ const SignupMember = () => {
               data-icon="none"
               data-shownumber="true"
               data-size="X-large"
-              data-state="enabled"
+              data-state={(!isIdChecked || formData.custId !== checkedId) ? "disabled" : "enabled"}
               data-style="primary"
               style={{
                 width: "100%",
                 height: "100%",
                 paddingLeft: 20,
                 paddingRight: 20,
-                background: "var(--button-primary-bg-enabled, #2F2C4D)",
+                background: (!isIdChecked || formData.custId !== checkedId) 
+                  ? "color-mix(in srgb, var(--button-primary-bg-enabled, #2F2C4D) 50%, transparent)"
+                  : "var(--button-primary-bg-enabled, #2F2C4D)",
                 borderRadius: 2,
                 justifyContent: "center",
                 alignItems: "center",
                 gap: 4,
                 display: "inline-flex",
+                cursor: (!isIdChecked || formData.custId !== checkedId) ? "not-allowed" : "pointer",
               }}
+              onClick={handleSubmit}
+              loading={isCreating}
+              disabled={!isIdChecked || formData.custId !== checkedId}
             >
               <div
                 style={{

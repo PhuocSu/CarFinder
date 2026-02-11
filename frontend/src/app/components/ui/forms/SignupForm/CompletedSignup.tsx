@@ -1,6 +1,12 @@
 import { Button, Flex, Image, Typography } from "antd";
+import { useRouter } from "next/navigation";
 
 const CompletedSignup = () => {
+  const router = useRouter();
+
+  const handleGoToMain = () => {
+    router.push("/");
+  };
   return (
     <div>
       <Flex
@@ -110,6 +116,7 @@ const CompletedSignup = () => {
               display: "inline-flex",
               marginTop: "45px",
             }}
+            onClick={handleGoToMain}
           >
             <div
               style={{
