@@ -6,8 +6,9 @@ export class CreateAgencyDto extends BaseCreateUserDto {
   @IsString()
   reprsntName: string;
 
-  @IsNotEmpty()
-  corpRegNo: string;
+  @IsOptional()
+  @IsString()
+  corpRegNo?: string;
 
   @IsNotEmpty()
   corpTellNo: string;

@@ -110,17 +110,20 @@ const SignupCorporate = () => {
       'reprsntName', 'custRep', 'custRepPhone'
     ];
     
-    // Add corpRegNo and corpTellNo only for corporate type
+    // For individual business (agency), corpRegNo is not required
     if (businessType === 'corporate') {
       requiredFields.push('corpRegNo', 'corpTellNo');
     }
     
     const missingFields = requiredFields.filter(field => !formData[field as keyof typeof formData]);
     
+    console.log("Business type:", businessType);
+    console.log("Required fields:", requiredFields);
+    console.log("Form data:", formData);
+    console.log("Missing fields:", missingFields);
+    
     if (missingFields.length > 0) {
       message.error(`필수 필드를 모두 입력해주세요: ${missingFields.join(', ')}`);
-      console.log("Missing fields:", missingFields);
-      console.log("Form data:", formData);
       return;
     }
 
@@ -135,19 +138,52 @@ const SignupCorporate = () => {
     }
 
     // Choose mutation based on business type
+    // Remove custPwConfirm from submitData as it's not sent to API
+    const { custPwConfirm, ...dataToSubmit } = formData;
+    
+    // For individual business (agency), don't send corpRegNo if it's empty
+    let finalData;
+    console.log("Business type:", businessType);
+    console.log("corpRegNo value:", dataToSubmit.corpRegNo);
+    console.log("corpRegNo is empty:", !dataToSubmit.corpRegNo);
+    
+    if (businessType === 'business' && !dataToSubmit.corpRegNo) {
+      // Create a copy without corpRegNo
+      const { corpRegNo, ...dataWithoutCorpRegNo } = dataToSubmit;
+      finalData = dataWithoutCorpRegNo;
+      console.log("Removed corpRegNo from data");
+    } else {
+      finalData = dataToSubmit;
+      console.log("Keeping all data including corpRegNo");
+    }
+    
     const submitData = {
-      ...formData,
+      ...finalData,
       birthDate: formData.birthDate || undefined,
       custAddr: formData.custAddr || undefined,
+      // Set role based on business type
+      role: businessType === "corporate" ? "BUSINESS" : "AGENCY",
     };
+
+    console.log("Final data before submission:", finalData);
+    console.log("Submit data:", submitData);
+    console.log("Using mutation:", businessType === "corporate" ? "createBusinessMutation" : "createAgencyMutation");
 
     const mutation = businessType === "corporate" ? createBusinessMutation : createAgencyMutation;
     
-    mutation.mutate(submitData, {
-      onSuccess: () => {
-        setIsSignupComplete(true);
-      }
-    });
+    if (businessType === 'corporate') {
+      (mutation as any).mutate(submitData as any, {
+        onSuccess: () => {
+          setIsSignupComplete(true);
+        }
+      });
+    } else {
+      (mutation as any).mutate(submitData as any, {
+        onSuccess: () => {
+          setIsSignupComplete(true);
+        }
+      });
+    }
   };
 
   // Show success component if signup is complete
@@ -509,7 +545,7 @@ const SignupCorporate = () => {
                       color: "#4A4A50",
                     }}
                   >
-                    주소
+                    팩스
                   </Typography.Text>
                 </Flex>
 
@@ -518,6 +554,45 @@ const SignupCorporate = () => {
                     <Input placeholder="CUST-001 CORP_FAX_NO" 
                       value={formData.corpFaxNo}
                       onChange={(e) => handleInputChange("corpFaxNo", e.target.value)}
+                    />
+                  </Flex>
+                </Flex>
+              </Flex>
+            </Flex>
+
+            {/* ============CUST-001 ADDR and CUST-001 CORP-EMAIL================= */}
+            <Flex gap={32} style={{ width: "100%" }}>
+              {/* Flex 1 chiếm 50% */}
+              <Flex flex={1} gap={16} style={{ height: "40px" }}>
+                <Typography.Text style={{ width: "318px", display: "flex" }}>
+                  사업장 주소
+                </Typography.Text>
+                <Input placeholder="CUST-001 ADDR" 
+                  value={formData.custAddr}
+                  onChange={(e) => handleInputChange("custAddr", e.target.value)}
+                />
+              </Flex>
+
+              {/* Flex 2 chiếm 50% */}
+              <Flex flex={1}>
+                <Flex flex={2}>
+                  <Typography.Text
+                    style={{
+                      fontSize: 16,
+                      fontFamily: "Noto Sans KR",
+                      fontWeight: 400,
+                      color: "#4A4A50",
+                    }}
+                  >
+                    이메일
+                  </Typography.Text>
+                </Flex>
+
+                <Flex flex={8} vertical gap={8}>
+                  <Flex gap={8} style={{ height: 40 }}>
+                    <Input placeholder="CUST-001 CORP_EMAIL" 
+                      value={formData.corpEmail}
+                      onChange={(e) => handleInputChange("corpEmail", e.target.value)}
                     />
                   </Flex>
                 </Flex>
@@ -749,7 +824,10 @@ const SignupCorporate = () => {
 
                 <Flex flex={8} vertical gap={8}>
                   <Flex gap={8} style={{ height: 40 }}>
-                    <Input placeholder="CUST-001 CORP_REG_NO" />
+                    <Input placeholder="CUST-001 CORP_REG_NO" 
+                      value={formData.corpRegNo}
+                      onChange={(e) => handleInputChange("corpRegNo", e.target.value)}
+                    />
                   </Flex>
                 </Flex>
               </Flex>
