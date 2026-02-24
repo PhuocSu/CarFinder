@@ -123,4 +123,17 @@ export class UsersService {
     const user = await this.userRepository.findOne({ where: { custId } });
     return !!user; 
   }
+
+  // Fetch methods for different user types
+  async findIndividual(id: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { id, role: Role.INDIVIDUAL } });
+  }
+
+  async findBusiness(id: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { id, role: Role.BUSINESS } });
+  }
+
+  async findAgency(id: number): Promise<User | null> {
+    return await this.userRepository.findOne({ where: { id, role: Role.AGENCY } });
+  }
 }

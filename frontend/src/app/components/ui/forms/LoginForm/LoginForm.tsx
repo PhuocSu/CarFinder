@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { Button, Checkbox, Divider, Form, Input, message, Typography } from "antd";
+import {
+  Button,
+  Checkbox,
+  Divider,
+  Form,
+  Input,
+  message,
+  Typography,
+} from "antd";
 import { useLoginMutation } from "@/app/api/auth/useLoginMutation";
 import { useSetRecoilState } from "recoil";
 import { authState } from "@/store/authStore.atom";
@@ -22,11 +30,15 @@ const LoginForm: React.FC = () => {
   const loginMutation = useLoginMutation();
   const setAuth = useSetRecoilState(authState);
 
+  const handleSignUpClick = () => {
+    router.push("/signup/onboarding");
+  };
+
   useEffect(() => {
-    if (typeof window !== 'undefined' && localStorage.getItem("access_token")) {
-      router.replace('/'); // không thể quay lại loginPage, khác với push()
-    }  
-    
+    if (typeof window !== "undefined" && localStorage.getItem("access_token")) {
+      router.replace("/"); // không thể quay lại loginPage, khác với push()
+    }
+
     const savedUsername = localStorage.getItem("username");
     const rememberMe = localStorage.getItem("rememberMe");
     if (savedUsername && rememberMe === "true") {
@@ -51,12 +63,27 @@ const LoginForm: React.FC = () => {
 
       //1. lưu access token vào trong storage hoặc cookies
       localStorage.setItem("access_token", response.access_token);
-      
+
+      console.log("Login response:", response);
+      console.log("User data from response:", response.user);
+
+      // Decode JWT token để lấy user data
+      const tokenPayload = JSON.parse(
+        atob(response.access_token.split(".")[1]),
+      );
+      console.log("Decoded token:", tokenPayload);
+
+      const userData = {
+        id: tokenPayload.sub,
+        username: tokenPayload.username,
+        role: tokenPayload.role,
+      };
+
       window.dispatchEvent(new Event("authChanged"));
 
       //2. Cập nhật state xác thực thực toàn cục
       setAuth({
-        user: response.user,
+        user: userData,
         accessToken: response.access_token,
         isAuthenticated: true,
       });
@@ -72,7 +99,7 @@ const LoginForm: React.FC = () => {
 
       //4. Hiển thị thông báo thành công
       message.success("Login successfully");
-      router.replace('/');
+      router.replace("/");
     } catch (error) {
       console.log("Login failed: ", error);
       console.error("Login failed: ", error);
@@ -196,17 +223,33 @@ const LoginForm: React.FC = () => {
           alignItems: "center",
         }}
       >
-        <Typography.Link className={styles['header__bottom--character']} style={{color: 'var(--button-secondary-fg-enabled, #3533CC)'}}>회원가입</Typography.Link>
+        <Typography.Link
+          className={styles["header__bottom--character"]}
+          style={{ color: "var(--button-secondary-fg-enabled, #3533CC)" }}
+          onClick={handleSignUpClick}
+        >
+          회원가입
+        </Typography.Link>
         <Divider
           orientation="vertical"
           style={{ margin: 0, height: "12px", borderColor: "#d9d9d9" }}
         />
-        <Typography.Link className={styles['header__bottom--character']} style={{color: 'var(--base-fg-color-base-fg-40, #8F97A4)'}}>아이디 찾기</Typography.Link>
+        <Typography.Link
+          className={styles["header__bottom--character"]}
+          style={{ color: "var(--base-fg-color-base-fg-40, #8F97A4)" }}
+        >
+          아이디 찾기
+        </Typography.Link>
         <Divider
           orientation="vertical"
           style={{ margin: 0, height: "12px", borderColor: "#d9d9d9" }}
         />
-        <Typography.Link className={styles['header__bottom--character']} style={{color: 'var(--base-fg-color-base-fg-40, #8F97A4)'}}>비밀번호 찾기</Typography.Link>
+        <Typography.Link
+          className={styles["header__bottom--character"]}
+          style={{ color: "var(--base-fg-color-base-fg-40, #8F97A4)" }}
+        >
+          비밀번호 찾기
+        </Typography.Link>
       </div>
     </div>
   );

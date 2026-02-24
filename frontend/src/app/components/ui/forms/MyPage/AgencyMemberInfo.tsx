@@ -1,9 +1,31 @@
 "use client";
 
 import { EyeInvisibleOutlined, EyeTwoTone } from "@ant-design/icons";
-import { Button, Flex, Input, Typography } from "antd";
+import { Button, Flex, Input, Typography, Spin, Form } from "antd";
+import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
+import useUpdateAgencyMutation from "@/app/api/users/useUpdateAgencyMutation";
+import { authState } from "@/store/authStore.atom";
+import { useRecoilValue } from "recoil";
 
 const AgencyMemberInfo = () => {
+  const { user } = useRecoilValue(authState);
+  const { data: userData, isLoading, error } = useFetchAgencyQuery(user?.sub?.toString());
+  const updateMutation = useUpdateAgencyMutation(user?.sub?.toString());
+  const [form] = Form.useForm();
+
+  const handleSave = async (values: any) => {
+    // Remove password confirmation and empty values
+    const { custPwConfirm, ...dataToUpdate } = values;
+    const cleanedData = Object.fromEntries(
+      Object.entries(dataToUpdate).filter(([_, value]) => value !== undefined && value !== "")
+    );
+    
+    updateMutation.mutate(cleanedData);
+  };
+
+  if (isLoading) return <Spin size="large" />;
+  if (error) return <div>Error loading user data</div>;
+
   return (
     <Flex vertical style={{ width: "590px" }}>
       <Flex vertical gap={8} style={{ marginBottom: "40px" }}>
@@ -31,12 +53,20 @@ const AgencyMemberInfo = () => {
         </Typography.Text>
       </Flex>
 
-      <Flex vertical gap={20}>
+      <Form
+        id="agencyForm"
+        form={form}
+        layout="vertical"
+        initialValues={userData}
+        onFinish={handleSave}
+        style={{ width: "100%" }}
+      >
+        <Flex vertical gap={20}>
         <Flex flex={1} gap={16} style={{ height: "40px" }}>
           <Typography.Text style={{ width: "318px", display: "flex" }}>
             아이디<span style={{ color: "#DC0000" }}> *</span>
           </Typography.Text>
-          <Input placeholder="CUST-001 CUST_ID" />
+          <Input placeholder="CUST-001 CUST_ID" value={userData?.custId} readOnly style={{ backgroundColor: "#f5f5f5", color: "#000000", cursor: "default" }} />
         </Flex>
 
         <Flex flex={1} gap={16} style={{ height: "40px" }}>
@@ -55,7 +85,14 @@ const AgencyMemberInfo = () => {
 
         <Flex flex={1} gap={16} style={{ height: "40px" }}>
           <Typography.Text style={{ width: "318px", display: "flex" }}>
-          사업자등록번호<span style={{ color: "#DC0000" }}> *</span>
+            법인등록번호<span style={{ color: "#DC0000" }}> *</span>
+          </Typography.Text>
+          <Input placeholder="CUST-001 CORP_REG_NO" />
+        </Flex>
+
+        <Flex flex={1} gap={16} style={{ height: "40px" }}>
+          <Typography.Text style={{ width: "318px", display: "flex" }}>
+            사업자등록번호<span style={{ color: "#DC0000" }}> *</span>
           </Typography.Text>
           <Input placeholder="CUST-001 BSNM_REG_NO" />
         </Flex>
@@ -146,13 +183,13 @@ const AgencyMemberInfo = () => {
           회원탈퇴하기
         </Typography.Text>
       </Flex>
+      </Form>
 
       <Button
-        data-icon="none"
-        data-shownumber="true"
-        data-size="X-large"
-        data-state="enabled"
-        data-style="primary"
+        type="primary"
+        htmlType="submit"
+        form="agencyForm"
+        loading={updateMutation.isPending}
         style={{
           width: "450px",
           height: "56px",
@@ -167,17 +204,7 @@ const AgencyMemberInfo = () => {
           display: "inline-flex",
         }}
       >
-        <div
-          style={{
-            color: "var(--button-primary-fg, white)",
-            fontSize: 16,
-            fontFamily: "Inter",
-            fontWeight: "700",
-            wordWrap: "break-word",
-          }}
-        >
-          저장하기
-        </div>
+        저장하기
       </Button>
     </Flex>
   );

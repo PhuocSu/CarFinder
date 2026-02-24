@@ -8,12 +8,15 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import VehiclesForPurchase from "./VehiclesForPurchase/VehiclesForPurchase";
 import MemberInfoManagement from "./MemberInfoManagement/MemberInfoManagement";
+import { authState } from "@/store/authStore.atom";
+import { useRecoilValue } from "recoil";
 
 const MyPageDetail = () => {
   const [activeTab, setActiveTab] = useState("VehiclesForPurchase");
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useRecoilValue(authState);
 
   //khu url thay đổiđổi
   useEffect (() => {
@@ -75,7 +78,7 @@ const MyPageDetail = () => {
         <Flex style={{ width: "100%"}}>
           {/* Hiển thị tên người dùng */}
           <Flex vertical style={{ width: "100%" }}>
-            <Typography.Text className={styles["display__name"]}>안녕하세요, 박웅님</Typography.Text>
+            <Typography.Text className={styles["display__name"]}>안녕하세요, {user?.username}님</Typography.Text>
             {/* Hiển thị component tương ứng */}
             {activeTab === "VehiclesForPurchase" && <VehiclesForPurchase />}
             {activeTab === "InterestedVehicles" && <InterestedVehicles />}

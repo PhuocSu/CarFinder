@@ -109,4 +109,23 @@ export class UsersController {
       message: exists ? 'custId already exists' : 'custId is available'
     };
   }
+
+  // Fetch endpoints for different user types
+  @Public()
+  @Get('individual/:id')
+  async findIndividual(@Param('id') id: string) {
+    return this.usersService.findIndividual(+id);
+  }
+
+  @Public()
+  @Get('business/:id')
+  async findBusiness(@Param('id') id: string) {
+    return this.usersService.findBusiness(+id);
+  }
+
+  @Public()
+  @Get('agency/:id')
+  async findAgency(@Param('id') id: string) {
+    return this.usersService.findAgency(+id);
+  }
 }

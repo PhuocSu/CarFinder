@@ -162,14 +162,14 @@ const SignupCorporate = () => {
       birthDate: formData.birthDate || undefined,
       custAddr: formData.custAddr || undefined,
       // Set role based on business type
-      role: businessType === "corporate" ? "BUSINESS" : "AGENCY",
+      role: businessType === "corporate" ? "AGENCY" : "BUSINESS",
     };
 
     console.log("Final data before submission:", finalData);
     console.log("Submit data:", submitData);
-    console.log("Using mutation:", businessType === "corporate" ? "createBusinessMutation" : "createAgencyMutation");
+    console.log("Using mutation:", businessType === "corporate" ? "createAgencyMutation" : "createBusinessMutation");
 
-    const mutation = businessType === "corporate" ? createBusinessMutation : createAgencyMutation;
+    const mutation = businessType === "corporate" ? createAgencyMutation : createBusinessMutation;
     
     if (businessType === 'corporate') {
       (mutation as any).mutate(submitData as any, {

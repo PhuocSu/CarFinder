@@ -8,22 +8,19 @@ import BusinessMemberInfo from "../../forms/MyPage/BusinessMemberInfo";
 import AgencyMemberInfo from "../../forms/MyPage/AgencyMemberInfo";
 
 const MemberInfoManagement = () => {
-    // const {user, isAuthenticated} = useRecoilValue(authState);
-    // console.log('Auth state:', { user, isAuthenticated });
-    // if (!isAuthenticated || !user) return null;
-
+    const {user, isAuthenticated} = useRecoilValue(authState);
+    console.log("isAuthenticated:", isAuthenticated);
+    console.log("User role:", user?.role);
+    console.log("Full user object:", user);
+    
     return (
-        // <div>
-        //     {isAuthenticated && user.role === "INDIVIDUAL" && <IndividualMemberInfo />}
-        //     {isAuthenticated && user.role === "BUSINESS" && <BusinessMemberInfo />}
-        //     {isAuthenticated && user.role === "AGENCY" && <AgencyMemberInfo />}
-        //     {/* admin từ từ cũng được */}
-        // </div>
-
-        //hiệ tại đang lỗi nên để sau
         <div>
-            <h1>MemberInfoManagement</h1>
+            {isAuthenticated && user?.role === "INDIVIDUAL" && <IndividualMemberInfo />}
+            {isAuthenticated && user?.role === "BUSINESS" && <BusinessMemberInfo />}
+            {isAuthenticated && user?.role === "AGENCY" && <AgencyMemberInfo />}
+            {/* admin từ từ cũng được */}
         </div>
+
     )
 }
 

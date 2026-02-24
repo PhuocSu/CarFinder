@@ -31,8 +31,20 @@ export default function Header() {
     setIsAuthenticated(!!token);
   };
 
-  const handleHomepage = () => {
+  const handleHomepageClick = () => {
     router.push('/')
+  }
+
+  const handleLoginClick = () => {
+    router.push('/login')
+  }
+
+  const handleSignupClick = () => {
+    router.push('/signup/onboarding')
+  }
+
+  const handleMyPage = () => {
+    router.push('/myPage?tab=VehiclesForPurchase')
   }
 
   const handleLogout = () => {
@@ -57,16 +69,16 @@ export default function Header() {
               >
                 로그아웃
               </Typography.Text>
-              <Typography.Text className={styles.header__top__mypage}>
+              <Typography.Text className={styles.header__top__mypage} onClick={handleMyPage}>
                 마이 페이지
               </Typography.Text>
             </>
           ) : (
             <>
-              <Typography.Text className={styles.header__top__login}>
+              <Typography.Text className={styles.header__top__login} onClick={handleLoginClick}>
                 로그인
               </Typography.Text>
-              <Typography.Text className={styles.header__top__register}>
+              <Typography.Text className={styles.header__top__register} onClick={handleSignupClick}>
                 회원가입
               </Typography.Text>
             </>
@@ -80,7 +92,7 @@ export default function Header() {
               alt="KGM 인증중고차"
               width={288}
               height={32}
-              onClick={handleHomepage}
+              onClick={handleHomepageClick}
               style={{cursor: "pointer"}}
             />
           </div>
