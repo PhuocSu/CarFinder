@@ -47,6 +47,22 @@ export default function Header() {
     router.push('/myPage?tab=VehiclesForPurchase')
   }
 
+  const handleListPageClick = () => {
+    router.push('/listPage')
+  }
+
+  const handleEventClick = () => {
+    router.push('/event')
+  }
+
+  const handleFaqClick = () => {
+    router.push('/faq')
+  }
+
+  const handleNoticeClick = () => {
+    router.push('/notice')
+  }
+
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     localStorage.removeItem("username");
@@ -98,7 +114,11 @@ export default function Header() {
           </div>
 
           <div className={styles.header__nav}>
-            <Typography.Text className={styles.header__nav__item}>
+            <Typography.Text
+              className={styles.header__nav__item}
+              onClick={handleListPageClick}
+              style={{ cursor: "pointer" }}
+            >
               내차사기
             </Typography.Text>
             <Typography.Text className={styles.header__nav__item}>
@@ -107,13 +127,25 @@ export default function Header() {
             <Typography.Text className={styles.header__nav__item}>
               KGM 인증소개
             </Typography.Text>
-            <Typography.Text className={styles.header__nav__item}>
+            <Typography.Text
+              className={styles.header__nav__item}
+              onClick={handleEventClick}
+              style={{ cursor: "pointer" }}
+            >
               이벤트
             </Typography.Text>
-            <Typography.Text className={styles.header__nav__item}>
+            <Typography.Text
+              className={styles.header__nav__item}
+              onClick={handleFaqClick}
+              style={{ cursor: "pointer" }}
+            >
               자주 묻는 질문
             </Typography.Text>
-            <Typography.Text className={styles.header__nav__item}>
+            <Typography.Text
+              className={styles.header__nav__item}
+              onClick={handleNoticeClick}
+              style={{ cursor: "pointer" }}
+            >
               공지사항
             </Typography.Text>
           </div>
