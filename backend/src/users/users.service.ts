@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+﻿import { Injectable } from '@nestjs/common';
 import { BaseCreateUserDto } from './dto/create/base-create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entities/user.entity';
@@ -23,6 +23,14 @@ export class UsersService {
   private async hashPassword(password: string): Promise<string>{
     const saltOrRounds = 10;
     return await bcrypt.hash(password, saltOrRounds);
+  }
+
+  private async withHashedPassword<T extends { custPw?: string }>(dto: T): Promise<T> {
+    if (!dto.custPw) return dto;
+    return {
+      ...dto,
+      custPw: await this.hashPassword(dto.custPw),
+    };
   }
 
   //admin
@@ -78,7 +86,8 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    Object.assign(user, updateAdminDto);
+    const updateData = await this.withHashedPassword(updateAdminDto);
+    Object.assign(user, updateData);
     return await this.userRepository.save(user);
   }
 
@@ -89,7 +98,8 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    Object.assign(user, updateIndividualDto);
+    const updateData = await this.withHashedPassword(updateIndividualDto);
+    Object.assign(user, updateData);
     return await this.userRepository.save(user);
   }
 
@@ -100,7 +110,8 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    Object.assign(user, updateBusinessDto); //cập nhật thông tin từ updateBusinessDto vào user
+    const updateData = await this.withHashedPassword(updateBusinessDto);
+    Object.assign(user, updateData);
     return await this.userRepository.save(user);
   }
 
@@ -111,7 +122,8 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    Object.assign(user, updateAgencyDto); //cập nhật thông tin từ updateAgencyDto vào user
+    const updateData = await this.withHashedPassword(updateAgencyDto);
+    Object.assign(user, updateData);
     return await this.userRepository.save(user);
   }
 

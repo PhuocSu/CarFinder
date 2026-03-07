@@ -69,7 +69,11 @@ const BusinessMemberInfo = () => {
         id="businessForm"
         form={form}
         layout="vertical"
-        initialValues={userData}
+        initialValues={{
+          ...userData,
+          custPw: "",
+          custPwConfirm: "",
+        }}
         onFinish={handleSave}
         style={{ width: "100%" }}
       >
@@ -114,7 +118,8 @@ const BusinessMemberInfo = () => {
           </Typography.Text>
           <Form.Item name="custPw" style={{ flex: 1, margin: 0 }}>
             <Input.Password
-              placeholder="CUST-001 CUST_PW"
+              placeholder="새 비밀번호 입력"
+              autoComplete="new-password"
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
@@ -129,7 +134,8 @@ const BusinessMemberInfo = () => {
 
           <Form.Item name="custPwConfirm" style={{ flex: 1, margin: 0 }}>
             <Input.Password
-              placeholder="CUST-001 CUST_PW"
+              placeholder="새 비밀번호 확인"
+              autoComplete="new-password"
               iconRender={(visible) =>
                 visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />
               }
