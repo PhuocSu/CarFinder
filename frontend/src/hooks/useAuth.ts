@@ -8,6 +8,8 @@ export const useAuth = () => {
 
   const logout = () => {
     localStorage.removeItem("access_token");
+    localStorage.removeItem("username");
+    localStorage.removeItem("rememberMe");
     setAuth({
       user: null,
       accessToken: null,

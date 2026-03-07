@@ -24,7 +24,7 @@ const useInitCompareCars = () => {
       setCompareCars(JSON.parse(cached));
       console.log("useInitCompareCars - loaded:", JSON.parse(cached));
     }
-  }, [user?.sub]);
+  }, [user?.sub, user?.username]);
 
   // 2. When API trả data -> sync Recoil + localStorage
   useEffect(() => {

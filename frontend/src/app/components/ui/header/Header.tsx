@@ -5,31 +5,13 @@ import Image from "next/image";
 import styles from "./Header.module.css";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const { Header: AntdHeader } = Layout;
 
 export default function Header() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+  const { isAuthenticated, logout } = useAuth();
   const router = useRouter();
-
-  useEffect(() => {
-    // Kiểm tra 1 lần khi load component
-    checkAuth();
-
-    // Lắng nghe sự kiện từ login/logout
-    window.addEventListener("authChanged", checkAuth);
-
-    // Cleanup
-    return () => {
-      window.removeEventListener("authChanged", checkAuth);
-    };
-  }, []);
-
-  const checkAuth = () => {
-    const token = localStorage.getItem("access_token");
-    setIsAuthenticated(!!token);
-  };
 
   const handleHomepageClick = () => {
     router.push('/')
@@ -64,12 +46,9 @@ export default function Header() {
   }
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("username");
-    localStorage.removeItem("rememberMe");
-    //Kích hoạt sự kiện authChanged để cập nhật toàn cục
+    logout();
+    //Kích hoạt sự kiện authChanged để cập nhật các component khác (nếu cần)
     window.dispatchEvent(new Event("authChanged"));
-    setIsAuthenticated(false);
     router.push("/login");
   };
 

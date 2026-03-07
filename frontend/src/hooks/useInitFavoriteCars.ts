@@ -25,7 +25,7 @@ const useInitFavoriteCars = () => {
       setFavoriteCars(JSON.parse(cached));
       console.log("useInitFavoriteCars - loaded:", JSON.parse(cached));
     }
-  }, [user?.sub]);
+  }, [user?.sub, user?.username]);
 
   // 2. When API trả data -> sync Recoil + localStorage
   useEffect(() => {

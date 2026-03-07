@@ -14,6 +14,7 @@ import { useLoginMutation } from "@/app/api/auth/useLoginMutation";
 import { useSetRecoilState } from "recoil";
 import { authState } from "@/store/authStore.atom";
 import { useRouter } from "next/navigation";
+import api from "@/lib/axios";
 import styles from "./LoginForm.module.css";
 
 const { Title } = Typography;
@@ -64,6 +65,9 @@ const LoginForm: React.FC = () => {
       //1. lưu access token vào trong storage hoặc cookies
       localStorage.setItem("access_token", response.access_token);
 
+      // Set authorization header for future API calls
+      api.defaults.headers.common["Authorization"] = `Bearer ${response.access_token}`;
+
       console.log("Login response:", response);
       console.log("User data from response:", response.user);
 
@@ -77,9 +81,8 @@ const LoginForm: React.FC = () => {
         id: tokenPayload.sub,
         username: tokenPayload.username,
         role: tokenPayload.role,
+        sub: tokenPayload.sub, // Add sub for useInitFavoriteCars and useInitCompareCars
       };
-
-      window.dispatchEvent(new Event("authChanged"));
 
       //2. Cập nhật state xác thực thực toàn cục
       setAuth({
@@ -99,7 +102,14 @@ const LoginForm: React.FC = () => {
 
       //4. Hiển thị thông báo thành công
       message.success("Login successfully");
-      router.replace("/");
+      
+      //5. Dispatch authChanged event and navigate
+      window.dispatchEvent(new Event("authChanged"));
+      
+      // Small delay to ensure state is updated before navigation
+      setTimeout(() => {
+        router.replace("/");
+      }, 100);
     } catch (error) {
       console.log("Login failed: ", error);
       console.error("Login failed: ", error);
