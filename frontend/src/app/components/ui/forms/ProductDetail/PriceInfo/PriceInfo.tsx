@@ -11,8 +11,10 @@ import { Vehicle } from "@/app/api/listPage/useVehiclesQuery";
 import { getVehicleFullName } from "@/utils/getVehicleFullName";
 import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
+import { useRouter } from "next/navigation";
 
 const PriceInfo = ({vehicle}: {vehicle: Vehicle}) => {
+      const router = useRouter();
       const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
       const favoriteCars = useRecoilValue(favoriteCarState);
       const toggleFavorite = useToggleFavoriteMutation();
@@ -129,6 +131,7 @@ const PriceInfo = ({vehicle}: {vehicle: Vehicle}) => {
           fontWeight: "700",
           wordWrap: "break-word",
         }}
+        onClick={() => router.push(`/buyMyCar?id=${vehicle.id}`)}
       >
         구매하기
       </Button>
