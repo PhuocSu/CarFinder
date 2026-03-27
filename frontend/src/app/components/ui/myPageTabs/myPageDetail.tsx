@@ -6,11 +6,11 @@ import InterestedVehicles from "./InterestedVehicles/InterestedVehicles";
 import { useEffect, useState } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
-import VehiclesForPurchase from "./VehiclesForPurchase/ProcessContractLayout";
+import VehiclesForPurchase from "./VehiclesForPurchase/ProcessPurchaseLayout";
 import MemberInfoManagement from "./MemberInfoManagement/MemberInfoManagement";
 import { authState } from "@/store/authStore.atom";
 import { useRecoilValue } from "recoil";
-import ProcessContractLayout from "./VehiclesForPurchase/ProcessContractLayout";
+import ProcessPurchaseLayout from "./VehiclesForPurchase/ProcessPurchaseLayout";
 
 const MyPageDetail = () => {
   const [activeTab, setActiveTab] = useState("VehiclesForPurchase");
@@ -81,7 +81,7 @@ const MyPageDetail = () => {
           <Flex vertical style={{ width: "100%" }}>
             <Typography.Text className={styles["display__name"]}>안녕하세요, {user?.username}님</Typography.Text>
             {/* Hiển thị component tương ứng */}
-            {activeTab === "VehiclesForPurchase" && <ProcessContractLayout />}
+            {activeTab === "VehiclesForPurchase" && <ProcessPurchaseLayout />}
             {activeTab === "InterestedVehicles" && <InterestedVehicles />}
             {activeTab === "UserManagement" && <MemberInfoManagement />}
           </Flex>

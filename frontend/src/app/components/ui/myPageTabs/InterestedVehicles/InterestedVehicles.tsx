@@ -17,9 +17,9 @@ const InterestedVehicles = () => {
 
   if (isLoading) {
     return (
-      <Flex justify="center" align="center" style={{ padding: "50px" }}>
-        <Spin size="large" />
-      </Flex>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <img src="/images/loadcat.gif" alt="Loading..." style={{ width: '100px', height: '100px' }} />
+      </div>
     );
   }
 

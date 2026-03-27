@@ -17,7 +17,11 @@ const RecentlyViewed = ({ onClose }: RecentlyViewedProps) => {
   const {user} = useAuth();
   const { data: ViewedData, isLoading, isError } = useRecentlyViewedQuery(user?.sub);
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <img src="/images/loadcat.gif" alt="Loading..." style={{ width: '100px', height: '100px' }} />
+    </div>
+  );
   if (isError) return <div>Error...</div>;
 
   return (

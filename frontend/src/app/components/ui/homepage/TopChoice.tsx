@@ -8,7 +8,11 @@ import CarCard from "../cards/CarCard";
 const TopChoice = () => {
     const {data, isLoading, error} = useTopFavoriteQuery(3);
 
-    if (isLoading) return <Spin size="large" />;
+    if (isLoading) return (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <img src="/images/loadcat.gif" alt="Loading..." style={{ width: '100px', height: '100px' }} />
+        </div>
+    );
     if (error) return <div>Error loading top cars</div>;
 
     return (

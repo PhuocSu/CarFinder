@@ -35,7 +35,11 @@ const BusinessMemberInfo = () => {
     updateMutation.mutate(cleanedData);
   };
 
-  if (isLoading) return <Spin size="large" />;
+  if (isLoading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <img src="/images/loadcat.gif" alt="Loading..." style={{ width: '100px', height: '100px' }} />
+    </div>
+  );
   if (error) return <div>Error loading user data</div>;
 
   return (

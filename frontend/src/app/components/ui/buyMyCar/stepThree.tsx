@@ -21,7 +21,11 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
     ? calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent)
     : 0;
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return (
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+      <img src="/images/loadcat.gif" alt="Loading..." style={{ width: '100px', height: '100px' }} />
+    </div>
+  );
   if (error) return <div>Error loading vehicle data</div>;
   return (
     <Flex vertical gap={40} align="center">
