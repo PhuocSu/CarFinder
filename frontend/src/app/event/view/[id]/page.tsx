@@ -18,17 +18,17 @@ const EventDetail = () => {
   };
 
   const handlePrev = () => {
-  if (!eventData?.prevEventId) return;
-  router.push(`/event/view/${eventData.prevEventId}`);
-};
+    if (!eventData?.prevEventId) return;
+    router.push(`/event/view/${eventData.prevEventId}`);
+  };
 
-const handleNext = () => {
-  if (!eventData?.nextEventId) return;
-  router.push(`/event/view/${eventData.nextEventId}`);
-};
+  const handleNext = () => {
+    if (!eventData?.nextEventId) return;
+    router.push(`/event/view/${eventData.nextEventId}`);
+  };
 
   return (
-    <div style={{ width: "1200px", margin: "0 auto" }}>
+    <div style={{ width: "1200px", margin: "40px auto 40px" }}>
       <Flex vertical gap={60}>
         <Flex vertical gap={8}>
           <Typography.Text

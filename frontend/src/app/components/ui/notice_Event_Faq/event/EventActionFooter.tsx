@@ -20,7 +20,7 @@ const EventActionFooter = () => {
   };
 
   return (
-    <Flex justify="space-between" align="center">
+    <Flex justify="space-between" align="center" style={{ margin: "16px 0 56px 0" }}>
       <Typography.Text>
         <span
           style={{
