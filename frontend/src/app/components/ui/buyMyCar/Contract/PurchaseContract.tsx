@@ -28,6 +28,7 @@ const labelStyle: React.CSSProperties = {
   fontSize: 14,
   fontFamily: "Noto Sans KR",
   fontWeight: 400,
+  height: "100%",
 };
 
 const valueStyle: React.CSSProperties = {
@@ -460,13 +461,206 @@ const PurchaseContract = () => {
             wordWrap: "break-word",
           }}
         >
-          ※ 당사는 차량대금을 현금으로 수령하지 않습니다. 계약서에 명시되어 있는 가상입금계좌로 입금을 해주시기 바랍니다. 위 계좌 외 입금 건은 차량대금으로 인정되지 않습니다
+          ※ 당사는 차량대금을 현금으로 수령하지 않습니다. 계약서에 명시되어 있는
+          가상입금계좌로 입금을 해주시기 바랍니다. 위 계좌 외 입금 건은
+          차량대금으로 인정되지 않습니다
         </div>
 
+        {/* section 4: Customer Information */}
         <div>
-          
+          <div style={sectionHeaderStyle}>
+            <div style={sectionTitleStyle}>
+              <div style={sectionTitleTextStyle}>■ 인적사항</div>
+            </div>
+          </div>
+
+          <div style={tableContainerStyle}>
+            <Row>
+              <Col span={6}>
+                <div style={valueStyle}>매도자 (갑)</div>
+              </Col>
+              <Col span={18}>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>성명</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>케이지모빌리티 주식회사</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={labelStyle}>사업자번호</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>257-85-02407</div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>주소</div>
+                  </Col>
+                  <Col span={18}>
+                    <div style={valueStyle}>
+                      서울특별시 강서구 양천로53길 30, 803호 804호(가양동,
+                      서서울모터리움)
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>담당자</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>우연수</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={labelStyle}>전화번호</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>1577-1240</div>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+
+            <Row>
+              <Col span={6}>
+                <div style={valueStyle}>매수자 (을)</div>
+              </Col>
+              <Col span={18}>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>성명</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>Su Van Phuoc</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={labelStyle}>주민/사업자 등록번호</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>681024-2804332</div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>연락처</div>
+                  </Col>
+                  <Col span={18}>
+                    <div style={valueStyle}>
+                      경상북도 상주시 봉양1길 126 (무양동, 지엘리베라움 아파트)
+                      103동 1002호
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>연락처</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>010-3546-3524</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={labelStyle}>이메일</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>SooTest@gmail.com</div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>개인/사업자 여부 확인</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>개인</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={labelStyle}>증빙여부</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>현금영수증</div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>이전비 잔금수령방법</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>환급계좌</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={labelStyle}>환급계좌/예금주</div>
+                  </Col>
+                  <Col span={6}>
+                    <div style={valueStyle}>
+                      농협은행 301011111111112 (박하연)
+                    </div>
+                  </Col>
+                </Row>
+                <Row>
+                  <Col span={6}>
+                    <div style={labelStyle}>이전등록증 우편물 수령지</div>
+                  </Col>
+                  <Col span={18}>
+                    <div style={valueStyle}>
+                      경상북도 상주시 봉양1길 126 (무양동, 지엘리베라움 아파트)
+                      103동 1002호
+                    </div>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col span={6}>
+                <div style={labelStyle}>계약일자</div>
+              </Col>
+              <Col span={6}>
+                <div style={valueStyle}>2025-07-17 15:53</div>
+              </Col>
+              <Col span={6}>
+                <div style={labelStyle}>구매자</div>
+              </Col>
+              <Col span={6}>
+                <div style={valueStyle}>박하연</div>
+              </Col>
+            </Row>
+          </div>
         </div>
       </Flex>
+
+      {/* Action Buttons */}
+      <div style={{width: '100%', marginTop: "80px", justifyContent: 'center', alignItems: 'center', gap: 12, display: 'inline-flex', padding: '0 40px 40px'}}>
+        <Button
+          style={{
+            width: 200,
+            height: 48,
+            background: 'var(--button-tertiary-bg-enabled, white)',
+            border: '1px solid var(--button-tertiary-stroke-enabled, #CECED3)',
+            borderRadius: 2,
+            color: 'var(--button-tertiary-fg-enabled, #666670)',
+            fontSize: 14,
+            fontFamily: 'Pretendard',
+            fontWeight: '700',
+          }}
+        >
+          계약해약
+        </Button>
+        <Button
+          type="primary"
+          style={{
+            width: 200,
+            height: 48,
+            background: 'var(--button-primary-bg-enabled, #2F2C4D)',
+            border: 'none',
+            borderRadius: 2,
+            color: 'var(--button-primary-fg, white)',
+            fontSize: 14,
+            fontFamily: 'Pretendard',
+            fontWeight: '700',
+          }}
+        >
+          제출하기
+        </Button>
+      </div>
     </Modal>
   );
 };
