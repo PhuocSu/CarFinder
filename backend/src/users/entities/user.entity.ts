@@ -11,6 +11,8 @@ import { RecentlyViewedCar } from 'src/recently-viewed-car/entities/recently-vie
 import { FavoriteCar } from 'src/favorite-car/entities/favorite-car.entity';
 import { CompareCar } from 'src/compare-car/entities/compare-car.entity';
 import { RecentSearchHistory } from 'src/recently-search-history/entity/recently-search-history.entity';
+import { PurchaseContract } from 'src/purchase-contract/entities/purchase-contract.entity';
+import { ContractStatusHistory } from 'src/contract-status-history/entities/contract-status-history.entity';
 
 export enum Role {
   ADMIN = 'ADMIN',
@@ -97,4 +99,11 @@ export class User {
   
   @OneToMany(() => RecentSearchHistory, (recentSearchHistory) => recentSearchHistory.user)
   recentSearchHistories: RecentSearchHistory[];
+  
+  @OneToMany(() => PurchaseContract, (purchaseContract) => purchaseContract.buyer)
+  purchaseContracts: PurchaseContract[];
+
+  @OneToMany(() => ContractStatusHistory, (contractStatusHistory) => contractStatusHistory.changedBy)
+  contractStatusHistories: ContractStatusHistory[];
 }
+

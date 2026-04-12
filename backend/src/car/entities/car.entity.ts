@@ -16,6 +16,7 @@ import {
 import { VehicleBadge } from '../enums/vehicle-badge.enum';
 import { FuelType } from '../enums/fuel-type.enum';
 import { TransmissionType } from '../enums/transmission-type.enum';
+import { PurchaseContract } from 'src/purchase-contract/entities/purchase-contract.entity';
 
 
 @Entity()
@@ -116,4 +117,8 @@ export class Car {
 
   @OneToMany(() => CompareCar, (compareCar) => compareCar.car)
   comparedByUsers: CompareCar[];
+  
+  @OneToMany(() => PurchaseContract, (purchaseContract) => purchaseContract.car)
+  purchaseContracts: PurchaseContract[];
 }
+

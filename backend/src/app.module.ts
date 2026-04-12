@@ -22,6 +22,9 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { RecentlySearchHistoryController } from './recently-search-history/recently-search-history.controller';
 import { RecentlySearchHistoryService } from './recently-search-history/recently-search-history.service';
 import { RecentlySearchHistoryModule } from './recently-search-history/recently-search-history.module';
+import { PurchaseContractModule } from './purchase-contract/purchase-contract.module';
+import { ContractStatusHistoryModule } from './contract-status-history/contract-status-history.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -82,6 +85,12 @@ import { RecentlySearchHistoryModule } from './recently-search-history/recently-
     CloudinaryModule,
 
     RecentlySearchHistoryModule,
+
+    PurchaseContractModule,
+
+    ContractStatusHistoryModule,
+
+    PaymentModule,
 
     // cần nên khai báo trong RootAsync 
     // => tránh interceptor chạy đầu tiên trước khi đọc dữ liệu trong.env.development
