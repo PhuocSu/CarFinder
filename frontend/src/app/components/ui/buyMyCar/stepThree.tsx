@@ -5,6 +5,9 @@ import { useVehicleDetailQuery } from "@/app/api/productDetail/useProductDetailQ
 import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
 import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import PurchaseContract from "./Contract/PurchaseContract";
 
 interface StepThreeProps {
   vehicleId?: string | null;
@@ -17,6 +20,9 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
     error,
   } = useVehicleDetailQuery(vehicleId || null);
 
+  const router = useRouter();
+  const [contractModalVisible, setContractModalVisible] = useState(false);
+
   const finalPrice = vehicle
     ? calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent)
     : 0;
@@ -27,6 +33,19 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
     </div>
   );
   if (error) return <div>Error loading vehicle data</div>;
+
+  const handleMyPageClick = () => {
+    router.push('/myPage?tab=VehiclesForPurchase');
+  };
+
+  const handleContractModalOpen = () => {
+    setContractModalVisible(true);
+  };
+
+  const handleContractModalClose = () => {
+    setContractModalVisible(false);
+  };
+
   return (
     <Flex vertical gap={40} align="center">
       <Flex justify="space-between" style={{ width: "788px" }}>
@@ -273,7 +292,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
         </Row>
       </Card>
 
-      <Flex gap={8} style={{width: "788px"}}>
+      <Flex gap={8} style={{ width: "788px" }}>
         <Button
           style={{
             width: "100%",
@@ -284,6 +303,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
             fontWeight: "700",
             wordWrap: "break-word",
           }}
+          onClick={handleMyPageClick}
         >
           마이페이지로 가기
         </Button>
@@ -299,9 +319,16 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
             fontWeight: "700",
             wordWrap: "break-word",
           }}
+          onClick={handleContractModalOpen}
         >
           매매계약서 작성하기
         </Button>
+
+        <PurchaseContract
+          visible={contractModalVisible}
+          onClose={handleContractModalClose}
+          vehicleId={vehicleId}
+        />
       </Flex>
     </Flex>
   );

@@ -5,17 +5,32 @@ import StepOne from "../components/ui/buyMyCar/stepOne"
 import StepTwo from "../components/ui/buyMyCar/stepTwo"
 import StepThree from "../components/ui/buyMyCar/stepThree"
 import PurchaseContract from "../components/ui/buyMyCar/Contract/PurchaseContract"
+import { useState } from "react"
 
 const BuyMyCar = () => {
     const searchParams = useSearchParams()
     const vehicleId = searchParams.get('id')
+    const [currentStep, setCurrentStep] = useState(1)
+
+    const handleNextStep = () => {
+        setCurrentStep(prev => prev + 1)
+    }
     
+    const handlePreviousStep = () => {
+        setCurrentStep(prev => prev - 1)
+    }
+
     return (
         <div style={{width: "1200px", margin: "40px auto 40px"}}>
-            {/* <StepOne vehicleId={vehicleId} /> */}
-            {/* <StepTwo /> */}
-            {/* <StepThree vehicleId={vehicleId} /> */}
-            <PurchaseContract />
+            {currentStep === 1 && (
+                <StepOne vehicleId={vehicleId} onNext={handleNextStep} />
+            )}
+            {currentStep === 2 && (
+                <StepTwo onNext={handleNextStep} onPrevious={handlePreviousStep} />
+            )}
+            {currentStep === 3 && (
+                <StepThree vehicleId={vehicleId} />
+            )}
         </div>
     )
 }

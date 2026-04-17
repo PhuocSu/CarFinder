@@ -82,13 +82,11 @@ const tableContainerStyle: React.CSSProperties = {
   outlineOffset: "-0.5px",
 };
 
-const PurchaseContract = () => {
-  const [open, setOpen] = useState(true);
-
+const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; onClose: () => void; vehicleId: string | null | undefined }) => {
   return (
     <Modal
-      open={open}
-      onCancel={() => setOpen(false)}
+      open={visible}
+      onCancel={onClose} // click vào backdrop ddeeer tắt
       closable={false}
       footer={null}
       width={1200}
@@ -131,7 +129,7 @@ const PurchaseContract = () => {
           <Button
             type="text"
             icon={<CloseOutlined />}
-            onClick={() => setOpen(false)}
+            onClick={onClose}
             style={{
               width: 28,
               height: 28,
@@ -628,7 +626,7 @@ const PurchaseContract = () => {
       </Flex>
 
       {/* Action Buttons */}
-      <div style={{width: '100%', marginTop: "80px", justifyContent: 'center', alignItems: 'center', gap: 12, display: 'inline-flex', padding: '0 40px 40px'}}>
+      <div style={{ width: '100%', marginTop: "80px", justifyContent: 'center', alignItems: 'center', gap: 12, display: 'inline-flex', padding: '0 40px 40px' }}>
         <Button
           style={{
             width: 200,

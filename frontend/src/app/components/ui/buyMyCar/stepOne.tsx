@@ -8,9 +8,10 @@ import { getVehicleFullName } from "@/utils/getVehicleFullName";
 
 interface StepOneProps {
   vehicleId?: string | null;
+  onNext?: () => void;
 }
 
-const StepOne = ({ vehicleId }: StepOneProps) => {
+const StepOne = ({ vehicleId, onNext }: StepOneProps) => {
   const {
     data: vehicle,
     isLoading,
@@ -155,6 +156,7 @@ const StepOne = ({ vehicleId }: StepOneProps) => {
           fontWeight: "700",
           wordWrap: "break-word",
         }}
+        onClick={onNext}
       >
         다음
       </Button>

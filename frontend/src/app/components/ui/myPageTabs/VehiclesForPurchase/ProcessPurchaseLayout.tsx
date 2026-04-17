@@ -1,9 +1,22 @@
 "use client";
 
-import { BorderBottomOutlined } from "@ant-design/icons";
 import { Button, Card, Col, Flex, Row, Steps, Typography } from "antd";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import PurchaseContract from "../../buyMyCar/Contract/PurchaseContract";
 
 const ProcessPurchaseLayout = () => {
+  const router = useRouter();
+  const [contractModalVisible, setContractModalVisible] = useState(false);
+
+  const handleContractModalOpen = () => {
+    setContractModalVisible(true);
+  };
+
+  const handleContractModalClose = () => {
+    setContractModalVisible(false);
+  };
+
   return (
     <Card
       style={{
@@ -117,12 +130,13 @@ const ProcessPurchaseLayout = () => {
               <Button
                 block
                 style={{ borderColor: "#CECED3", color: "#666670", height: "100%" }}
+                onClick={() => router.push("/")}
               >
                 메인페이지로 가기
               </Button>
             </Col>
             <Col span={12}>
-              <Button block type="primary" style={{ height: "100%", background: "#2F2C4D", borderColor: "#2F2C4D" }}>
+              <Button block type="primary" style={{ height: "100%", background: "#2F2C4D", borderColor: "#2F2C4D" }} onClick={handleContractModalOpen}>
                 매매계약서 작성하기
               </Button>
             </Col>
@@ -153,6 +167,13 @@ const ProcessPurchaseLayout = () => {
           </Typography.Text>
         </Col>
       </Row>
+
+       <PurchaseContract
+        visible={contractModalVisible}
+        onClose={handleContractModalClose}
+        vehicleId={null}
+      />
+
     </Card>
   );
 };

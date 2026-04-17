@@ -2,7 +2,12 @@
 
 import { Button, Flex, Input, Typography, DatePicker, Select } from "antd";
 
-const StepTwo = () => {
+interface StepTwoProps {
+  onNext?: () => void;
+  onPrevious?: () => void;
+}
+
+const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
   return (
     <Flex vertical gap={40} align="center">
       <Flex justify="space-between" style={{ width: "100%" }}>
@@ -192,8 +197,9 @@ const StepTwo = () => {
           fontWeight: "700",
           wordWrap: "break-word",
         }}
+        onClick={onNext}
       >
-        다음
+        주문신청
       </Button>
     </Flex>
   );
