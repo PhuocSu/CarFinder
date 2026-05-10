@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
 import { Repository } from 'typeorm';
 import { User } from 'src/users/entities/user.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class SessionsService {
@@ -47,13 +48,16 @@ export class SessionsService {
     }
 
     //Xoá session hết hạn
+    @Cron(CronExpression.EVERY_HOUR)
     async removeExpiredSessions(): Promise<void> {
+        console.log('[CRON] Removing expired sessions at:', new Date().toISOString());
         await this.sessionRepository
           .createQueryBuilder()
           .delete()
           .from(Session)
           .where('expireAt < :now', { now: new Date() })
           .execute();
+        console.log('[CRON] Expired sessions removed');
     }
 
 }
