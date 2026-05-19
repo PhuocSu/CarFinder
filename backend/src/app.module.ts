@@ -24,7 +24,8 @@ import { RecentlySearchHistoryService } from './recently-search-history/recently
 import { RecentlySearchHistoryModule } from './recently-search-history/recently-search-history.module';
 import { PurchaseContractModule } from './purchase-contract/purchase-contract.module';
 import { ContractStatusHistoryModule } from './contract-status-history/contract-status-history.module';
-import { PaymentModule } from './payment/payment.module';
+import { MomoModule } from './momo/momo.module';
+import { PaymentsModule } from './payments/payments.module';
 
 @Module({
   imports: [
@@ -90,7 +91,9 @@ import { PaymentModule } from './payment/payment.module';
 
     ContractStatusHistoryModule,
 
-    PaymentModule,
+    MomoModule,
+
+    PaymentsModule,
 
     // cần nên khai báo trong RootAsync 
     // => tránh interceptor chạy đầu tiên trước khi đọc dữ liệu trong.env.development

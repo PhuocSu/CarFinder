@@ -1,5 +1,5 @@
 import { Car } from 'src/car/entities/car.entity';
-import { Payment } from 'src/payment/entities/payment.entity';
+import { Payment } from 'src/payments/entities/payment.entity';
 import { User } from 'src/users/entities/user.entity';
 import {
   Entity,

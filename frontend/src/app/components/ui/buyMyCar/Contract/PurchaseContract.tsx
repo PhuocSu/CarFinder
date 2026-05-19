@@ -1,5 +1,7 @@
 "use client";
 
+import { useMomoPayment } from "@/app/api/payments/momo/useMomoPayment";
+import { generateOrderId } from "@/utils/generate-order-id";
 import { CloseOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -83,6 +85,9 @@ const tableContainerStyle: React.CSSProperties = {
 };
 
 const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; onClose: () => void; vehicleId: string | null | undefined }) => {
+  const { mutate, isPending } = useMomoPayment();
+  const orderId = generateOrderId();
+
   return (
     <Modal
       open={visible}
@@ -655,6 +660,7 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
             fontFamily: 'Pretendard',
             fontWeight: '700',
           }}
+          onClick={() => mutate({ orderId: orderId, amount: 500000 })}
         >
           제출하기
         </Button>
