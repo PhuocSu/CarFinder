@@ -2,7 +2,6 @@
 
 import { useMomoPayment } from "@/app/api/payments/momo/useMomoPayment";
 import { buyMyCarFormState } from "@/store/buyMyCar.atom";
-import { generateOrderId } from "@/utils/generate-order-id";
 import { CloseOutlined } from "@ant-design/icons";
 import {
   Button,
@@ -26,6 +25,7 @@ import { authState } from "@/store/authStore.atom";
 import useFetchIndividualQuery from "@/app/api/users/useFetchIndividualQuery";
 import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
 import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
+import { generateOrderId } from "@/utils/generate-order-id";
 
 const cellBaseStyle: React.CSSProperties = {
   padding: 12,
@@ -701,7 +701,7 @@ const PurchaseContract = ({
                 <div style={labelStyle}>구매자</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>{buyerName}</div>
+                <div style={valueStyle}>박하연</div>
               </Col>
             </Row>
           </div>
