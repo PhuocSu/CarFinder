@@ -1,6 +1,7 @@
 "use client";
 
 import { useMomoPayment } from "@/app/api/payments/momo/useMomoPayment";
+import { buyMyCarFormState } from "@/store/buyMyCar.atom";
 import { generateOrderId } from "@/utils/generate-order-id";
 import { CloseOutlined } from "@ant-design/icons";
 import {
@@ -14,6 +15,17 @@ import {
   Typography,
 } from "antd";
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
+import { useVehicleDetailQuery } from "@/app/api/productDetail/useProductDetailQuery";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { formatNumber } from "@/utils/formatNumber";
+import { calculateFinalPrice } from "@/utils/countPrice";
+import { formatDate } from "@/utils/formatDate";
+import formatDateTime from "@/utils/formatDateTime";
+import { authState } from "@/store/authStore.atom";
+import useFetchIndividualQuery from "@/app/api/users/useFetchIndividualQuery";
+import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
+import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
 
 const cellBaseStyle: React.CSSProperties = {
   padding: 12,
@@ -84,9 +96,62 @@ const tableContainerStyle: React.CSSProperties = {
   outlineOffset: "-0.5px",
 };
 
-const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; onClose: () => void; vehicleId: string | null | undefined }) => {
+const PurchaseContract = ({
+  visible,
+  onClose,
+  vehicleId,
+}: {
+  visible: boolean;
+  onClose: () => void;
+  vehicleId: string | null | undefined;
+}) => {
   const { mutate, isPending } = useMomoPayment();
   const orderId = generateOrderId();
+  const formData = useRecoilValue(buyMyCarFormState);
+  const {
+    data: vehicleData,
+    isLoading: vehicleLoading,
+    error: vehicleError,
+  } = useVehicleDetailQuery(vehicleId || null);
+
+  const { user } = useRecoilValue(authState);
+
+  const individualQuery = useFetchIndividualQuery(
+    user?.role === "INDIVIDUAL" ? user?.sub?.toString() : undefined,
+  );
+
+  const businessQuery = useFetchBusinessQuery(
+    user?.role === "BUSINESS" ? user?.sub?.toString() : undefined,
+  );
+
+  const agencyQuery = useFetchAgencyQuery(
+    user?.role === "AGENCY" ? user?.sub?.toString() : undefined,
+  );
+
+  const buyerData =
+    user?.role === "INDIVIDUAL"
+      ? individualQuery.data
+      : user?.role === "BUSINESS"
+        ? businessQuery.data
+        : user?.role === "AGENCY"
+          ? agencyQuery.data
+          : null;
+  const buyerName =
+    user?.role === "INDIVIDUAL"
+      ? buyerData?.custName
+      : (buyerData?.reprsntName ?? buyerData?.custName);
+
+  const buyerRegistrationNumber =
+    user?.role === "INDIVIDUAL" ? buyerData?.rrn : buyerData?.bnsmRegNo;
+
+  const buyerPhone =
+    user?.role === "INDIVIDUAL"
+      ? buyerData?.custPhone
+      : (buyerData?.custRepPhone ?? buyerData?.corpTellNo);
+
+  const buyerEmail = buyerData?.custEmail ?? buyerData?.email ?? "-";
+
+  const buyerTypeLabel = user?.role === "INDIVIDUAL" ? "개인" : "사업자";
 
   return (
     <Modal
@@ -303,13 +368,15 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                 <div style={labelStyle}>차명</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>KIA EV6</div>
+                <div style={valueStyle}>{vehicleData?.brandName}</div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>모델명</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>EV6</div>
+                <div style={valueStyle}>
+                  {vehicleData?.subModel?.model?.modelName ?? "-"}
+                </div>
               </Col>
             </Row>
             <Row>
@@ -317,13 +384,13 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                 <div style={labelStyle}>차량번호</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}></div>
+                <div style={valueStyle}>{vehicleData?.carRegNo || "-"}</div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>차대번호</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}></div>
+                <div style={valueStyle}>{vehicleData?.chassisNo || "-"}</div>
               </Col>
             </Row>
             <Row>
@@ -331,13 +398,17 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                 <div style={labelStyle}>최초등록일</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>2025-07-19</div>
+                <div style={valueStyle}>
+                  {formatDate(vehicleData?.firstRegDate || "")}
+                </div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>형식연도</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>2025</div>
+                <div style={valueStyle}>
+                  {vehicleData?.manufacturerYear || "-"}
+                </div>
               </Col>
             </Row>
             <Row>
@@ -345,13 +416,15 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                 <div style={labelStyle}>주행거리</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>30,000km</div>
+                <div style={valueStyle}>{vehicleData?.mileage || "-"}</div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>배기량</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>2.0L</div>
+                <div style={valueStyle}>
+                  {vehicleData?.engineDisplacement || "-"}
+                </div>
               </Col>
             </Row>
           </div>
@@ -380,7 +453,7 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                 <div style={labelStyle}>명의이전비</div>
               </Col>
               <Col span={18}>
-                <div style={valueStyle}>500,000원</div>
+                <div style={valueStyle}>0원</div>
               </Col>
             </Row>
             <Row>
@@ -438,7 +511,10 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
               </Col>
               <Col span={18}>
                 <div style={valueStyle}>
-                  SALE_AMT + TAX_CAR + MAN_EX + DELI_AMT
+                  {vehicleData?.basePrice
+                    ? formatNumber(vehicleData.basePrice)
+                    : "0"}
+                  원
                 </div>
               </Col>
             </Row>
@@ -535,18 +611,18 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                     <div style={labelStyle}>성명</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>Su Van Phuoc</div>
+                    <div style={valueStyle}>{buyerName}</div>
                   </Col>
                   <Col span={6}>
                     <div style={labelStyle}>주민/사업자 등록번호</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>681024-2804332</div>
+                    <div style={valueStyle}>{buyerRegistrationNumber}</div>
                   </Col>
                 </Row>
                 <Row>
                   <Col span={6}>
-                    <div style={labelStyle}>연락처</div>
+                    <div style={labelStyle}>주소</div>
                   </Col>
                   <Col span={18}>
                     <div style={valueStyle}>
@@ -560,13 +636,13 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                     <div style={labelStyle}>연락처</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>010-3546-3524</div>
+                    <div style={valueStyle}>{buyerPhone}</div>
                   </Col>
                   <Col span={6}>
                     <div style={labelStyle}>이메일</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>SooTest@gmail.com</div>
+                    <div style={valueStyle}>{buyerEmail}</div>
                   </Col>
                 </Row>
                 <Row>
@@ -617,13 +693,15 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
                 <div style={labelStyle}>계약일자</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>2025-07-17 15:53</div>
+                <div style={labelStyle}>
+                  {formatDateTime(new Date().toISOString())}
+                </div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>구매자</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>박하연</div>
+                <div style={valueStyle}>{buyerName}</div>
               </Col>
             </Row>
           </div>
@@ -631,18 +709,28 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
       </Flex>
 
       {/* Action Buttons */}
-      <div style={{ width: '100%', marginTop: "80px", justifyContent: 'center', alignItems: 'center', gap: 12, display: 'inline-flex', padding: '0 40px 40px' }}>
+      <div
+        style={{
+          width: "100%",
+          marginTop: "80px",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 12,
+          display: "inline-flex",
+          padding: "0 40px 40px",
+        }}
+      >
         <Button
           style={{
             width: 200,
             height: 48,
-            background: 'var(--button-tertiary-bg-enabled, white)',
-            border: '1px solid var(--button-tertiary-stroke-enabled, #CECED3)',
+            background: "var(--button-tertiary-bg-enabled, white)",
+            border: "1px solid var(--button-tertiary-stroke-enabled, #CECED3)",
             borderRadius: 2,
-            color: 'var(--button-tertiary-fg-enabled, #666670)',
+            color: "var(--button-tertiary-fg-enabled, #666670)",
             fontSize: 14,
-            fontFamily: 'Pretendard',
-            fontWeight: '700',
+            fontFamily: "Pretendard",
+            fontWeight: "700",
           }}
         >
           계약해약
@@ -652,13 +740,13 @@ const PurchaseContract = ({ visible, onClose, vehicleId }: { visible: boolean; o
           style={{
             width: 200,
             height: 48,
-            background: 'var(--button-primary-bg-enabled, #2F2C4D)',
-            border: 'none',
+            background: "var(--button-primary-bg-enabled, #2F2C4D)",
+            border: "none",
             borderRadius: 2,
-            color: 'var(--button-primary-fg, white)',
+            color: "var(--button-primary-fg, white)",
             fontSize: 14,
-            fontFamily: 'Pretendard',
-            fontWeight: '700',
+            fontFamily: "Pretendard",
+            fontWeight: "700",
           }}
           onClick={() => mutate({ orderId: orderId, amount: 500000 })}
         >

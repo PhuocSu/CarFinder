@@ -8,6 +8,8 @@ import { getVehicleFullName } from "@/utils/getVehicleFullName";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import PurchaseContract from "./Contract/PurchaseContract";
+import { useRecoilValue } from "recoil";
+import { buyMyCarFormState } from "@/store/buyMyCar.atom";
 
 interface StepThreeProps {
   vehicleId?: string | null;
@@ -27,15 +29,29 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
     ? calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent)
     : 0;
 
-  if (isLoading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
-      <img src="/images/loadcat.gif" alt="Loading..." style={{ width: '100px', height: '100px' }} />
-    </div>
-  );
+  const formData = useRecoilValue(buyMyCarFormState);
+
+  if (isLoading)
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100vh",
+        }}
+      >
+        <img
+          src="/images/loadcat.gif"
+          alt="Loading..."
+          style={{ width: "100px", height: "100px" }}
+        />
+      </div>
+    );
   if (error) return <div>Error loading vehicle data</div>;
 
   const handleMyPageClick = () => {
-    router.push('/myPage?tab=VehiclesForPurchase');
+    router.push("/myPage?tab=VehiclesForPurchase");
   };
 
   const handleContractModalOpen = () => {
@@ -188,7 +204,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  홍길동
+                  {formData?.representativeName}
                 </Typography.Text>
               </Col>
             </Row>
@@ -227,7 +243,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  pw0131@naver.com
+                  {formData?.email}
                 </Typography.Text>
               </Col>
             </Row>
@@ -245,7 +261,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  010-5043-3343
+                  {formData?.homePhone}
                 </Typography.Text>
               </Col>
             </Row>
@@ -266,7 +282,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  2025.05.02
+                  {formData?.desiredDeliveryDate}
                 </Typography.Text>
               </Col>
             </Row>

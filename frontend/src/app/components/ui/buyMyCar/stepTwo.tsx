@@ -1,6 +1,13 @@
 "use client";
 
+import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
+import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
+import { authState } from "@/store/authStore.atom";
+import { buyMyCarFormState } from "@/store/buyMyCar.atom";
+import StepTwoFormData from "@/types/stepTwoFormData";
 import { Button, Flex, Input, Typography, DatePicker, Select } from "antd";
+import { useEffect } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 interface StepTwoProps {
   onNext?: () => void;
@@ -8,6 +15,29 @@ interface StepTwoProps {
 }
 
 const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
+  const [formData, setFormData] = useRecoilState(buyMyCarFormState);
+
+  const { user } = useRecoilValue(authState);
+  const businessQuery = useFetchBusinessQuery(
+    user?.role === "BUSINESS" ? user?.sub?.toString() : undefined,
+  );
+  const agencyQuery = useFetchAgencyQuery(
+    user?.role === "AGENCY" ? user?.sub?.toString() : undefined,
+  );
+  const userData =
+    user?.role === "BUSINESS" ? businessQuery.data : agencyQuery.data;
+
+  useEffect(() => {
+    if (!userData) return;
+
+    setFormData((prev) => ({
+      ...prev,
+      companyName: userData.custName || "",
+      representativeName: userData.reprsntName || "",
+      businessRegistrationNumber: userData.bnsmRegNo || "",
+    }));
+  }, [userData, setFormData]);
+
   return (
     <Flex vertical gap={40} align="center">
       <Flex justify="space-between" style={{ width: "100%" }}>
@@ -59,10 +89,11 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
               <Typography.Text style={{ fontSize: 14, fontWeight: 500 }}>
                 법인명 (Company Name)
               </Typography.Text>
-              <Input 
+              <Input
                 placeholder="CUST-001 CUST_NM"
                 defaultValue="유지운"
                 style={{ height: 48 }}
+                value={userData?.custName}
                 disabled
               />
             </Flex>
@@ -71,10 +102,11 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
               <Typography.Text style={{ fontSize: 14, fontWeight: 500 }}>
                 대표자명 (Representative Name)
               </Typography.Text>
-              <Input 
+              <Input
                 placeholder="CUST-001 REPRSNT_NM"
                 defaultValue="유지운"
                 style={{ height: 48 }}
+                value={userData?.reprsntName}
                 disabled
               />
             </Flex>
@@ -83,9 +115,16 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
               <Typography.Text style={{ fontSize: 14, fontWeight: 500 }}>
                 (자택) 전화번호 (Home Phone Number)
               </Typography.Text>
-              <Input 
+              <Input
                 placeholder="CUST-001 TEL_NO"
                 style={{ height: 48 }}
+                value={formData.homePhone}
+                onChange={(e) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    homePhone: e.target.value,
+                  }))
+                }
               />
               <Typography.Text style={{ fontSize: 12, color: "#666" }}>
                 전화번호를 입력해주세요.
@@ -96,10 +135,16 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
               <Typography.Text style={{ fontSize: 14, fontWeight: 500 }}>
                 희망 배송일 (Desired Delivery Date)
               </Typography.Text>
-              <DatePicker 
+              <DatePicker
                 placeholder="CT-001 DLV_HOPE_DT"
                 style={{ width: "100%", height: 48 }}
                 format="YYYY-MM-DD"
+                onChange={(_, dateString) =>
+                  setFormData((prev) => ({
+                    ...prev,
+                    desiredDeliveryDate: dateString || "",
+                  }))
+                }
               />
               <Typography.Text style={{ fontSize: 12, color: "#666" }}>
                 희망배송일을 선택해주세요.
@@ -113,10 +158,10 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
               <Typography.Text style={{ fontSize: 14, fontWeight: 500 }}>
                 사업자등록번호 (Business Registration Number)
               </Typography.Text>
-              <Input 
+              <Input
                 placeholder="CUST-001 BSNM_REG_NO"
-                defaultValue="1234567890123"
                 style={{ height: 48 }}
+                value={userData?.bnsmRegNo}
                 disabled
               />
             </Flex>
@@ -126,18 +171,18 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
                 담당자 연락처 (Contact Person's Information)
               </Typography.Text>
               <Flex gap={8}>
-                <Input 
-                placeholder="CUST-001 CUST_REP_NM"
-                defaultValue="유지운"
-                style={{ height: 48, flex: 1 }}
-                disabled
-              />
-              <Input 
-                placeholder="CUST-001 CUST_REP_PHONE"
-                defaultValue="010-9981-9918"
-                style={{ height: 48, flex: 3 }}
-                disabled
-              />
+                <Input
+                  placeholder="CUST-001 CUST_REP_NM"
+                  defaultValue="유지운"
+                  style={{ height: 48, flex: 1 }}
+                  disabled
+                />
+                <Input
+                  placeholder="CUST-001 CUST_REP_PHONE"
+                  defaultValue="010-9981-9918"
+                  style={{ height: 48, flex: 3 }}
+                  disabled
+                />
               </Flex>
             </Flex>
 
@@ -146,9 +191,13 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
                 이메일 (Email)
               </Typography.Text>
               <Flex align="center" gap={8}>
-                <Input 
+                <Input
                   placeholder="CUST-001 CORP_EMAIL"
                   style={{ height: 48, flex: 1 }}
+                  value={formData.email}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, email: e.target.value }))
+                  }
                 />
                 {/* <Typography.Text style={{ fontSize: 16 }}>@</Typography.Text>
                 <Select 
@@ -184,7 +233,7 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
           </Flex>
         </Flex>
       </Flex>
-      
+
       <Button
         style={{
           width: "450px",
