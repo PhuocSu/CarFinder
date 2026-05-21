@@ -336,7 +336,7 @@ const PurchaseContract = ({
                 <div style={labelStyle}>배송요청일/장소</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>2025-07-19 / 지점</div>
+                <div style={valueStyle}>{formData.desiredDeliveryDate} / 지점</div>
               </Col>
             </Row>
 
@@ -611,7 +611,7 @@ const PurchaseContract = ({
                     <div style={labelStyle}>성명</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>{buyerName}</div>
+                    <div style={valueStyle}>{formData.representativeName}</div>
                   </Col>
                   <Col span={6}>
                     <div style={labelStyle}>주민/사업자 등록번호</div>
@@ -636,13 +636,13 @@ const PurchaseContract = ({
                     <div style={labelStyle}>연락처</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>{buyerPhone}</div>
+                    <div style={valueStyle}>{formData.homePhone}</div>
                   </Col>
                   <Col span={6}>
                     <div style={labelStyle}>이메일</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>{buyerEmail}</div>
+                    <div style={valueStyle}>{formData.email}</div>
                   </Col>
                 </Row>
                 <Row>
