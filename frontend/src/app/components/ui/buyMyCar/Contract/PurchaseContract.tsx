@@ -26,6 +26,7 @@ import useFetchIndividualQuery from "@/app/api/users/useFetchIndividualQuery";
 import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
 import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
 import { generateOrderId } from "@/utils/generate-order-id";
+import { createdPurchaseContractState } from "@/store/createdPurchaseContractState.atom";
 
 const cellBaseStyle: React.CSSProperties = {
   padding: 12,
@@ -115,6 +116,7 @@ const PurchaseContract = ({
   } = useVehicleDetailQuery(vehicleId || null);
 
   const { user } = useRecoilValue(authState);
+  const createdContract = useRecoilValue(createdPurchaseContractState);
 
   const individualQuery = useFetchIndividualQuery(
     user?.role === "INDIVIDUAL" ? user?.sub?.toString() : undefined,
@@ -330,7 +332,9 @@ const PurchaseContract = ({
                 <div style={labelStyle}>계약등록번호</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>KG-S-00586호</div>
+                <div style={valueStyle}>
+                  {createdContract?.contractNumber}
+                </div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>배송요청일/장소</div>

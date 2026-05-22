@@ -1,21 +1,59 @@
 "use client";
 
+import { useVehicleDetailQuery } from "@/app/api/productDetail/useProductDetailQuery";
+import { useCreateContractMutation } from "@/app/api/purchaseContract/useCreateContractMutation";
 import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
 import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
 import { authState } from "@/store/authStore.atom";
 import { buyMyCarFormState } from "@/store/buyMyCar.atom";
+import { createdPurchaseContractState } from "@/store/createdPurchaseContractState.atom";
 import StepTwoFormData from "@/types/stepTwoFormData";
-import { Button, Flex, Input, Typography, DatePicker, Select } from "antd";
+import { calculateFinalPrice } from "@/utils/countPrice";
+import { Button, Flex, Input, Typography, DatePicker, Select, message } from "antd";
 import { useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 interface StepTwoProps {
+  vehicleId?: string | null;
   onNext?: () => void;
   onPrevious?: () => void;
 }
 
-const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
+const StepTwo = ({ onNext, onPrevious, vehicleId }: StepTwoProps) => {
   const [formData, setFormData] = useRecoilState(buyMyCarFormState);
+  const { mutateAsync, isPending } = useCreateContractMutation();
+  const { data: vehicle } = useVehicleDetailQuery(vehicleId || null);
+  const finalPrice = vehicle
+    ? calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent)
+    : 0;
+  const setCreatedContract = useSetRecoilState(createdPurchaseContractState);
+
+  const handleSubmitContract = async () => {
+    if (!vehicleId || !user?.sub || !vehicle) return;
+    if (
+      !formData.representativeName ||
+      !formData.email ||
+      !formData.homePhone ||
+      !formData.desiredDeliveryDate
+    ) {
+      message.error("필수 정보를 입력해주세요.");
+      return;
+    }
+
+    const payload = {
+      carId: Number(vehicleId),
+      buyerId: Number(user.sub),
+      priceAtPurchase: finalPrice,
+      buyerName: formData.representativeName || "",
+      buyerEmail: formData.email || "",
+      buyerPhone: formData.homePhone || "",
+      desiredDeliveryDate: formData.desiredDeliveryDate || undefined,
+    };
+
+    const createdContract = await mutateAsync(payload);
+    setCreatedContract(createdContract);
+    onNext?.();
+  };
 
   const { user } = useRecoilValue(authState);
   const businessQuery = useFetchBusinessQuery(
@@ -246,7 +284,8 @@ const StepTwo = ({ onNext, onPrevious }: StepTwoProps) => {
           fontWeight: "700",
           wordWrap: "break-word",
         }}
-        onClick={onNext}
+        onClick={handleSubmitContract}
+        loading={isPending}
       >
         주문신청
       </Button>

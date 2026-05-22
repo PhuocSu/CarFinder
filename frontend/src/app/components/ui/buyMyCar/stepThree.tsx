@@ -10,6 +10,7 @@ import { useState } from "react";
 import PurchaseContract from "./Contract/PurchaseContract";
 import { useRecoilValue } from "recoil";
 import { buyMyCarFormState } from "@/store/buyMyCar.atom";
+import { createdPurchaseContractState } from "@/store/createdPurchaseContractState.atom";
 
 interface StepThreeProps {
   vehicleId?: string | null;
@@ -30,6 +31,8 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
     : 0;
 
   const formData = useRecoilValue(buyMyCarFormState);
+  const createdContract = useRecoilValue(createdPurchaseContractState);
+
 
   if (isLoading)
     return (
@@ -204,7 +207,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {formData?.representativeName}
+                  {createdContract?.buyerName}
                 </Typography.Text>
               </Col>
             </Row>
@@ -243,7 +246,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {formData?.email}
+                  {createdContract?.buyerEmail}
                 </Typography.Text>
               </Col>
             </Row>
@@ -261,7 +264,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {formData?.homePhone}
+                  {createdContract?.buyerPhone}
                 </Typography.Text>
               </Col>
             </Row>
@@ -282,7 +285,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {formData?.desiredDeliveryDate}
+                  {createdContract?.desiredDeliveryDate}
                 </Typography.Text>
               </Col>
             </Row>

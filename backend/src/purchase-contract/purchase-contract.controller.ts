@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode, HttpStatus } from '@nestjs/common';
 import { PurchaseContractService } from './purchase-contract.service';
 import { CreatePurchaseContractDto } from './dto/create-purchase-contract.dto';
 import { UpdatePurchaseContractDto } from './dto/update-purchase-contract.dto';
@@ -8,27 +8,13 @@ export class PurchaseContractController {
   constructor(private readonly purchaseContractService: PurchaseContractService) {}
 
   @Post()
-  create(@Body() createPurchaseContractDto: CreatePurchaseContractDto) {
-    return this.purchaseContractService.create(createPurchaseContractDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.purchaseContractService.findAll();
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() dto: CreatePurchaseContractDto) {
+    return this.purchaseContractService.createContract(dto);
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.purchaseContractService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePurchaseContractDto: UpdatePurchaseContractDto) {
-    return this.purchaseContractService.update(+id, updatePurchaseContractDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.purchaseContractService.remove(+id);
+  async findOne(@Param('id') id: string) {
+    return this.purchaseContractService.getContractById(Number(id));
   }
 }

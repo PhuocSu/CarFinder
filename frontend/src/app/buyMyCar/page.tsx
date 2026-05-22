@@ -26,7 +26,7 @@ const BuyMyCar = () => {
                 <StepOne vehicleId={vehicleId} onNext={handleNextStep} />
             )}
             {currentStep === 2 && (
-                <StepTwo onNext={handleNextStep} onPrevious={handlePreviousStep} />
+                <StepTwo onNext={handleNextStep} onPrevious={handlePreviousStep} vehicleId={vehicleId} />
             )}
             {currentStep === 3 && (
                 <StepThree vehicleId={vehicleId} />
