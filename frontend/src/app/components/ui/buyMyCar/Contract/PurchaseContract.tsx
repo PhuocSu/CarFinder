@@ -752,15 +752,7 @@ const PurchaseContract = ({
             fontFamily: "Pretendard",
             fontWeight: "700",
           }}
-          onClick={() =>
-            mutate({
-              orderId: orderId,
-              amount: calculateFinalPrice(
-                vehicleData?.basePrice || 0,
-                vehicleData?.discountPercent || 0
-              ),
-            })
-          }
+          onClick={() => mutate({ orderId: orderId, amount: 500000 })}
         >
           제출하기
         </Button>
