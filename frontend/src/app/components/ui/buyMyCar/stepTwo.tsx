@@ -9,7 +9,15 @@ import { buyMyCarFormState } from "@/store/buyMyCar.atom";
 import { createdPurchaseContractState } from "@/store/createdPurchaseContractState.atom";
 import StepTwoFormData from "@/types/stepTwoFormData";
 import { calculateFinalPrice } from "@/utils/countPrice";
-import { Button, Flex, Input, Typography, DatePicker, Select, message } from "antd";
+import {
+  Button,
+  Flex,
+  Input,
+  Typography,
+  DatePicker,
+  Select,
+  message,
+} from "antd";
 import { useEffect } from "react";
 import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
@@ -20,6 +28,7 @@ interface StepTwoProps {
 }
 
 const StepTwo = ({ onNext, onPrevious, vehicleId }: StepTwoProps) => {
+  const { user } = useRecoilValue(authState);
   const [formData, setFormData] = useRecoilState(buyMyCarFormState);
   const { mutateAsync, isPending } = useCreateContractMutation();
   const { data: vehicle } = useVehicleDetailQuery(vehicleId || null);
@@ -28,10 +37,35 @@ const StepTwo = ({ onNext, onPrevious, vehicleId }: StepTwoProps) => {
     : 0;
   const setCreatedContract = useSetRecoilState(createdPurchaseContractState);
 
-  const handleSubmitContract = async () => {
-    if (!vehicleId || !user?.sub || !vehicle) return;
+  // const handleSubmitContract = async () => {
+  //   if (!vehicleId || !user?.sub || !vehicle) return;
+  //   if (
+  //     !formData.representativeName ||
+  //     !formData.email ||
+  //     !formData.homePhone ||
+  //     !formData.desiredDeliveryDate
+  //   ) {
+  //     message.error("필수 정보를 입력해주세요.");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     carId: Number(vehicleId),
+  //     buyerId: Number(user.sub),
+  //     priceAtPurchase: finalPrice,
+  //     buyerName: formData.representativeName || "",
+  //     buyerEmail: formData.email || "",
+  //     buyerPhone: formData.homePhone || "",
+  //     desiredDeliveryDate: formData.desiredDeliveryDate || undefined,
+  //   };
+
+  //   const createdContract = await mutateAsync(payload);
+  //   setCreatedContract(createdContract);
+  //   onNext?.();
+  // };
+
+  const handleNext = () => {
     if (
-      !formData.representativeName ||
       !formData.email ||
       !formData.homePhone ||
       !formData.desiredDeliveryDate
@@ -40,22 +74,9 @@ const StepTwo = ({ onNext, onPrevious, vehicleId }: StepTwoProps) => {
       return;
     }
 
-    const payload = {
-      carId: Number(vehicleId),
-      buyerId: Number(user.sub),
-      priceAtPurchase: finalPrice,
-      buyerName: formData.representativeName || "",
-      buyerEmail: formData.email || "",
-      buyerPhone: formData.homePhone || "",
-      desiredDeliveryDate: formData.desiredDeliveryDate || undefined,
-    };
-
-    const createdContract = await mutateAsync(payload);
-    setCreatedContract(createdContract);
     onNext?.();
   };
 
-  const { user } = useRecoilValue(authState);
   const businessQuery = useFetchBusinessQuery(
     user?.role === "BUSINESS" ? user?.sub?.toString() : undefined,
   );
@@ -284,8 +305,9 @@ const StepTwo = ({ onNext, onPrevious, vehicleId }: StepTwoProps) => {
           fontWeight: "700",
           wordWrap: "break-word",
         }}
-        onClick={handleSubmitContract}
-        loading={isPending}
+        // onClick={handleSubmitContract}
+        // loading={isPending}
+        onClick={handleNext}
       >
         주문신청
       </Button>

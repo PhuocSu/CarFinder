@@ -1,16 +1,21 @@
 "use client";
 
-import { Button, Card, Col, Flex, Image, Row, Typography } from "antd";
+import { Button, Card, Col, Flex, Image, message, Row, Typography } from "antd";
 import { useVehicleDetailQuery } from "@/app/api/productDetail/useProductDetailQuery";
 import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
 import { getVehicleFullName } from "@/utils/getVehicleFullName";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import PurchaseContract from "./Contract/PurchaseContract";
-import { useRecoilValue } from "recoil";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import { buyMyCarFormState } from "@/store/buyMyCar.atom";
 import { createdPurchaseContractState } from "@/store/createdPurchaseContractState.atom";
+import PurchaseContractDraft from "./Contract/PurchaseContractDraft";
+import { authState } from "@/store/authStore.atom";
+import { useCreateContractMutation } from "@/app/api/purchaseContract/useCreateContractMutation";
+import useFetchIndividualQuery from "@/app/api/users/useFetchIndividualQuery";
+import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
+import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
 
 interface StepThreeProps {
   vehicleId?: string | null;
@@ -30,9 +35,53 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
     ? calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent)
     : 0;
 
-  const formData = useRecoilValue(buyMyCarFormState);
+  // const formData = useRecoilValue(buyMyCarFormState);
   const createdContract = useRecoilValue(createdPurchaseContractState);
 
+  const { user } = useRecoilValue(authState);
+  const formData = useRecoilValue(buyMyCarFormState);
+  const { mutateAsync, isPending } = useCreateContractMutation();
+  const setCreatedContract = useSetRecoilState(createdPurchaseContractState);
+
+  const handleSubmitContract = async () => {
+    if (!vehicleId || !user?.sub || !vehicle) return null;
+
+    const payload = {
+      carId: Number(vehicleId),
+      buyerId: Number(user.sub),
+      priceAtPurchase: finalPrice,
+      buyerName,
+      buyerEmail: formData.email || "",
+      buyerPhone: formData.homePhone || "",
+      desiredDeliveryDate: formData.desiredDeliveryDate || undefined,
+    };
+
+    const createdContract = await mutateAsync(payload);
+    setCreatedContract(createdContract);
+    return createdContract;
+  };
+
+  const individualQuery = useFetchIndividualQuery(
+    user?.role === "INDIVIDUAL" ? user?.sub?.toString() : undefined,
+  );
+
+  const businessQuery = useFetchBusinessQuery(
+    user?.role === "BUSINESS" ? user?.sub?.toString() : undefined,
+  );
+
+  const agencyQuery = useFetchAgencyQuery(
+    user?.role === "AGENCY" ? user?.sub?.toString() : undefined,
+  );
+
+  const buyerData =
+    user?.role === "INDIVIDUAL"
+      ? individualQuery.data
+      : user?.role === "BUSINESS"
+        ? businessQuery.data
+        : user?.role === "AGENCY"
+          ? agencyQuery.data
+          : null;
+  const buyerName = buyerData?.custName ?? "-";
 
   if (isLoading)
     return (
@@ -207,7 +256,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {createdContract?.buyerName}
+                  {buyerName}
                 </Typography.Text>
               </Col>
             </Row>
@@ -246,7 +295,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {createdContract?.buyerEmail}
+                  {formData?.email || "-"}
                 </Typography.Text>
               </Col>
             </Row>
@@ -264,7 +313,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {createdContract?.buyerPhone}
+                  {formData?.homePhone || "-"}
                 </Typography.Text>
               </Col>
             </Row>
@@ -285,7 +334,7 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
                 <Typography.Text
                   style={{ fontSize: 14, color: "#4A4A50", fontWeight: 700 }}
                 >
-                  {createdContract?.desiredDeliveryDate}
+                  {formData?.desiredDeliveryDate || "-"}
                 </Typography.Text>
               </Col>
             </Row>
@@ -343,10 +392,11 @@ const StepThree = ({ vehicleId }: StepThreeProps) => {
           매매계약서 작성하기
         </Button>
 
-        <PurchaseContract
+        <PurchaseContractDraft
           visible={contractModalVisible}
           onClose={handleContractModalClose}
-          vehicleId={vehicleId}
+          onSubmit={handleSubmitContract}
+          submitLoading={isPending}
         />
       </Flex>
     </Flex>

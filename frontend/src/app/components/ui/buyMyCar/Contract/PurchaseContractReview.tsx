@@ -27,6 +27,7 @@ import useFetchBusinessQuery from "@/app/api/users/useFetchBusinessQuery";
 import useFetchAgencyQuery from "@/app/api/users/useFetchAgencyQuery";
 import { generateOrderId } from "@/utils/generate-order-id";
 import { createdPurchaseContractState } from "@/store/createdPurchaseContractState.atom";
+import { useContractByIdQuery } from "@/app/api/purchaseContract/useContractByIdQuery";
 
 const cellBaseStyle: React.CSSProperties = {
   padding: 12,
@@ -97,23 +98,19 @@ const tableContainerStyle: React.CSSProperties = {
   outlineOffset: "-0.5px",
 };
 
-const PurchaseContract = ({
+const PurchaseContractReview = ({
   visible,
   onClose,
-  vehicleId,
+  contractId,
 }: {
   visible: boolean;
   onClose: () => void;
-  vehicleId: string | null | undefined;
+  contractId: number | null | undefined;
 }) => {
   const { mutate, isPending } = useMomoPayment();
   const orderId = generateOrderId();
   const formData = useRecoilValue(buyMyCarFormState);
-  const {
-    data: vehicleData,
-    isLoading: vehicleLoading,
-    error: vehicleError,
-  } = useVehicleDetailQuery(vehicleId || null);
+  const {data: contract} = useContractByIdQuery(contractId || 0);
 
   const { user } = useRecoilValue(authState);
   const createdContract = useRecoilValue(createdPurchaseContractState);
@@ -138,22 +135,9 @@ const PurchaseContract = ({
         : user?.role === "AGENCY"
           ? agencyQuery.data
           : null;
-  const buyerName =
-    user?.role === "INDIVIDUAL"
-      ? buyerData?.custName
-      : (buyerData?.reprsntName ?? buyerData?.custName);
+  const buyerName = buyerData?.custName ?? "-";
 
-  const buyerRegistrationNumber =
-    user?.role === "INDIVIDUAL" ? buyerData?.rrn : buyerData?.bnsmRegNo;
-
-  const buyerPhone =
-    user?.role === "INDIVIDUAL"
-      ? buyerData?.custPhone
-      : (buyerData?.custRepPhone ?? buyerData?.corpTellNo);
-
-  const buyerEmail = buyerData?.custEmail ?? buyerData?.email ?? "-";
-
-  const buyerTypeLabel = user?.role === "INDIVIDUAL" ? "개인" : "사업자";
+  const buyerRegistrationNumber = buyerData?.bnsmRegNo ?? "-";
 
   return (
     <Modal
@@ -333,14 +317,14 @@ const PurchaseContract = ({
               </Col>
               <Col span={6}>
                 <div style={valueStyle}>
-                  {createdContract?.contractNumber}
+                  {contract?.contractNumber}
                 </div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>배송요청일/장소</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>{formData.desiredDeliveryDate} / 지점</div>
+                <div style={valueStyle}>{contract?.desiredDeliveryDate} / 지점</div>
               </Col>
             </Row>
 
@@ -372,14 +356,14 @@ const PurchaseContract = ({
                 <div style={labelStyle}>차명</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>{vehicleData?.brandName}</div>
+                <div style={valueStyle}>{contract?.car?.brandName}</div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>모델명</div>
               </Col>
               <Col span={6}>
                 <div style={valueStyle}>
-                  {vehicleData?.subModel?.model?.modelName ?? "-"}
+                  {contract?.car?.subModel?.model?.modelName ?? "-"}
                 </div>
               </Col>
             </Row>
@@ -388,13 +372,13 @@ const PurchaseContract = ({
                 <div style={labelStyle}>차량번호</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>{vehicleData?.carRegNo || "-"}</div>
+                <div style={valueStyle}>{contract?.car?.carRegNo || "-"}</div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>차대번호</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>{vehicleData?.chassisNo || "-"}</div>
+                <div style={valueStyle}>-</div>
               </Col>
             </Row>
             <Row>
@@ -403,7 +387,7 @@ const PurchaseContract = ({
               </Col>
               <Col span={6}>
                 <div style={valueStyle}>
-                  {formatDate(vehicleData?.firstRegDate || "")}
+                  {formatDate(contract?.car?.firstRegDate || "")}
                 </div>
               </Col>
               <Col span={6}>
@@ -411,7 +395,7 @@ const PurchaseContract = ({
               </Col>
               <Col span={6}>
                 <div style={valueStyle}>
-                  {vehicleData?.manufacturerYear || "-"}
+                  {contract?.car?.manufacturerYear || "-"}
                 </div>
               </Col>
             </Row>
@@ -420,14 +404,14 @@ const PurchaseContract = ({
                 <div style={labelStyle}>주행거리</div>
               </Col>
               <Col span={6}>
-                <div style={valueStyle}>{vehicleData?.mileage || "-"}</div>
+                <div style={valueStyle}>{contract?.car?.mileage || "-"}</div>
               </Col>
               <Col span={6}>
                 <div style={labelStyle}>배기량</div>
               </Col>
               <Col span={6}>
                 <div style={valueStyle}>
-                  {vehicleData?.engineDisplacement || "-"}
+                  {contract?.car?.engineDisplacement || "-"}
                 </div>
               </Col>
             </Row>
@@ -515,10 +499,12 @@ const PurchaseContract = ({
               </Col>
               <Col span={18}>
                 <div style={valueStyle}>
-                  {vehicleData?.basePrice
-                    ? formatNumber(vehicleData.basePrice)
-                    : "0"}
-                  원
+                  {formatNumber(
+                    calculateFinalPrice(
+                      contract?.car?.basePrice || 0,
+                      contract?.car?.discountPercent || 0
+                    )
+                  )}원
                 </div>
               </Col>
             </Row>
@@ -615,7 +601,7 @@ const PurchaseContract = ({
                     <div style={labelStyle}>성명</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>{formData.representativeName}</div>
+                    <div style={valueStyle}>{buyerName}</div>
                   </Col>
                   <Col span={6}>
                     <div style={labelStyle}>주민/사업자 등록번호</div>
@@ -640,13 +626,13 @@ const PurchaseContract = ({
                     <div style={labelStyle}>연락처</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>{formData.homePhone}</div>
+                    <div style={valueStyle}>{contract?.buyerPhone || "-"}</div>
                   </Col>
                   <Col span={6}>
                     <div style={labelStyle}>이메일</div>
                   </Col>
                   <Col span={6}>
-                    <div style={valueStyle}>{formData.email}</div>
+                    <div style={valueStyle}>{contract?.buyerEmail || "-"}</div>
                   </Col>
                 </Row>
                 <Row>
@@ -761,4 +747,4 @@ const PurchaseContract = ({
   );
 };
 
-export default PurchaseContract;
+export default PurchaseContractReview;

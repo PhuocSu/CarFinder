@@ -4,7 +4,6 @@ import { useSearchParams } from "next/navigation"
 import StepOne from "../components/ui/buyMyCar/stepOne"
 import StepTwo from "../components/ui/buyMyCar/stepTwo"
 import StepThree from "../components/ui/buyMyCar/stepThree"
-import PurchaseContract from "../components/ui/buyMyCar/Contract/PurchaseContract"
 import { useState } from "react"
 
 const BuyMyCar = () => {

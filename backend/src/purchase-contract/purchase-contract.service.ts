@@ -60,11 +60,39 @@ export class PurchaseContractService {
     });
   }
 
-  async getContractById(id: number): Promise<PurchaseContract> {
-    const contract = await this.dataSource.getRepository(PurchaseContract).findOne({
-      where: { id },
-      relations: ['car', 'buyer', 'saleperson', 'payments'],
+  async getContractsByBuyerId(buyerId: number): Promise<PurchaseContract[]> {
+    return this.dataSource.getRepository(PurchaseContract).find({
+      where: {
+        buyer: { id: buyerId },
+      },
+      relations: [
+        'car',
+        'buyer',
+        'saleperson',
+        'payments',
+        'car.subModel',
+        'car.subModel.model',
+      ],
+      order: {
+        createdAt: 'DESC',
+      },
     });
+  }
+
+  async getContractById(id: number): Promise<PurchaseContract> {
+    const contract = await this.dataSource
+      .getRepository(PurchaseContract)
+      .findOne({
+        where: { id },
+        relations: [
+          'car',
+          'buyer',
+          'saleperson',
+          'payments',
+          'car.subModel',
+          'car.subModel.model',
+        ],
+      });
 
     if (!contract) throw new NotFoundException(`Not Found Contract #${id}`);
 

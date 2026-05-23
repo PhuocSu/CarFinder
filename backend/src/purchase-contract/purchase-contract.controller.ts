@@ -13,6 +13,11 @@ export class PurchaseContractController {
     return this.purchaseContractService.createContract(dto);
   }
 
+  @Get('buyer/:buyerId')
+  async findByBuyer(@Param('buyerId') buyerId: string) {
+    return this.purchaseContractService.getContractsByBuyerId(Number(buyerId));
+  }
+
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.purchaseContractService.getContractById(Number(id));
