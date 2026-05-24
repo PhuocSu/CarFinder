@@ -1,6 +1,6 @@
 "use client";
 
-import { useMomoPayment } from "@/app/api/payments/momo/useMomoPayment";
+import { useMomoPaymentMutation } from "@/app/api/payments/momo/useMomoPaymentMutation";
 import { buyMyCarFormState } from "@/store/buyMyCar.atom";
 import { CloseOutlined } from "@ant-design/icons";
 import {
@@ -111,7 +111,7 @@ const PurchaseContractDraft = ({
   onSubmit: () => Promise<Contract | null>;
   submitLoading: boolean;
 }) => {
-  const { mutate, isPending } = useMomoPayment();
+  const { mutate, isPending } = useMomoPaymentMutation();
   // const orderId = generateOrderId();
   const formData = useRecoilValue(buyMyCarFormState);
 

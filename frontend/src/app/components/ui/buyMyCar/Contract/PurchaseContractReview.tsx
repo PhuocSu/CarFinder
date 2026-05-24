@@ -1,6 +1,6 @@
 "use client";
 
-import { useMomoPayment } from "@/app/api/payments/momo/useMomoPayment";
+import { useMomoPaymentMutation } from "@/app/api/payments/momo/useMomoPaymentMutation";
 import { buyMyCarFormState } from "@/store/buyMyCar.atom";
 import { CloseOutlined } from "@ant-design/icons";
 import {
@@ -107,7 +107,7 @@ const PurchaseContractReview = ({
   onClose: () => void;
   contractId: number | null | undefined;
 }) => {
-  const { mutate, isPending } = useMomoPayment();
+  const { mutate, isPending } = useMomoPaymentMutation();
   const orderId = generateOrderId();
   const formData = useRecoilValue(buyMyCarFormState);
   const {data: contract} = useContractByIdQuery(contractId || 0);
@@ -722,25 +722,9 @@ const PurchaseContractReview = ({
             fontFamily: "Pretendard",
             fontWeight: "700",
           }}
+          onClick={onClose}
         >
-          계약해약
-        </Button>
-        <Button
-          type="primary"
-          style={{
-            width: 200,
-            height: 48,
-            background: "var(--button-primary-bg-enabled, #2F2C4D)",
-            border: "none",
-            borderRadius: 2,
-            color: "var(--button-primary-fg, white)",
-            fontSize: 14,
-            fontFamily: "Pretendard",
-            fontWeight: "700",
-          }}
-          onClick={() => mutate({ orderId: orderId, amount: 500000 })}
-        >
-          제출하기
+          뒤로가기
         </Button>
       </div>
     </Modal>

@@ -4,10 +4,12 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Card, Result, Button, Descriptions } from 'antd';
 import { useRouter } from 'next/navigation';
+import { useConfirmMomoMutation } from '@/app/api/payments/momo/useConfirmMomoMutation';
 
 export default function PaymentResultPage() {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const [confirming, setConfirming] = useState(true);
 
   const resultCode    = searchParams.get('resultCode');
   const orderId       = searchParams.get('orderId');
@@ -17,6 +19,19 @@ export default function PaymentResultPage() {
   const message       = searchParams.get('message');
 
   const isSuccess = resultCode === '0';
+
+  // ✅ Confirm payment to backend ngay khi trang load
+  useEffect(() => {
+    if (resultCode && orderId && transId && responseTime) {
+      useConfirmMomoMutation({
+        orderId,
+        transId,
+        responseTime,
+        resultCode,
+      }).catch(err => console.error('Confirm payment error:', err))
+       .finally(() => setConfirming(false));
+    }
+  }, [resultCode, orderId, transId, responseTime]);
 
   return (
     <div className="min-h-screen flex items-center justify-center p-6" style={{width: '1200px', margin: '40px auto 40px'}}>
@@ -49,10 +64,11 @@ export default function PaymentResultPage() {
           <Button
             type="primary"
             block
+            disabled={confirming}
             style={{height: "40px", backgroundColor: "#292743", borderColor: "#292743", borderRadius: "4px"}}
             onClick={() => router.push('/')}
           >
-            처음으로 
+            {confirming ? '확인하고 있습니다...' : '처음으로'} 
           </Button>
           {!isSuccess && (
             <Button block onClick={() => router.back()}>

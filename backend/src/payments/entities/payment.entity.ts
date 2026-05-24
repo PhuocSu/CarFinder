@@ -71,6 +71,9 @@ export class Payment {
   })
   statusPayment: PaymentStatus;
 
+  @Column({ name: 'order_id', length: 100, nullable: true })
+  orderId: string;
+
   @Column({ name: 'transaction_ref', length: 100, nullable: true })
   transactionRef: string;
 

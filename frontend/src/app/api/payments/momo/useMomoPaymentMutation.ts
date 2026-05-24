@@ -1,8 +1,18 @@
-import { createMomoPayment } from '@/services/momo.service';
-import { CreateMomoPayload } from '@/types/momo';
+import api from '@/lib/axios';
+import { CreateMomoPayload, MomoPaymentResponse } from '@/types/momo';
 import { useMutation } from '@tanstack/react-query';
 
-export const useMomoPayment = () => {
+const createMomoPayment = async (
+  payload: CreateMomoPayload,
+): Promise<MomoPaymentResponse> => {
+  const { data } = await api.post<MomoPaymentResponse>(
+    "/momo/create",
+    payload,
+  );
+  return data;
+};
+
+export const useMomoPaymentMutation = () => {
   return useMutation({
     mutationFn: (payload: CreateMomoPayload) => createMomoPayment(payload),
     onSuccess: (data) => {

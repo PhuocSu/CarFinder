@@ -1,10 +1,12 @@
 import {
   Controller,
   Post,
+  Get,
   Body,
   BadRequestException,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { MomoService } from './momo.service';
 import { CreateMomoDto } from './dto/create-momo.dto';
@@ -57,5 +59,24 @@ export class MomoController {
     });
 
     return { message: 'ok' }; // ✅ MoMo yêu cầu trả về 200 + { message: 'ok' }
+  }
+
+  // POST /momo/confirm ← Frontend gọi sau khi nhận redirect từ MoMo
+  @Post('confirm')
+  @HttpCode(HttpStatus.OK)
+  async confirmPayment(@Body() body: {
+    orderId: string;
+    transId: string;
+    responseTime: string;
+    resultCode: string;
+  }) {
+    await this.paymentService.updateByTransaction({
+      orderId: body.orderId,
+      transactionRef: body.transId,
+      resultCode: Number(body.resultCode),
+      paidAt: new Date(Number(body.responseTime)),
+    });
+
+    return { message: 'Payment confirmed' };
   }
 }

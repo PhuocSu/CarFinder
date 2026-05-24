@@ -40,16 +40,16 @@ export class PaymentsService {
     resultCode: number;
     paidAt: Date;
   }): Promise<void> {
-    // ✅ Tìm theo orderId lưu trong transactionRef
+    // ✅ Tìm theo orderId field
     const payment = await this.paymentRepository.findOne({
-      where: { transactionRef: data.orderId },
+      where: { orderId: data.orderId },
     });
 
     if (!payment) throw new NotFoundException('Payment not found');
 
     payment.statusPayment =
       data.resultCode === 0 ? PaymentStatus.SUCCESS : PaymentStatus.FAILED;
-    payment.transactionRef = data.transactionRef; // ✅ cập nhật thành transId thật từ MoMo
+    payment.transactionRef = data.transactionRef; // ✅ Lưu MoMo transId
     payment.paidAt = data.paidAt;
 
     await this.paymentRepository.save(payment);
@@ -57,7 +57,7 @@ export class PaymentsService {
 
   async saveOrderId(paymentId: number, orderId: string): Promise<void> {
     await this.paymentRepository.update(paymentId, {
-      transactionRef: orderId, // ✅ tạm lưu orderId vào transactionRef
+      orderId: orderId, // ✅ Lưu vào field orderId riêng
     });
   }
 }
