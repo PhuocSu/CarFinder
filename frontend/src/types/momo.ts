@@ -1,5 +1,5 @@
 export interface CreateMomoPayload {
-  orderId: string;
+  contractId: number;
   amount: number;
 }
 

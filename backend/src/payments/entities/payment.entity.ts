@@ -21,6 +21,11 @@ export enum PaymentStatus {
   FAILED = 'FAILED',
 }
 
+export enum PaymentType {
+  DEPOSIT = 'DEPOSIT', // tiền cọc
+  FINAL   = 'FINAL',   // thanh toán còn lại
+}
+
 @Entity()
 export class Payment {
   @PrimaryGeneratedColumn()
@@ -42,6 +47,14 @@ export class Payment {
     scale: 2,
   })
   amount: number;
+
+  @Column({
+    name: 'payment_type',
+    type: 'enum',
+    enum: PaymentType,
+    default: PaymentType.DEPOSIT,
+  })
+  paymentType: PaymentType;
 
   @Column({
     name: 'payment_method',

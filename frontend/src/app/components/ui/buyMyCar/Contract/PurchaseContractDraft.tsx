@@ -112,7 +112,7 @@ const PurchaseContractDraft = ({
   submitLoading: boolean;
 }) => {
   const { mutate, isPending } = useMomoPayment();
-  const orderId = generateOrderId();
+  // const orderId = generateOrderId();
   const formData = useRecoilValue(buyMyCarFormState);
 
   const searchParams = useSearchParams();
@@ -748,7 +748,7 @@ const PurchaseContractDraft = ({
             const createdContract = await onSubmit();
             if (!createdContract) return;
 
-            mutate({ orderId, amount: 500000 });
+            mutate({ contractId: createdContract.id, amount: 500000 });
           }}
         >
           제출하기

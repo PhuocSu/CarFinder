@@ -1,11 +1,11 @@
-import { IsString, IsNotEmpty, IsNumber, Min } from 'class-validator';
+import { IsNumber, IsPositive, Min } from "class-validator";
 
 export class CreateMomoDto {
-  @IsString()
-  @IsNotEmpty()
-  orderId: string;
+  @IsNumber()
+  @IsPositive()
+  contractId: number; // ✅ nhận contractId thay vì orderId
 
   @IsNumber()
-  @Min(1000) // MoMo yêu cầu tối thiểu 1.000đ
+  @Min(1000)
   amount: number;
 }

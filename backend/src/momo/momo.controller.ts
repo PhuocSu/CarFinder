@@ -9,6 +9,7 @@ import {
 import { MomoService } from './momo.service';
 import { CreateMomoDto } from './dto/create-momo.dto';
 import { PaymentsService } from 'src/payments/payments.service';
+import { PaymentType } from 'src/payments/entities/payment.entity';
 
 @Controller('momo')
 export class MomoController {
@@ -17,11 +18,27 @@ export class MomoController {
     private readonly paymentService: PaymentsService,
   ) {}
 
-  // POST /momo/create
   @Post('create')
   @HttpCode(HttpStatus.OK)
   async createPayment(@Body() dto: CreateMomoDto) {
-    return this.momoService.createPayment(dto.orderId, dto.amount);
+    // ✅ Bước 1: Tạo payment PENDING trong DB
+    const payment = await this.paymentService.createPending(
+      dto.contractId,
+      dto.amount,
+      PaymentType.DEPOSIT,
+    );
+
+    // ✅ Thêm timestamp để tránh trùng orderId với MoMo
+    const orderId = `${payment.id}-${Date.now()}-${Math.random().toString(36).substring(2,8)}`;
+
+    // ✅ Lưu orderId này vào payment để sau callback tìm lại được
+    await this.paymentService.saveOrderId(payment.id, orderId);
+
+    // ✅ Bước 2: Gửi orderId unique sang MoMo
+    return this.momoService.createPayment(
+      orderId, // dùng orderId unique đã tạo
+      dto.amount,
+    );
   }
 
   // POST /momo/callback  ← MoMo IPN gọi vào đây

@@ -7,7 +7,7 @@ export class MomoService {
   private readonly partnerCode = process.env.MOMO_PARTNER_CODE!;
   private readonly accessKey   = process.env.MOMO_ACCESS_KEY!;
   private readonly secretKey   = process.env.MOMO_SECRET_KEY!;
-  private readonly endpoint    = 'https://test-payment.momo.vn/v2/gateway/api/create';
+  private readonly endpoint    = process.env.MOMO_ENDPOINT!;
 
   async createPayment(orderId: string, amount: number) {
     const requestId   = this.partnerCode + new Date().getTime(); // giống MoMo gốc
