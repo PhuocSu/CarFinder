@@ -13,12 +13,15 @@ import {
   Typography,
   Image,
 } from "antd";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 export default function PaymentViewPage() {
+  const searchParams = useSearchParams();
+  const contractId = Number(searchParams.get("contractId") || 0);
   return (
     <div>
-      <PaymentView />
+      <PaymentView contractId={contractId} />
     </div>
   );
 }

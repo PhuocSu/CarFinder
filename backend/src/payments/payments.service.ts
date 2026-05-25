@@ -55,6 +55,15 @@ export class PaymentsService {
     await this.paymentRepository.save(payment);
   }
 
+  async findByContractId(contractId: number): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({
+      where: { contractId },
+      relations: ['contract', 'contract.car', 'contract.car.subModel', 'contract.car.subModel.model'],
+    });
+    if (!payment) throw new NotFoundException('Payment not found');
+    return payment;
+  }
+
   async saveOrderId(paymentId: number, orderId: string): Promise<void> {
     await this.paymentRepository.update(paymentId, {
       orderId: orderId, // ✅ Lưu vào field orderId riêng

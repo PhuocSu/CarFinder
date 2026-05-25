@@ -1,48 +1,78 @@
-"use client"
-import { Card, Row, Col, Typography, Image, Table, Empty, Flex } from "antd";
+"use client";
+import { usePaymentsView } from "@/app/api/payments/usePaymentsView";
+import { calculateFinalPrice } from "@/utils/countPrice";
+import { formatDate } from "@/utils/formatDate";
+import { formatNumber } from "@/utils/formatNumber";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import {
+  Card,
+  Row,
+  Col,
+  Typography,
+  Image,
+  Table,
+  Empty,
+  Flex,
+  Button,
+} from "antd";
 import { useState } from "react";
 
-const carData = {
-  image: "/images/placeholder-car.jpg",
-  title: "15712345",
-  description: "렉스턴 뉴렉스턴 2.2 4WD 레더리",
-  year: "2022년8월",
-  mileage: "78,000km",
-  price: "대53",
-};
-
-const buyerInfo = {
-  name: "User Information",
-};
-
-const paymentInfo = {
-  paid: "10,000,000원",
-  remain: "15,000,000원",
+type PaymentViewProps = {
+  contractId: number;
 };
 
 const transactionColumns = [
   {
     title: "Transaction Id",
-    dataIndex: "transId",
-    key: "transId",
-    width: "33.33%",
+    dataIndex: "transactionRef",
+    key: "transactionRef",
+  },
+  {
+    title: "Order Id",
+    dataIndex: "orderId",
+    key: "orderId",
   },
   {
     title: "Amount",
     dataIndex: "amount",
     key: "amount",
-    width: "33.33%",
+  },
+  {
+    title: "Status",
+    dataIndex: "statusPayment",
+    key: "statusPayment",
   },
   {
     title: "Transaction Time",
-    dataIndex: "transTime",
-    key: "transTime",
-    width: "33.33%",
+    dataIndex: "paidAt",
+    key: "paidAt",
   },
 ];
 
-const PaymentView = () => {
+const PaymentView = ({ contractId }: PaymentViewProps) => {
   const [isOpen, setIsOpen] = useState(true);
+  const { data: payments, isLoading } = usePaymentsView({ contractId });
+
+  const car = payments?.contract?.car;
+  const RemainedNo =
+    calculateFinalPrice(car?.basePrice || 0, car?.discountPercent || 0) -
+    (payments?.amount || 0);
+
+  const transactionData = payments
+    ? [
+        {
+          key: payments.id,
+          transactionRef: payments.transactionRef || "-",
+          orderId: payments.orderId || "-",
+          amount: formatNumber(payments.amount) || 0,
+          statusPayment: payments.statusPayment || "-",
+          paidAt: payments.paidAt
+            ? new Date(payments.paidAt).toLocaleString()
+            : "-",
+        },
+      ]
+    : [];
+
   return (
     <Flex
       style={{
@@ -52,21 +82,18 @@ const PaymentView = () => {
         justifyContent: "center",
         padding: "40px 20px",
         backgroundColor: "#f5f5f5",
-      }
-      }
+      }}
     >
       <Card
-        style={
-          {
-            width: "100%",
-            maxWidth: "600px",
-            borderRadius: "12px",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
-          }
-        }
+        style={{
+          width: "100%",
+          maxWidth: "600px",
+          borderRadius: "12px",
+          boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
+        }}
       >
         {/* Photo Section */}
-        < div
+        <div
           style={{
             display: "flex",
             gap: "16px",
@@ -77,22 +104,32 @@ const PaymentView = () => {
           }}
         >
           <div
-            style={
-              {
-                width: "100px",
-                height: "100px",
-                backgroundColor: "#e8e8e8",
-                borderRadius: "8px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                flexShrink: 0,
-              }
-            }
+            style={{
+              width: "120px",
+              height: "80px",
+              backgroundColor: "#e8e8e8",
+              borderRadius: "8px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              flexShrink: 0,
+            }}
           >
-            <span style={{ color: "#999", fontSize: "14px" }}> Photo </span>
+            <img
+              src={
+                car?.carImage?.length
+                  ? car.carImage[0]
+                  : "/images/default-car-image-detail.png"
+              }
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: 6,
+              }}
+            />
           </div>
-          < div
+          <div
             style={{
               flex: 1,
               display: "flex",
@@ -103,18 +140,47 @@ const PaymentView = () => {
             <div
               style={{ fontWeight: 600, fontSize: "16px", marginBottom: "4px" }}
             >
-              {carData.title}
+              {payments?.contract?.car?.carRegNo}
             </div>
-            < div
+            <div
               style={{ fontSize: "14px", color: "#666", marginBottom: "8px" }}
             >
-              {carData.description}
+              {payments?.contract?.car ? getVehicleFullName(car) : ""}
             </div>
-            < div style={{ fontSize: "12px", color: "#999" }}>
-              {carData.year} · {carData.mileage} · {carData.price}
+            <div style={{ fontSize: "12px", color: "#999" }}>
+              {car?.manufacturerYear} · {formatNumber(car?.mileage || 0)}km ·{" "}
+              {car?.fuelType}
+            </div>
+            <div
+              style={{ fontSize: "16px", color: "#EF4444", fontWeight: "bold" }}
+            >
+              {formatNumber(
+                calculateFinalPrice(
+                  car?.basePrice || 0,
+                  car?.discountPercent || 0,
+                ),
+              )}
+              원
             </div>
           </div>
         </div>
+
+        <Flex justify="flex-end">
+          <Button
+            type="primary"
+            style={{
+              height: "40px",
+              marginBottom: "20px",
+              background: "#2F2C4D",
+              borderColor: "#2F2C4D",
+            }}
+            // onClick={() =>
+            //   router.push(`/payment/view?contractId=${contract.id}`)
+            // }
+          >
+            구매 완료
+          </Button>
+        </Flex>
 
         {/* Buyer Info Section */}
         <Flex
@@ -130,11 +196,16 @@ const PaymentView = () => {
             alignItems: "center",
           }}
         >
-          <Flex justify="space-between" style={{ width: "100%", marginBottom: "8px" }}>
-            <Typography.Text style={{ fontSize: "14px", color: "#000", fontWeight: 600 }}>
+          <Flex
+            justify="space-between"
+            style={{ width: "100%", marginBottom: "8px" }}
+          >
+            <Typography.Text
+              style={{ fontSize: "14px", color: "#000", fontWeight: 600 }}
+            >
               구매자 정보
             </Typography.Text>
-            < Image
+            <Image
               src="/images/listPage/icon-chevron-down.svg"
               preview={false}
               width={20}
@@ -148,68 +219,79 @@ const PaymentView = () => {
               }}
             />
           </Flex>
-          {
-            isOpen && (
-              <Flex vertical gap={8} style={{ width: "100%", padding: "10px" }}>
-                <Row gutter={16}>
-                  <Col span={6}>이름</Col>
-                  < Col span={6} style={{ whiteSpace: "normal", overflowWrap: "break-word" }} >
-                    SooTestInLive
-                  </Col>
-                  < Col span={6} >휴대폰 번호</Col>
-                  < Col span={6} >010-1234-5678</Col>
-                </Row>
-                < Row gutter={16} >
-                  <Col span={6}> E-mail </Col>
-                  < Col span={6} style={{ whiteSpace: "normal", overflowWrap: "break-word" }}>SooTestInLive@gmail.com</Col>
-                  < Col span={6} >희망 배송일</Col>
-                  < Col span={6} >25-06-2026</Col>
-                </Row>
-              </Flex>
-            )}
+          {isOpen && (
+            <Flex vertical gap={8} style={{ width: "100%", padding: "10px" }}>
+              <Row gutter={16}>
+                <Col span={6}>이름</Col>
+                <Col
+                  span={6}
+                  style={{ whiteSpace: "normal", overflowWrap: "break-word" }}
+                >
+                  {payments?.contract?.buyerName}
+                </Col>
+                <Col span={6}>휴대폰 번호</Col>
+                <Col span={6}>{payments?.contract?.buyerPhone}</Col>
+              </Row>
+              <Row gutter={16}>
+                <Col span={6}> E-mail </Col>
+                <Col
+                  span={6}
+                  style={{ whiteSpace: "normal", overflowWrap: "break-word" }}
+                >
+                  {payments?.contract?.buyerEmail}
+                </Col>
+                <Col span={6}>희망 배송일</Col>
+                <Col span={6}>
+                  {payments?.contract?.desiredDeliveryDate
+                    ? formatDate(
+                        new Date(
+                          payments.contract.desiredDeliveryDate,
+                        ).toLocaleDateString("ko-KR"),
+                      )
+                    : ""}
+                </Col>
+              </Row>
+            </Flex>
+          )}
         </Flex>
 
         {/* Paid & Remain Section */}
         <Row gutter={16} style={{ marginBottom: "24px" }}>
           <Col span={12}>
             <div
-              style={
-                {
-                  padding: "12px",
-                  border: "1px solid #d9d9d9",
-                  borderRadius: "6px",
-                  textAlign: "center",
-                }
-              }
+              style={{
+                padding: "12px",
+                border: "1px solid #d9d9d9",
+                borderRadius: "6px",
+                textAlign: "center",
+              }}
             >
               <div
                 style={{ fontSize: "12px", color: "#999", marginBottom: "4px" }}
               >
                 Paid:
               </div>
-              < div style={{ fontSize: "14px", fontWeight: 600 }}>
-                {paymentInfo.paid}
+              <div style={{ fontSize: "14px", fontWeight: 600 }}>
+                {payments && formatNumber(payments.amount)}원
               </div>
             </div>
           </Col>
-          < Col span={12} >
+          <Col span={12}>
             <div
-              style={
-                {
-                  padding: "12px",
-                  border: "1px solid #d9d9d9",
-                  borderRadius: "6px",
-                  textAlign: "center",
-                }
-              }
+              style={{
+                padding: "12px",
+                border: "1px solid #d9d9d9",
+                borderRadius: "6px",
+                textAlign: "center",
+              }}
             >
               <div
                 style={{ fontSize: "12px", color: "#999", marginBottom: "4px" }}
               >
                 Remain:
               </div>
-              < div style={{ fontSize: "14px", fontWeight: 600 }}>
-                {paymentInfo.remain}
+              <div style={{ fontSize: "14px", fontWeight: 600 }}>
+                {formatNumber(RemainedNo)}원
               </div>
             </div>
           </Col>
@@ -217,17 +299,16 @@ const PaymentView = () => {
 
         {/* Transaction Table */}
         <Table
+          loading={isLoading}
           columns={transactionColumns}
-          // dataSource={transactionData}
+          dataSource={transactionData}
           pagination={false}
           locale={{ emptyText: <Empty description="No transactions" /> }}
           bordered
-          style={{ marginTop: "20px" }}
-        //   rowKey={(record, index) => index}
         />
       </Card>
     </Flex>
-  )
-}
+  );
+};
 
-export default PaymentView
+export default PaymentView;
