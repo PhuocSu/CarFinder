@@ -1,0 +1,24 @@
+"use client";
+
+import PaymentView from "@/app/components/ui/payment/paymentView";
+import { DownOutlined } from "@ant-design/icons";
+import {
+  Card,
+  Table,
+  Row,
+  Col,
+  Divider,
+  Empty,
+  Flex,
+  Typography,
+  Image,
+} from "antd";
+import { useState } from "react";
+
+export default function PaymentViewPage() {
+  return (
+    <div>
+      <PaymentView />
+    </div>
+  );
+}

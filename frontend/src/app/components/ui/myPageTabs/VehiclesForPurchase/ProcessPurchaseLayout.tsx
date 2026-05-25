@@ -186,6 +186,7 @@ const ProcessPurchaseLayout = () => {
                         background: "#2F2C4D",
                         borderColor: "#2F2C4D",
                       }}
+                      onClick={() => router.push("/payment/view")}
                     >
                       결제하기
                     </Button>
