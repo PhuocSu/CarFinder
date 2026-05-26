@@ -12,7 +12,7 @@ const createMomoPayment = async (
   return data;
 };
 
-export const useMomoPaymentMutation = () => {
+export const useCreateMomoPaymentMutation = () => {
   return useMutation({
     mutationFn: (payload: CreateMomoPayload) => createMomoPayment(payload),
     onSuccess: (data) => {
