@@ -77,7 +77,7 @@ export class Payment {
   @Column({ name: 'transaction_ref', length: 100, nullable: true })
   transactionRef: string;
 
-  @Column({ name: 'paid_at', type: 'date', nullable: true })
+  @Column({ name: 'paid_at', type: 'timestamp', nullable: true })
   paidAt: Date;
 
   @CreateDateColumn()
