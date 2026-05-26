@@ -53,25 +53,29 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const { data: payments, isLoading } = usePaymentsView({ contractId });
 
-  const car = payments?.contract?.car;
-  const RemainedNo =
-    calculateFinalPrice(car?.basePrice || 0, car?.discountPercent || 0) -
-    (payments?.amount || 0);
+  const latestPayment = payments?.[0];
+  const car = latestPayment?.contract?.car;
+  const totalAmount = calculateFinalPrice(
+    car?.basePrice || 0,
+    car?.discountPercent || 0,
+  );
+  const paidAmount =
+    payments?.reduce((total, payment) => {
+      return payment.statusPayment === "SUCCESS"
+        ? total + Number(payment.amount || 0)
+        : total;
+    }, 0) || 0;
+  const remainedAmount = Math.max(totalAmount - paidAmount, 0);
 
-  const transactionData = payments
-    ? [
-        {
-          key: payments.id,
-          transactionRef: payments.transactionRef || "-",
-          orderId: payments.orderId || "-",
-          amount: formatNumber(payments.amount) || 0,
-          statusPayment: payments.statusPayment || "-",
-          paidAt: payments.paidAt
-            ? new Date(payments.paidAt).toLocaleString()
-            : "-",
-        },
-      ]
-    : [];
+  const transactionData =
+    payments?.map((payment) => ({
+      key: payment.id,
+      transactionRef: payment.transactionRef || "-",
+      orderId: payment.orderId || "-",
+      amount: formatNumber(Number(payment.amount) || 0),
+      statusPayment: payment.statusPayment || "-",
+      paidAt: payment.paidAt ? new Date(payment.paidAt).toLocaleString() : "-",
+    })) || [];
 
   return (
     <Flex
@@ -92,7 +96,6 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
           boxShadow: "0 2px 8px rgba(0, 0, 0, 0.15)",
         }}
       >
-        {/* Photo Section */}
         <div
           style={{
             display: "flex",
@@ -140,12 +143,12 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
             <div
               style={{ fontWeight: 600, fontSize: "16px", marginBottom: "4px" }}
             >
-              {payments?.contract?.car?.carRegNo}
+              {latestPayment?.contract?.car?.carRegNo}
             </div>
             <div
               style={{ fontSize: "14px", color: "#666", marginBottom: "8px" }}
             >
-              {payments?.contract?.car ? getVehicleFullName(car) : ""}
+              {latestPayment?.contract?.car ? getVehicleFullName(car) : ""}
             </div>
             <div style={{ fontSize: "12px", color: "#999" }}>
               {car?.manufacturerYear} · {formatNumber(car?.mileage || 0)}km ·{" "}
@@ -154,13 +157,7 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
             <div
               style={{ fontSize: "16px", color: "#EF4444", fontWeight: "bold" }}
             >
-              {formatNumber(
-                calculateFinalPrice(
-                  car?.basePrice || 0,
-                  car?.discountPercent || 0,
-                ),
-              )}
-              원
+              {formatNumber(totalAmount)}원
             </div>
           </div>
         </div>
@@ -174,15 +171,11 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
               background: "#2F2C4D",
               borderColor: "#2F2C4D",
             }}
-            // onClick={() =>
-            //   router.push(`/payment/view?contractId=${contract.id}`)
-            // }
           >
             구매 완료
           </Button>
         </Flex>
 
-        {/* Buyer Info Section */}
         <Flex
           vertical
           style={{
@@ -227,25 +220,25 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
                   span={6}
                   style={{ whiteSpace: "normal", overflowWrap: "break-word" }}
                 >
-                  {payments?.contract?.buyerName}
+                  {latestPayment?.contract?.buyerName}
                 </Col>
                 <Col span={6}>휴대폰 번호</Col>
-                <Col span={6}>{payments?.contract?.buyerPhone}</Col>
+                <Col span={6}>{latestPayment?.contract?.buyerPhone}</Col>
               </Row>
               <Row gutter={16}>
-                <Col span={6}> E-mail </Col>
+                <Col span={6}>E-mail</Col>
                 <Col
                   span={6}
                   style={{ whiteSpace: "normal", overflowWrap: "break-word" }}
                 >
-                  {payments?.contract?.buyerEmail}
+                  {latestPayment?.contract?.buyerEmail}
                 </Col>
                 <Col span={6}>희망 배송일</Col>
                 <Col span={6}>
-                  {payments?.contract?.desiredDeliveryDate
+                  {latestPayment?.contract?.desiredDeliveryDate
                     ? formatDate(
                         new Date(
-                          payments.contract.desiredDeliveryDate,
+                          latestPayment.contract.desiredDeliveryDate,
                         ).toLocaleDateString("ko-KR"),
                       )
                     : ""}
@@ -255,7 +248,6 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
           )}
         </Flex>
 
-        {/* Paid & Remain Section */}
         <Row gutter={16} style={{ marginBottom: "24px" }}>
           <Col span={12}>
             <div
@@ -272,7 +264,7 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
                 Paid:
               </div>
               <div style={{ fontSize: "14px", fontWeight: 600 }}>
-                {payments && formatNumber(payments.amount)}원
+                {formatNumber(paidAmount)}원
               </div>
             </div>
           </Col>
@@ -291,13 +283,12 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
                 Remain:
               </div>
               <div style={{ fontSize: "14px", fontWeight: 600 }}>
-                {formatNumber(RemainedNo)}원
+                {formatNumber(remainedAmount)}원
               </div>
             </div>
           </Col>
         </Row>
 
-        {/* Transaction Table */}
         <Table
           loading={isLoading}
           columns={transactionColumns}

@@ -11,7 +11,7 @@ export const usePaymentsView = ({ contractId }: UsePaymentsViewProps) => {
     queryKey: ["payments", contractId],
     queryFn: async () => {
       const { data } = await api.get(`/payments/view?contractId=${contractId}`);
-      return data.payments as Payment;
+      return data.payments as Payment[];
     },
     enabled: !!contractId,
   });

@@ -55,13 +55,19 @@ export class PaymentsService {
     await this.paymentRepository.save(payment);
   }
 
-  async findByContractId(contractId: number): Promise<Payment> {
-    const payment = await this.paymentRepository.findOne({
+  async findByContractId(contractId: number): Promise<Payment[]> {
+    const payments = await this.paymentRepository.find({
       where: { contractId },
-      relations: ['contract', 'contract.car', 'contract.car.subModel', 'contract.car.subModel.model'],
+      relations: [
+        'contract',
+        'contract.car',
+        'contract.car.subModel',
+        'contract.car.subModel.model',
+      ],
+      order: { createdAt: 'DESC' },
     });
-    if (!payment) throw new NotFoundException('Payment not found');
-    return payment;
+    if (!payments.length) throw new NotFoundException('Payment not found');
+    return payments;
   }
 
   async saveOrderId(paymentId: number, orderId: string): Promise<void> {
