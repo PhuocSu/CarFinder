@@ -16,7 +16,7 @@ export class MomoController {
   constructor(
     private readonly momoService: MomoService,
     private readonly paymentService: PaymentsService,
-  ) {}
+  ) { }
 
   @Post('create')
   @HttpCode(HttpStatus.OK)
@@ -25,6 +25,24 @@ export class MomoController {
       dto.contractId,
       dto.amount,
       PaymentType.DEPOSIT,
+    );
+
+    const orderId = `${payment.id}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 8)}`;
+
+    await this.paymentService.saveOrderId(payment.id, orderId);
+
+    return this.momoService.createPayment(orderId, dto.amount);
+  }
+
+  @Post('final/create')
+  @HttpCode(HttpStatus.OK)
+  async createFinalPayment(@Body() dto: CreateMomoDto) {
+    const payment = await this.paymentService.createFinalPending(
+      dto.contractId,
+      dto.amount,
+      PaymentType.FINAL,
     );
 
     const orderId = `${payment.id}-${Date.now()}-${Math.random()

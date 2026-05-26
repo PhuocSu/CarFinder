@@ -1,4 +1,5 @@
 "use client";
+import { useCreateFinalMomoPaymentMutation } from "@/app/api/payments/momo/useCreateFinalMomoPaymentMutation";
 import { usePaymentsView } from "@/app/api/payments/usePaymentsView";
 import { calculateFinalPrice } from "@/utils/countPrice";
 import { formatDate } from "@/utils/formatDate";
@@ -52,6 +53,7 @@ const transactionColumns = [
 const PaymentView = ({ contractId }: PaymentViewProps) => {
   const [isOpen, setIsOpen] = useState(true);
   const { data: payments, isLoading } = usePaymentsView({ contractId });
+  const { mutate, isPending } = useCreateFinalMomoPaymentMutation();
 
   const latestPayment = payments?.[0];
   const car = latestPayment?.contract?.car;
@@ -170,6 +172,15 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
               marginBottom: "20px",
               background: "#2F2C4D",
               borderColor: "#2F2C4D",
+            }}
+            loading={isPending}
+            onClick={() => {
+              if (latestPayment?.contract) {
+                mutate({
+                  contractId: latestPayment.contract.id,
+                  amount: remainedAmount,
+                });
+              }
             }}
           >
             구매 완료

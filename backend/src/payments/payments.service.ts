@@ -17,11 +17,27 @@ export class PaymentsService {
     private paymentRepository: Repository<Payment>,
   ) {}
 
-  // Tạo payment mới với trạng thái PENDING
-  async createPending(
+  // Tạo payment DEPOSIT mới với trạng thái PENDING
+  async createDepositPending(
     contractId: number,
     amount: number,
     paymentType: PaymentType = PaymentType.DEPOSIT,
+  ): Promise<Payment> {
+    const payment = this.paymentRepository.create({
+      contractId,
+      amount,
+      paymentType,
+      paymentMethod: PaymentMethod.MOMO,
+      statusPayment: PaymentStatus.PENDING,
+    });
+    return this.paymentRepository.save(payment);
+  }
+
+  // Tạo payment FINAL mới với trạng thái PENDING
+  async createFinalPending(
+    contractId: number,
+    amount: number,
+    paymentType: PaymentType = PaymentType.FINAL,
   ): Promise<Payment> {
     const payment = this.paymentRepository.create({
       contractId,
@@ -89,7 +105,7 @@ export class PaymentsService {
       throw new BadRequestException('Only failed payments can be retried');
     }
 
-    return this.createPending(
+    return this.createDepositPending(
       failedPayment.contractId,
       Number(failedPayment.amount),
       failedPayment.paymentType,
