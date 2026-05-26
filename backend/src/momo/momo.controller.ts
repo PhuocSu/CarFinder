@@ -21,7 +21,7 @@ export class MomoController {
   @Post('create')
   @HttpCode(HttpStatus.OK)
   async createPayment(@Body() dto: CreateMomoDto) {
-    const payment = await this.paymentService.createPending(
+    const payment = await this.paymentService.createDepositPending(
       dto.contractId,
       dto.amount,
       PaymentType.DEPOSIT,
