@@ -7,7 +7,6 @@ export const useBuyerContractQuery = (buyerId: number | null | undefined) => {
     queryKey: ["purchase-contract", "buyer", buyerId],
     queryFn: async () => {
       const { data } = await api.get(`/purchase-contract/buyer/${buyerId}`);
-      console.log("Xe mới:", data)
       return data;
     },
     enabled: !!buyerId,

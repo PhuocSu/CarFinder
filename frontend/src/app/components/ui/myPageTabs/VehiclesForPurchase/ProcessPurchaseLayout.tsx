@@ -14,6 +14,7 @@ import { calculateFinalPrice } from "@/utils/countPrice";
 import { formatNumber } from "@/utils/formatNumber";
 import CancelPurchaseLayout from "./CancelPurchaseLayout";
 import { getActionButtonText, getCurrentStep } from "@/utils/getCurrentStep";
+import formatDateTime from "@/utils/formatDateTime";
 
 const ProcessPurchaseLayout = () => {
   const router = useRouter();
@@ -216,6 +217,8 @@ const ProcessPurchaseLayout = () => {
                 <Typography.Text>가상계좌 번호</Typography.Text>
                 <br />
                 <Typography.Text>미결제 금액</Typography.Text>
+                <br />
+                <Typography.Text>계약 만료일</Typography.Text>
               </Col>
               <Col style={{ textAlign: "right" }}>
                 <Typography.Text strong>
@@ -236,6 +239,19 @@ const ProcessPurchaseLayout = () => {
                     ),
                   )}
                   원
+                </Typography.Text>
+                <br />
+                <Typography.Text strong>
+                  {formatDateTime(
+                    new Date(
+                      new Date(contract.createdAt).getTime() +
+                        7 * 24 * 60 * 60 * 1000,
+                    ).toISOString(),
+                  )}
+                </Typography.Text>
+                <br />
+                <Typography.Text strong style={{ color: "#EF4444", fontSize: "12px" }}>
+                  🔔계약은 생성 후 7일이 지나면 자동으로 취소됩니다
                 </Typography.Text>
               </Col>
             </Row>

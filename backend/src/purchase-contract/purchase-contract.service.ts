@@ -1,15 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePurchaseContractDto } from './dto/create-purchase-contract.dto';
 import { UpdatePurchaseContractDto } from './dto/update-purchase-contract.dto';
-import { DataSource, DeepPartial } from 'typeorm';
+import { DataSource, DeepPartial, LessThan } from 'typeorm';
 import { ContractNumberCounter } from './entities/contract-number-counter.entity';
-import { PurchaseContract } from './entities/purchase-contract.entity';
+import { ContractStatus, PurchaseContract } from './entities/purchase-contract.entity';
 import {
   getDateKey,
   buildContractNumber,
 } from './helpers/format-date-purchase-contract';
 import { Car } from 'src/car/entities/car.entity';
 import { User } from 'src/users/entities/user.entity';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class PurchaseContractService {
@@ -97,5 +98,35 @@ export class PurchaseContractService {
     if (!contract) throw new NotFoundException(`Not Found Contract #${id}`);
 
     return contract;
+  }
+
+  @Cron(CronExpression.EVERY_HOUR)
+  async autoCancelExpiredDraftContracts() {
+    const expiredDate = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    const expiredDraftContracts = await this.dataSource
+      .getRepository(PurchaseContract)
+      .find({
+        where: {
+          statusContract: ContractStatus.DRAFTED,
+          createdAt: LessThan(expiredDate),
+        },
+      });
+
+    if (!expiredDraftContracts.length) {
+      return;
+    }
+
+    for (const contract of expiredDraftContracts) {
+      contract.statusContract = ContractStatus.CANCELLED;
+    }
+
+    await this.dataSource
+      .getRepository(PurchaseContract)
+      .save(expiredDraftContracts);
+
+    console.log(
+      `[PurchaseContractCron] Auto-cancelled ${expiredDraftContracts.length} drafted contract(s) at ${new Date().toISOString()}`,
+    );
   }
 }
