@@ -12,7 +12,6 @@ import {
 } from 'typeorm';
 
 export enum ContractStatus {
-  PENDING = 'PENDING',
   DRAFTED = 'DRAFTED',
   ACTIVE = 'ACTIVE',
   COMPLETED = 'COMPLETED',
@@ -80,7 +79,7 @@ export class PurchaseContract {
     name: 'status_contract',
     type: 'enum',
     enum: ContractStatus,
-    default: ContractStatus.PENDING,
+    default: ContractStatus.DRAFTED,
   })
   statusContract: ContractStatus;
 

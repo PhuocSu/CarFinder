@@ -12,13 +12,17 @@ import { VehicleBadge } from "@/enums/vehicle-badge.enum";
 import { formatDate } from "@/utils/formatDate";
 import { calculateFinalPrice } from "@/utils/countPrice";
 import { formatNumber } from "@/utils/formatNumber";
+import CancelPurchaseLayout from "./CancelPurchaseLayout";
+import { getActionButtonText, getCurrentStep } from "@/utils/getCurrentStep";
 
 const ProcessPurchaseLayout = () => {
   const router = useRouter();
   const [contractModalVisible, setContractModalVisible] = useState(false);
 
   const { user } = useRecoilValue(authState);
-  const [selectedContractId, setSelectedContractId] = useState<number | null>(null);
+  const [selectedContractId, setSelectedContractId] = useState<number | null>(
+    null,
+  );
 
   const buyerId = user?.sub ? Number(user.sub) : null;
   const { data: contracts, isLoading, error } = useBuyerContractQuery(buyerId);
@@ -62,6 +66,13 @@ const ProcessPurchaseLayout = () => {
   return (
     <Flex vertical gap={16} style={{ marginTop: "20px" }}>
       {contracts.map((contract) => {
+        console.log("contract:", contract);
+        console.log("statusContract:", contract.statusContract);
+        console.log("typeof statusContract:", typeof contract.statusContract);
+
+        if (contract.statusContract === "CANCELLED") {
+          return <CancelPurchaseLayout key={contract.id} contract={contract} />;
+        }
         return (
           <Card
             key={contract.id}
@@ -89,15 +100,13 @@ const ProcessPurchaseLayout = () => {
               <Row style={{ paddingBottom: "24px" }}>
                 <Steps
                   style={{ width: "600px" }}
-                  current={0}
+                  current={getCurrentStep(contract.statusContract)}
                   direction="horizontal"
                   labelPlacement="vertical"
                   items={[
-                    { title: "계약진행 요청" },
                     { title: "매매계약서 작성" },
                     { title: "결제진행" },
                     { title: "결제완료" },
-                    { title: "출고 완료" },
                   ]}
                 />
               </Row>
@@ -157,7 +166,7 @@ const ProcessPurchaseLayout = () => {
                         height: "36px",
                       }}
                     >
-                      계약진행요청
+                      {getActionButtonText(contract.statusContract)}
                     </Button>
                   </Col>
                 </Row>
@@ -186,7 +195,9 @@ const ProcessPurchaseLayout = () => {
                         background: "#2F2C4D",
                         borderColor: "#2F2C4D",
                       }}
-                      onClick={() => router.push(`/payment/view?contractId=${contract.id}`)}
+                      onClick={() =>
+                        router.push(`/payment/view?contractId=${contract.id}`)
+                      }
                     >
                       결제하기
                     </Button>
@@ -207,14 +218,24 @@ const ProcessPurchaseLayout = () => {
                 <Typography.Text>미결제 금액</Typography.Text>
               </Col>
               <Col style={{ textAlign: "right" }}>
-                <Typography.Text strong>{contract.car.carRegNo}</Typography.Text>
+                <Typography.Text strong>
+                  {contract.car.carRegNo}
+                </Typography.Text>
                 <br />
-                <Typography.Text strong>{contract.contractNumber}</Typography.Text>
+                <Typography.Text strong>
+                  {contract.contractNumber}
+                </Typography.Text>
                 <br />
                 <Typography.Text strong>신한 123456789001231</Typography.Text>
                 <br />
                 <Typography.Text strong style={{ color: "#EF4444" }}>
-                  {formatNumber(calculateFinalPrice(contract.car.basePrice, contract.car.discountPercent))}원
+                  {formatNumber(
+                    calculateFinalPrice(
+                      contract.car.basePrice,
+                      contract.car.discountPercent,
+                    ),
+                  )}
+                  원
                 </Typography.Text>
               </Col>
             </Row>

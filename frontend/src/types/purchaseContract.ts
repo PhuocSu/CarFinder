@@ -13,7 +13,7 @@ export interface Contract {
   id: number;
   contractNumber: string;
   priceAtPurchase: number;
-  statusContract: "PENDING" | "DRAFTED" | "ACTIVE" | "COMPLETED" | "CANCELLED";
+  statusContract: "DRAFTED" | "ACTIVE" | "COMPLETED" | "CANCELLED";
   buyerRegNo: string;
   buyerEmail: string;
   buyerPhone: string;

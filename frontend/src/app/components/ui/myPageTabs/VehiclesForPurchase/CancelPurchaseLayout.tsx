@@ -1,8 +1,19 @@
 "use client";
 
 import { Button, Row, Typography } from "antd";
+import { useRouter } from "next/navigation";
+import { Contract } from "@/types/purchaseContract";
+import { getVehicleFullName } from "@/utils/getVehicleFullName";
+import { formatDate } from "@/utils/formatDate";
+import { formatNumber } from "@/utils/formatNumber";
 
-const CancelPurchaseLayout = () => {
+type CancelPurchaseLayoutProps = {
+  contract: Contract;
+};
+
+const CancelPurchaseLayout = ({ contract }: CancelPurchaseLayoutProps) => {
+  const router = useRouter();
+
   return (
     <div
       style={{
@@ -19,34 +30,35 @@ const CancelPurchaseLayout = () => {
       <div
         style={{ flex: 1, display: "flex", flexDirection: "column", gap: 8 }}
       >
-        {/* Khối trên */}
         <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
           <Typography.Text
             style={{ fontSize: 16, fontWeight: 700, color: "#4A4A50" }}
           >
-            123우8765
+            {contract.car.carRegNo}
           </Typography.Text>
+
           <Row justify="space-between">
             <Typography.Text
               style={{ fontSize: 16, fontWeight: 400, color: "#37373E" }}
             >
-              싼타페 신형 싼타페 R2.0 2WD 프리미엄
+              {getVehicleFullName(contract.car)}
             </Typography.Text>
+
             <Typography.Text
               style={{ fontSize: 15, fontWeight: 400, color: "#666670" }}
             >
-              2025-03-21
+              {contract.createdAt ? formatDate(contract.createdAt) : ""}
             </Typography.Text>
           </Row>
         </div>
 
-        {/* Khối dưới */}
         <Row justify="space-between">
           <Typography.Text
             style={{ fontSize: 18, fontWeight: 700, color: "#37373E" }}
           >
-            32,500,000원
+            {formatNumber(contract.priceAtPurchase)}원
           </Typography.Text>
+
           <Button
             style={{
               padding: "8px 20px",
@@ -57,8 +69,9 @@ const CancelPurchaseLayout = () => {
               fontWeight: 700,
               color: "#4A4A50",
             }}
+            onClick={() => router.push(`/buy-my-car?id=${contract.car.id}`)}
           >
-            계약해약
+            계약 재진행
           </Button>
         </Row>
       </div>
