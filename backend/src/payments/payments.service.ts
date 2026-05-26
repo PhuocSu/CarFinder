@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePaymentDto } from './dto/create-payment.dto';
 import { UpdatePaymentDto } from './dto/update-payment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -68,6 +68,32 @@ export class PaymentsService {
     });
     if (!payments.length) throw new NotFoundException('Payment not found');
     return payments;
+  }
+
+
+  //Sử dụng cho retry Deposit
+  async findByOrderId(orderId: string): Promise<Payment> {
+    const payment = await this.paymentRepository.findOne({
+      where: { orderId },
+      relations: ['contract'],
+    });
+
+    if (!payment) throw new NotFoundException('Payment not found');
+    return payment;
+  }
+
+  async createRetryPaymentByOrderId(orderId: string): Promise<Payment> {
+    const failedPayment = await this.findByOrderId(orderId);
+
+    if (failedPayment.statusPayment !== PaymentStatus.FAILED) {
+      throw new BadRequestException('Only failed payments can be retried');
+    }
+
+    return this.createPending(
+      failedPayment.contractId,
+      Number(failedPayment.amount),
+      failedPayment.paymentType,
+    );
   }
 
   async saveOrderId(paymentId: number, orderId: string): Promise<void> {

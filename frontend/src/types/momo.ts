@@ -3,6 +3,10 @@ export interface CreateMomoPayload {
   amount: number;
 }
 
+export interface RetryMomoPaymentPayload {
+  orderId: string;
+}
+
 export interface MomoPaymentResponse {
   payUrl: string;
   deeplink?: string;

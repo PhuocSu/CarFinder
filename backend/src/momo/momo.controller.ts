@@ -1,15 +1,13 @@
 import {
-  Controller,
-  Post,
-  Get,
   Body,
   BadRequestException,
+  Controller,
   HttpCode,
   HttpStatus,
-  Query,
+  Post,
 } from '@nestjs/common';
-import { MomoService } from './momo.service';
 import { CreateMomoDto } from './dto/create-momo.dto';
+import { MomoService } from './momo.service';
 import { PaymentsService } from 'src/payments/payments.service';
 import { PaymentType } from 'src/payments/entities/payment.entity';
 
@@ -23,34 +21,43 @@ export class MomoController {
   @Post('create')
   @HttpCode(HttpStatus.OK)
   async createPayment(@Body() dto: CreateMomoDto) {
-    // ✅ Bước 1: Tạo payment PENDING trong DB
     const payment = await this.paymentService.createPending(
       dto.contractId,
       dto.amount,
       PaymentType.DEPOSIT,
     );
 
-    // ✅ Thêm timestamp để tránh trùng orderId với MoMo
-    const orderId = `${payment.id}-${Date.now()}-${Math.random().toString(36).substring(2,8)}`;
+    const orderId = `${payment.id}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 8)}`;
 
-    // ✅ Lưu orderId này vào payment để sau callback tìm lại được
     await this.paymentService.saveOrderId(payment.id, orderId);
 
-    // ✅ Bước 2: Gửi orderId unique sang MoMo
-    return this.momoService.createPayment(
-      orderId, // dùng orderId unique đã tạo
-      dto.amount,
-    );
+    return this.momoService.createPayment(orderId, dto.amount);
   }
 
-  // POST /momo/callback  ← MoMo IPN gọi vào đây
+  @Post('retry')
+  @HttpCode(HttpStatus.OK)
+  async retryPayment(@Body() body: { orderId: string }) {
+    const payment = await this.paymentService.createRetryPaymentByOrderId(
+      body.orderId,
+    );
+
+    const orderId = `${payment.id}-${Date.now()}-${Math.random()
+      .toString(36)
+      .substring(2, 8)}`;
+
+    await this.paymentService.saveOrderId(payment.id, orderId);
+
+    return this.momoService.createPayment(orderId, Number(payment.amount));
+  }
+
   @Post('callback')
   @HttpCode(HttpStatus.OK)
   async handleIpn(@Body() body: any) {
     const valid = this.momoService.verifyCallback(body);
     if (!valid) throw new BadRequestException('Invalid signature');
 
-    // ✅ Cập nhật DB đầy đủ
     await this.paymentService.updateByTransaction({
       orderId: body.orderId,
       transactionRef: body.transId,
@@ -58,10 +65,9 @@ export class MomoController {
       paidAt: new Date(body.responseTime),
     });
 
-    return { message: 'ok' }; // ✅ MoMo yêu cầu trả về 200 + { message: 'ok' }
+    return { message: 'ok' };
   }
 
-  // POST /momo/confirm ← Frontend gọi sau khi nhận redirect từ MoMo
   @Post('confirm')
   @HttpCode(HttpStatus.OK)
   async confirmPayment(@Body() body: {
