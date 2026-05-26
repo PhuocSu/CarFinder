@@ -5,6 +5,11 @@ import api from "@/lib/axios";
 import { useRecoilValue } from "recoil";
 import { vehicleFilterReadSelector } from "@/selectors/VehicleFilter.selectors";
 
+export interface VehicleContract {
+  id: number;
+  statusContract: "DRAFTED" | "ACTIVE" | "COMPLETED" | "CANCELLED";
+}
+
 export interface Vehicle {
   id: number;
   carImage: string[];
@@ -26,6 +31,7 @@ export interface Vehicle {
   createdAt: string;
 
   brandName: string;
+  purchaseContracts?: VehicleContract[];
 
   subModel: {
     id: number;

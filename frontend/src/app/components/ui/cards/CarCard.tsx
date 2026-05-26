@@ -28,7 +28,7 @@ const CarCard = ({
     vehicle.discountPercent,
   );
   const router = useRouter();
-  const pathname = usePathname(); 
+  const pathname = usePathname();
   const isHomepage = pathname === "/";
 
   const favoriteCars = useRecoilValue(favoriteCarState);
@@ -41,12 +41,32 @@ const CarCard = ({
 
   const trackViewed = useTrackViewedMutation();
 
-    const getTopBadge = (index: number) => {
-    switch(index) {
-      case 0: return "/images/homepage/Top1.svg";
-      case 1: return "/images/homepage/Top2.svg";
-      case 2: return "/images/homepage/Top3.svg";
-      default: return null;
+  const hasActiveContract = vehicle.purchaseContracts?.some(
+    (contract: { statusContract: string }) =>
+      contract.statusContract === "ACTIVE",
+  );
+
+  const hasCompletedContract = vehicle.purchaseContracts?.some(
+    (contract: { statusContract: string }) =>
+      contract.statusContract === "COMPLETED",
+  );
+
+  const statusLabel = hasCompletedContract
+    ? "판매완료"
+    : hasActiveContract
+      ? "상담중"
+      : null;
+
+  const getTopBadge = (index: number) => {
+    switch (index) {
+      case 0:
+        return "/images/homepage/Top1.svg";
+      case 1:
+        return "/images/homepage/Top2.svg";
+      case 2:
+        return "/images/homepage/Top3.svg";
+      default:
+        return null;
     }
   };
 
@@ -71,9 +91,23 @@ const CarCard = ({
       onClick={handleProductDetail}
     >
       <Flex vertical style={{ position: "relative" }}>
-        <div style={{ width: "100%", height: "220px", background: "#F5F5F5", overflow: "hidden", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div
+          style={{
+            width: "100%",
+            height: "220px",
+            background: "#F5F5F5",
+            overflow: "hidden",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
           <Image
-            style={{ height: "100%", width: "100%" }}
+            style={{
+              height: "100%",
+              width: "100%",
+              opacity: hasCompletedContract ? 0.2 : 1,
+            }}
             src={
               vehicle.carImage?.length > 0
                 ? vehicle.carImage[0]
@@ -86,13 +120,13 @@ const CarCard = ({
 
         {isHomepage && rankIndex < 3 && (
           <Image
-            style={{ 
-              position: "absolute", 
-              top: "-220px", 
-              right: "10px", 
-              width: "40px", 
+            style={{
+              position: "absolute",
+              top: "-220px",
+              right: "10px",
+              width: "40px",
               height: "40px",
-              zIndex: 2
+              zIndex: 2,
             }}
             src={getTopBadge(rankIndex)!}
             alt={`Top${rankIndex + 1}`}
@@ -173,6 +207,24 @@ const CarCard = ({
               </Typography.Text>
             </div>
           ))}
+        </Flex>
+
+        <Flex style={{ position: "absolute", bottom: "8px", left: "8px" }}>
+          {statusLabel && (
+            <div
+              style={{
+                padding: "4px 8px",
+                background: hasCompletedContract
+                  ? "var(--base-bg-color-base-bg-50, #646E8B)"
+                  : "linear-gradient(130deg, #4040FF 19.12%, #1E1EA9 88.19%)",
+                borderRadius: 9999,
+              }}
+            >
+              <Typography.Text style={{ color: "white", fontSize: "12px" }}>
+                {statusLabel}
+              </Typography.Text>
+            </div>
+          )}
         </Flex>
       </Flex>
 

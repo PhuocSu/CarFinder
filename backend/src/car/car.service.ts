@@ -39,7 +39,7 @@ export class CarService {
     try {
       return await this.carRepository.findOne({
         where: { id },
-        relations: ['subModel', 'subModel.model'],
+        relations: ['subModel', 'subModel.model', 'purchaseContracts'],
       });
     } catch (error) {
       console.log('Error finding car:', error);
@@ -110,7 +110,8 @@ export class CarService {
     const qb = this.carRepository
       .createQueryBuilder('car')
       .leftJoinAndSelect('car.subModel', 'subModel')
-      .leftJoinAndSelect('subModel.model', 'model');
+      .leftJoinAndSelect('subModel.model', 'model')
+      .leftJoinAndSelect('car.purchaseContracts', 'purchaseContracts');;
 
     // ===== SEARCH =====
     if (search) {

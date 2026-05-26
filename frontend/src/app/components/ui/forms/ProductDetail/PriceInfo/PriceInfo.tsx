@@ -13,16 +13,27 @@ import { formatNumber } from "@/utils/formatNumber";
 import { calculateFinalPrice } from "@/utils/countPrice";
 import { useRouter } from "next/navigation";
 
-const PriceInfo = ({vehicle}: {vehicle: Vehicle}) => {
-      const router = useRouter();
-      const finalPrice = calculateFinalPrice(vehicle.basePrice, vehicle.discountPercent);
-      const favoriteCars = useRecoilValue(favoriteCarState);
-      const toggleFavorite = useToggleFavoriteMutation();
-      const isFavorite = favoriteCars.includes(vehicle.id); //để tạm: vehicle.id
-    
-      const compareCars = useRecoilValue(compareCarState);
-      const toggleCompare = useToggleCompareMutation();
-      const isCompare = compareCars.includes(vehicle.id);
+const PriceInfo = ({ vehicle }: { vehicle: Vehicle }) => {
+  const router = useRouter();
+  const finalPrice = calculateFinalPrice(
+    vehicle.basePrice,
+    vehicle.discountPercent,
+  );
+  const favoriteCars = useRecoilValue(favoriteCarState);
+  const toggleFavorite = useToggleFavoriteMutation();
+  const isFavorite = favoriteCars.includes(vehicle.id); //để tạm: vehicle.id
+
+  const compareCars = useRecoilValue(compareCarState);
+  const toggleCompare = useToggleCompareMutation();
+  const isCompare = compareCars.includes(vehicle.id);
+
+  const hasActiveContract = vehicle.purchaseContracts?.some(
+    (contract) => contract.statusContract === "ACTIVE",
+  );
+  const hasCompletedContract = vehicle.purchaseContracts?.some(
+    (contract) => contract.statusContract === "COMPLETED",
+  );
+  const isPurchaseDisabled = hasActiveContract || hasCompletedContract;
 
   return (
     <Flex
@@ -92,7 +103,10 @@ const PriceInfo = ({vehicle}: {vehicle: Vehicle}) => {
             color: "var(--base-fg-color-base-fg-50, #666670)",
           }}
         >
-          {formatNumber(vehicle.basePrice)}원 <span style={{ color: "rgb(99, 100, 250)" }}>({vehicle.discountPercent}%)</span>
+          {formatNumber(vehicle.basePrice)}원{" "}
+          <span style={{ color: "rgb(99, 100, 250)" }}>
+            ({vehicle.discountPercent}%)
+          </span>
         </Typography.Text>
       </Flex>
 
@@ -130,7 +144,9 @@ const PriceInfo = ({vehicle}: {vehicle: Vehicle}) => {
           fontFamily: "Inter",
           fontWeight: "700",
           wordWrap: "break-word",
+          opacity: isPurchaseDisabled ? 0.5 : 1,
         }}
+        disabled={isPurchaseDisabled}
         onClick={() => router.push(`/buyMyCar?id=${vehicle.id}`)}
       >
         구매하기
