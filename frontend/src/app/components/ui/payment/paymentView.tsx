@@ -172,6 +172,7 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
               marginBottom: "20px",
               background: "#2F2C4D",
               borderColor: "#2F2C4D",
+              color: "#fff",
             }}
             loading={isPending}
             onClick={() => {
@@ -182,6 +183,7 @@ const PaymentView = ({ contractId }: PaymentViewProps) => {
                 });
               }
             }}
+            disabled={remainedAmount === 0}
           >
             구매 완료
           </Button>
