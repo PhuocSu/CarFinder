@@ -2,7 +2,7 @@
 
 import { useConfirmMomoMutation } from "@/app/api/payments/momo/useConfirmMomoMutation";
 import { useRetryMomoPaymentMutation } from "@/app/api/payments/momo/useRetryMomoPaymentMutation";
-import { Button, Card, Descriptions, Result } from "antd";
+import { Button, Card, Descriptions, Flex, Result } from "antd";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -77,7 +77,7 @@ const PaymentResult = () => {
           )}
         </Descriptions>
 
-        <div className="mt-6 flex gap-3" style={{ marginTop: "24px" }}>
+        <Flex gap={8} className="mt-6" style={{ marginTop: "24px" }}>
           <Button
             type="primary"
             block
@@ -98,11 +98,12 @@ const PaymentResult = () => {
               loading={retryPaymentMutation.isPending}
               disabled={!orderId}
               onClick={handleRetryPayment}
+              style={{ height: "40px" }}
             >
               다시 시도
             </Button>
           )}
-        </div>
+        </Flex>
       </Card>
     </div>
   );
