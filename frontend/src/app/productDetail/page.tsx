@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import ProductDetail from "../components/ui/productDetail/ProductDetail";
 import RecentlyViewed from "../components/ui/sideBar/RecentlyViewed/RecentlyViewed";

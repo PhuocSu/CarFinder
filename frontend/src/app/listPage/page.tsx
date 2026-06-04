@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic";
+
 import LeftFilter from "../components/ui/filter/listpage/LeftFilter/LeftFilter";
 import RightContent from "../components/ui/filter/listpage/RightContent/RightContent";
 import RightSidebar from "../components/ui/sideBar/RightSidebar";

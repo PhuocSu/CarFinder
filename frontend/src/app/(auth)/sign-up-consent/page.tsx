@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic";
+
 import CompletedSignup from "@/app/components/ui/forms/SignupForm/CompletedSignup";
 import SignupCorporate from "@/app/components/ui/forms/SignupForm/Signup-corporate";
 import SignupMember from "@/app/components/ui/forms/SignupForm/Signup-member";

@@ -1,5 +1,7 @@
 "use client";
 
+export const dynamic = "force-dynamic";
+
 import PaymentView from "@/app/components/ui/payment/paymentView";
 import { DownOutlined } from "@ant-design/icons";
 import {

@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic";
+
 import NoticeForm from "@/app/components/ui/forms/Notice/NoticeForm"
 import { useSearchParams } from "next/navigation"
 

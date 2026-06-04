@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic";
+
 import EventForm from "@/app/components/ui/forms/Event/EventForm"
 import { useSearchParams } from "next/navigation"
 

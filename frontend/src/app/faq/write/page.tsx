@@ -1,5 +1,7 @@
 "use client"
 
+export const dynamic = "force-dynamic";
+
 import FaqForm from "@/app/components/ui/forms/Faq/FaqForm"
 import { useAuth } from "@/hooks/useAuth"
 import { useSearchParams } from "next/navigation"
