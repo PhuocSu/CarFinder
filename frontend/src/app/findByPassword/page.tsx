@@ -1,7 +1,6 @@
 "use client"
 
-import FindByPassword from "../components/ui/forms/FindByPassword/FindByPassword";
-
+import FindByPassword from "../components/ui/forms/findByPassword/FindByPassword";
 
 const FindPassword = () => {
     return (
