@@ -1,13 +1,14 @@
 "use client"
 
-export const dynamic = "force-dynamic";
-
+import { Suspense } from "react";
 import MyPageDetail from "../components/ui/myPageTabs/myPageDetail";
 
 const MyPage = () => {
     return (
         <div>
-            <MyPageDetail />
+            <Suspense fallback={null}>
+              <MyPageDetail />
+            </Suspense>
         </div>
     );
 };

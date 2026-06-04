@@ -1,11 +1,10 @@
 "use client"
 
-export const dynamic = "force-dynamic";
-
+import { Suspense } from "react"
 import NoticeForm from "@/app/components/ui/forms/Notice/NoticeForm"
 import { useSearchParams } from "next/navigation"
 
-const NoticeWrite = () => {
+const NoticeWriteContent = () => {
     const searchParams = useSearchParams()
     const id = searchParams.get("id")
     
@@ -15,5 +14,11 @@ const NoticeWrite = () => {
         </div>
     )
 }
+
+const NoticeWrite = () => (
+  <Suspense fallback={null}>
+    <NoticeWriteContent />
+  </Suspense>
+)
 
 export default NoticeWrite

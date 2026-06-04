@@ -1,7 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
+import { Suspense } from "react";
 import { useRecentlyViewed } from "@/hooks/useRecentlyViewed";
 import ProductDetail from "../components/ui/productDetail/ProductDetail";
 import RecentlyViewed from "../components/ui/sideBar/RecentlyViewed/RecentlyViewed";
@@ -21,7 +20,9 @@ const ProductDetailPage = () => {
         gap: "20px",
       }}
     >
-      <ProductDetail />
+      <Suspense fallback={null}>
+        <ProductDetail />
+      </Suspense>
 
       <RightSidebar onOpen={open} />
       {isOpen && <RecentlyViewed onClose={close} />}

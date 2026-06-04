@@ -28,6 +28,6 @@ export const VEHICLES : Vehicle[] = [
     {
         id: 7,
         name: "코란도",
-        image: "/images/car/Korando.svg"
+        image: "/images/car/korando.svg"
     }
 ]

@@ -1,12 +1,11 @@
 "use client"
 
-export const dynamic = "force-dynamic";
-
+import { Suspense } from "react"
 import EventForm from "@/app/components/ui/forms/Event/EventForm"
 import { useSearchParams } from "next/navigation"
 
 
-const EventWrite = () => {
+const EventWriteContent = () => {
     const searchParams = useSearchParams()
     const id = searchParams.get("id")
 
@@ -16,5 +15,11 @@ const EventWrite = () => {
         </div>
     )
 }
+
+const EventWrite = () => (
+  <Suspense fallback={null}>
+    <EventWriteContent />
+  </Suspense>
+)
 
 export default EventWrite

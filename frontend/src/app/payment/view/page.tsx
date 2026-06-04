@@ -1,7 +1,6 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-
+import { Suspense, useState } from "react";
 import PaymentView from "@/app/components/ui/payment/paymentView";
 import { DownOutlined } from "@ant-design/icons";
 import {
@@ -16,14 +15,21 @@ import {
   Image,
 } from "antd";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
 
-export default function PaymentViewPage() {
+const PaymentViewContent = () => {
   const searchParams = useSearchParams();
   const contractId = Number(searchParams.get("contractId") || 0);
   return (
     <div>
       <PaymentView contractId={contractId} />
     </div>
+  );
+};
+
+export default function PaymentViewPage() {
+  return (
+    <Suspense fallback={null}>
+      <PaymentViewContent />
+    </Suspense>
   );
 }

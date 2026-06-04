@@ -1,7 +1,6 @@
 "use client"
 
-export const dynamic = "force-dynamic";
-
+import { Suspense, useEffect } from "react";
 import LeftFilter from "../components/ui/filter/listpage/LeftFilter/LeftFilter";
 import RightContent from "../components/ui/filter/listpage/RightContent/RightContent";
 import RightSidebar from "../components/ui/sideBar/RightSidebar";
@@ -12,9 +11,8 @@ import Compare from "../components/ui/sideBar/Compare/Compare";
 import { useSearchParams } from "next/navigation";
 import { useRecoilState } from "recoil";
 import { vehicleFilterState } from "@/store/VehicleFilter.atom";
-import { useEffect } from "react";
 
-const ListPage = () => {
+const ListPageContent = () => {
     const { isOpen, open, close } = useRecentlyViewed();
     const searchParams = useSearchParams();
     const [filter, setFilter] = useRecoilState(vehicleFilterState);
@@ -50,5 +48,9 @@ const ListPage = () => {
         </div>
     );
 };
-
+const ListPage = () => (
+  <Suspense fallback={null}>
+    <ListPageContent />
+  </Suspense>
+);
 export default ListPage
