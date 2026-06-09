@@ -1,0 +1,55 @@
+stages:
+  - build
+  - deploy
+  - checklog
+
+build-backend:
+  stage: build
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    - npm ci
+    - npm run build
+  tags:
+    - backend-runner
+  artifacts:
+    paths:
+      - dist
+      - package.json
+      - package-lock.json
+  only:
+    - tags
+
+deploy-backend:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+  dependencies:
+    - build-backend
+  script:
+    - |
+      if [ "$GITLAB_USER_LOGIN" = "suvanphuoc" ]; then
+        sudo cp -r dist /datas/carfinder/backend/
+        sudo cp package.json /datas/carfinder/backend/
+        sudo cp package-lock.json /datas/carfinder/backend/
+        cd /datas/carfinder/backend
+        sudo npm ci --omit=dev
+        sudo chown -R carfinderbackend:carfinderbackend /datas/carfinder/backend
+        sudo su carfinderbackend -c "cd /datas/carfinder/backend; pm2 stop backend || true; pm2 start npm --name backend -- run start; pm2 save"
+      else
+        echo "Permission denied"
+        exit 1
+      fi
+  tags:
+    - backend-runner
+  only:
+    - tags
+
+checklog-backend:
+  stage: checklog
+  script:
+    - sudo su carfinderbackend -c "pm2 logs backend --lines 50 --nostream"
+  tags:
+    - backend-runner
+  when: manual

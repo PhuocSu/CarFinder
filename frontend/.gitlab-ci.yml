@@ -1,0 +1,46 @@
+stages:
+  - build
+  - deploy
+
+build-frontend:
+  stage: build
+  variables:
+    GIT_STRATEGY: clone
+  script:
+    - npm ci # tự cài động cài node-modules luôn 
+    - npm run build
+  tags:
+    - frontend-runner
+  artifacts:
+    paths:
+      - .next
+      - package.json
+      - package-lock.json
+  only:
+    - tags
+
+deploy-frontend:
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  when: manual
+  dependencies:
+    - build-frontend
+  script:
+    - |
+      if [ "$GITLAB_USER_LOGIN" = "suvanphuoc" ]; then
+        sudo cp -r .next /datas/carfinder/frontend/
+        sudo cp package.json /datas/carfinder/frontend/
+        sudo cp package-lock.json /datas/carfinder/frontend/
+        cd /datas/carfinder/frontend
+        sudo npm ci --omit=dev # 
+        sudo chown -R carfinderfrontend:carfinderfrontend /datas/carfinder/frontend
+        sudo su carfinderfrontend -c "cd /datas/carfinder/frontend; pm2 stop frontend || true; pm2 start npm --name frontend -- run start; pm2 save"
+      else
+        echo "Permission denied"
+        exit 1
+      fi
+  tags:
+    - frontend-runner
+  only:
+    - tags
