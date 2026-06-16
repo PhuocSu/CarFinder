@@ -1,0 +1,66 @@
+pipeline {
+    agent {
+        label 'lab-server'
+    }
+    environment {
+        appUser = "carfinderbackend"
+        appName = "backend"
+        folderDeploy = "/datas/carfinder/backend"
+        copyScript = "sudo cp -r dist ${folderDeploy}"
+        permsScript = "sudo chown -R ${appUser}:${appUser} ${folderDeploy}"
+        stopScript = "sudo su ${appUser} -c 'pm2 stop ${appName} || true'"
+        startScript = "sudo su ${appUser} -c 'cd ${folderDeploy}; pm2 start npm --name ${appName} -- run start; pm2 save'"
+        checklogScript = "sudo su ${appUser} -c 'pm2 logs ${appName} --lines 50 --nostream'"
+    }
+    stages {
+        stage('build') {
+            steps {
+                sh(script: """
+                    npm ci
+                    npm run build
+                """, label: "build NestJS project")
+            }
+        }
+        stage('deploy') {
+            steps {
+                script {
+                    try {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            env.useChoice = input message: "Can it be deployed?",
+                                parameters: [choice(name: 'deploy', choices: 'no\nyes', description: 'Choose "yes" if you want to deploy!')]
+                        }
+                    } catch (err) {
+                        // Timeout hoặc bấm Abort → skip deploy
+                        env.useChoice = 'no'
+                        echo "Timeout or cancelled, please skip!"
+                    }
+
+                    if (env.useChoice == 'yes') {
+                        sh(script: """ ${copyScript} """, label: "copy dist folder to deploy folder")
+                        sh(script: """ ${permsScript} """, label: "set permission folder")
+                        sh(script: """ ${stopScript} """, label: "stop running process")
+                        sh(script: """ ${startScript} """, label: "start project with pm2")
+                    } else {
+                        echo "Deploy bị bỏ qua!"
+                    }
+                }
+            }
+        }
+        stage('checklog') {
+            when {
+                expression { return env.useChoice == 'yes' }
+            }
+            steps {
+                sh(script: """ ${checklogScript} """, label: "check pm2 logs")
+            }
+        }
+    }
+    post {
+        failure {
+            echo "Pipeline failed! Check logs above."
+        }
+        success {
+            echo "Pipeline completed successfully!"
+        }
+    }
+}

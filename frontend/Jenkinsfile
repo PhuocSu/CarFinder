@@ -1,0 +1,56 @@
+pipeline {
+    agent {
+        label 'lab-server'
+    }
+    environment {
+        appUser = "carfinderfrontend"
+        appName = "frontend"
+        folderDeploy = "/datas/carfinder/frontend"
+
+        copyScript = "sudo cp -r .next ${folderDeploy}"
+        permsScript = "sudo chown -R ${appUser}:${appUser} ${folderDeploy}"
+        stopScript = "sudo su ${appUser} -c 'pm2 stop ${appName} || true'"
+        startScript = "sudo su ${appUser} -c 'cd ${folderDeploy}; pm2 start npm --name ${appName} -- run start; pm2 save'"
+    }
+    stages {
+        stage('build') {
+            steps {
+                sh(script: """
+                    npm run build
+                """, label: "build NextJS project")
+            }
+        }
+        stage('deploy') {
+            steps {
+                script {
+                    try {
+                        timeout(time: 5, unit: 'MINUTES') {
+                            env.useChoice = input message: "Can it be deployed?",
+                                parameters: [choice(name: 'deploy', choices: 'no\nyes', description: 'Choose "yes" if you want to deploy!')]
+                        }
+                    } catch (err) {
+                        env.useChoice = 'no'
+                        echo "Timeout hoặc bị huỷ, bỏ qua deploy!"
+                    }
+
+                    if (env.useChoice == 'yes') {
+                        sh(script: """ ${copyScript} """, label: "copy .next folder to deploy folder")
+                        sh(script: """ ${permsScript} """, label: "set permission folder")
+                        sh(script: """ ${stopScript} """, label: "stop running process")
+                        sh(script: """ ${startScript} """, label: "start project with pm2")
+                    } else {
+                        echo "Deploy bị bỏ qua!"
+                    }
+                }
+            }
+        }
+    }
+    post {
+        failure {
+            echo "Pipeline failed! Check logs above."
+        }
+        success {
+            echo "Pipeline completed successfully!"
+        }
+    }
+}
